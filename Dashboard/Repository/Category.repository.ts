@@ -78,7 +78,7 @@ export const editParentCategoryRepository = async (
     const response = await ParentCategoryModel.findByIdAndUpdate(id, {
       $set: {
         name,
-        image: finalImages,
+        image: finalImages[0],
       },
     });
 
@@ -91,7 +91,7 @@ export const editParentCategoryRepository = async (
 
     return {
       status: STATUS_CODE.OK,
-      message: " Parent Category update Successfully",
+      message: "Parent Category update Successfully",
     };
   } catch (error) {
     console.log("this is the error in category repository ", error);
@@ -101,8 +101,32 @@ export const editParentCategoryRepository = async (
 
 //-----------------------------------------------------------------------------------------------
 
-export const editChildCategoryRepository = async () => {
+export const editChildCategoryRepository = async (
+  id: string,
+  name: string,
+  finalImages: Array<string>,
+  parentcategoryId: string
+) => {
   try {
+    const response = await childCategoryModel.findByIdAndUpdate(id, {
+      $set: {
+        name,
+        image: finalImages[0],
+        parentcategoryId,
+      },
+    });
+
+    if (!response) {
+      return {
+        status: STATUS_CODE.BAD_REQUEST,
+        message: "Server error while updating the Child Category Category",
+      };
+    }
+
+    return {
+      status: STATUS_CODE.OK,
+      message: "child Category update Successfully",
+    };
   } catch (error) {
     console.log("this is the error in category repository ", error);
     throw error;

@@ -7,6 +7,8 @@ import {
   editParentCategoryServices,
   editChildCategoryServices,
 } from "../Services/Category.services";
+import { parseIfString } from "../../utils/helper";
+import { ParentCategory } from "../Modals/Category.modal";
 
 const addParentCategoryController = async (
   req: Request,
@@ -28,7 +30,7 @@ const addParentCategoryController = async (
     const response = await addParentCategoryServices(name, images);
 
     if ((response as { status: number }).status === STATUS_CODE.BAD_REQUEST) {
-      ErrorResponse(
+      return ErrorResponse(
         res,
         (response as { status: number }).status,
         "error while creating Parent Category"
@@ -66,7 +68,7 @@ const addChildCategoryController = async (
     );
 
     if ((response as { status: number }).status === STATUS_CODE.BAD_REQUEST) {
-      ErrorResponse(
+      return ErrorResponse(
         res,
         (response as { status: number }).status,
         "error while creating Parent Category"
@@ -87,7 +89,7 @@ const editParentCategoryController = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { name,id } = req.body;
+    let { name, id } = req.body;
 
     const existingImages: string[] =
       typeof req.body.existingImages === "string"
@@ -105,9 +107,17 @@ const editParentCategoryController = async (
 
     const finalImages = [...existingImages, ...images];
 
-    const response = await editParentCategoryServices(name,id,finalImages);
+    const response = await editParentCategoryServices(name, id, finalImages);
 
+    if ((response as { status: number }).status === STATUS_CODE.BAD_REQUEST) {
+      return ErrorResponse(
+        res,
+        (response as { status: number }).status,
+        "error while creating Parent Category"
+      );
+    }
 
+    SuccessResponse(res, STATUS_CODE.OK, response);
   } catch (error) {
     next(error);
   }
@@ -121,7 +131,36 @@ const editChildCategoryController = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const response = await editChildCategoryServices();
+    const { id, name, parentcategoryId } = req.body;
+
+    const existingImages: string[] =
+      typeof req.body.existingImages === "string"
+        ? JSON.parse(req.body.existingImages)
+        : req.body.existingImages || [];
+
+    let images: string[] = [];
+    if (
+      req.files &&
+      (req as any).files.images &&
+      Array.isArray((req as any).files.images)
+    ) {
+      images = (req as any).files.images.map((file: any) => file.key);
+    }
+
+    const finalImages = [...existingImages, ...images];
+
+    const response = await editChildCategoryServices(id, name, finalImages,parentcategoryId);
+
+    if ((response as { status: number }).status === STATUS_CODE.BAD_REQUEST) {
+      return ErrorResponse(
+        res,
+        (response as { status: number }).status,
+        "error while editing child Category"
+      );
+    }
+
+    SuccessResponse(res, STATUS_CODE.OK, response);
+
   } catch (error) {
     next(error);
   }

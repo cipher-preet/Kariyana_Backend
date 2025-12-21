@@ -40,11 +40,11 @@ export const addChildtCategoryServices = async (
 
 export const editParentCategoryServices = async (
   name: string,
-  id:string,
+  id: string,
   finalImages: Array<string>
 ) => {
   try {
-    const response = await editParentCategoryRepository(name,id,finalImages);
+    const response = await editParentCategoryRepository(name, id, finalImages);
     return response;
   } catch (error) {
     console.log("this error is inside Category services ", error);
@@ -54,9 +54,19 @@ export const editParentCategoryServices = async (
 
 //-------------------------------------------------------------------------
 
-export const editChildCategoryServices = async () => {
+export const editChildCategoryServices = async (
+  id: string,
+  name: string,
+  finalImages: Array<string>,
+  parentcategoryId: string
+) => {
   try {
-    const response = await editChildCategoryRepository();
+    const response = await editChildCategoryRepository(
+      id,
+      name,
+      finalImages,
+      parentcategoryId
+    );
     return response;
   } catch (error) {
     console.log("this error is inside Category services ", error);

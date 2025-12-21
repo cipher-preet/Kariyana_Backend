@@ -70,6 +70,15 @@ router.put(
   editParentCategoryController
 );
 
-router.put("/editChildCategory", editChildCategoryController);  //pending
+router.put(
+  "/editChildCategory",
+  uploadCategory.fields([
+    {
+      name: "images",
+      maxCount: 1,
+    },
+  ]),
+  editChildCategoryController
+);
 
 export default router;
