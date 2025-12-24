@@ -19,7 +19,7 @@ const ParentCategorySchema = new mongoose.Schema<ParentCategory>(
     },
     isActive: {
       type: Boolean,
-      default: false,
+      default: true,
     },
   },
   {

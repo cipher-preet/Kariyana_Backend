@@ -24,7 +24,7 @@ const childCategorySchema = new mongoose.Schema<childCategory>(
     },
     isActive: {
       type: Boolean,
-      default: false,
+      default: true,
     },
   },
   {

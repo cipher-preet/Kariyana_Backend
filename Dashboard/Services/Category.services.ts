@@ -3,7 +3,11 @@ import {
   addChildtCategoryRepository,
   editParentCategoryRepository,
   editChildCategoryRepository,
+  getParentCategoriesRepository,
+  getChildCategoryByParentIdRepository
 } from "../Repository/Category.repository";
+
+//-------------------------------------------------------------------------------
 
 export const addParentCategoryServices = async (
   name: string,
@@ -70,6 +74,36 @@ export const editChildCategoryServices = async (
     return response;
   } catch (error) {
     console.log("this error is inside Category services ", error);
+    throw error;
+  }
+};
+
+//------------------------------------------------------------------------------
+export const getParentCategoriesService = (
+  cursor: string | undefined,
+  limit: number
+) => {
+  try {
+    const response = getParentCategoriesRepository(cursor, limit);
+    return response;
+  } catch (error) {
+    console.log("error in product app services", error);
+    throw error;
+  }
+};
+
+//-----------------------------------------------------------------------------
+
+export const getChildCategoryByParentIdServices = async (
+  cursor: string | undefined,
+  ParentCategoryId: string,
+  limit: number
+) => {
+  try {
+    const response = await getChildCategoryByParentIdRepository(cursor,ParentCategoryId,limit);
+    return response;
+  } catch (error) {
+    console.log("error in product app services", error);
     throw error;
   }
 };

@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { STATUS_CODE } from "../../Api";
 import { ParentCategoryModel } from "../Modals/Category.modal";
 import { childCategoryModel } from "../Modals/ChildCategory.modal";
@@ -126,6 +127,87 @@ export const editChildCategoryRepository = async (
     return {
       status: STATUS_CODE.OK,
       message: "child Category update Successfully",
+    };
+  } catch (error) {
+    console.log("this is the error in category repository ", error);
+    throw error;
+  }
+};
+
+//-------------------------------------------------------------------------------------------------
+
+export const getParentCategoriesRepository = async (
+  cursor?: string | undefined,
+  limit = 10
+) => {
+  try {
+    const query: any = {};
+    if (cursor) {
+      query._id = { $lt: new Types.ObjectId(cursor) };
+    }
+    const limit = 10;
+
+    const categories = await ParentCategoryModel.find()
+      .sort({ _id: -1 })
+      .limit(limit + 1)
+      .select({
+        name: 1,
+        image: 1,
+        isActive: 1,
+      })
+      .lean();
+
+    const hasNextPage = categories.length > limit;
+    if (hasNextPage) {
+      categories.pop();
+    }
+
+    return {
+      categories,
+      nextCursor: hasNextPage ? categories[categories.length - 1]._id : null,
+      hasNextPage,
+    };
+  } catch (error) {
+    console.log("this is the error in category repository ", error);
+    throw error;
+  }
+};
+
+//-------------------------------------------------------------------------------------------------
+
+export const getChildCategoryByParentIdRepository = async (
+  cursor: string | undefined,
+  ParentCategoryId: string,
+  limit: number
+) => {
+  try {
+    const query: any = {
+      parentCategoryId: new Types.ObjectId(ParentCategoryId),
+      isActive: true,
+    };
+    console.log()
+
+    if (cursor) {
+      query._id = { $lt: new Types.ObjectId(cursor) };
+    }
+
+    const childcat = await childCategoryModel
+      .find(query)
+      .sort({ _id: -1 })
+      .limit(limit + 1)
+      .select({ name: 1, image: 1 })
+      .lean();
+
+    const hasNextPage = childcat.length > limit;
+
+    if (hasNextPage) {
+      childcat.pop();
+    }
+
+    return {
+      childcat,
+      nextCursor: hasNextPage ? childcat[childcat.length - 1]._id : null,
+      hasNextPage,
     };
   } catch (error) {
     console.log("this is the error in category repository ", error);

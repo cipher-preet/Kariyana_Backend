@@ -8,6 +8,8 @@ import {
   addChildCategoryController,
   editParentCategoryController,
   editChildCategoryController,
+  getParentCategoriesController,
+  getChildCategoryByParentIdController
 } from "./Controllers/Category.controller";
 import { uploadCategory } from "../Middleware/Multer/CateogryResources";
 import { uploadProduct } from "../Middleware/Multer/ProductResources";
@@ -80,5 +82,15 @@ router.put(
   ]),
   editChildCategoryController
 );
+
+
+
+// -------------------------- get API's ---------------------------------
+
+router.get("/getParentCategories", getParentCategoriesController)
+
+router.get("/getchildcategorybyparentId", getChildCategoryByParentIdController)
+
+
 
 export default router;
