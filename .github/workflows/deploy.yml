@@ -10,11 +10,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      # 1️⃣ Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: google-github-actions/setup-gcloud@v2
+      # 2️⃣ Authenticate to Google Cloud
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
         with:
-          project_id: YOUR_PROJECT_ID
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - run: gcloud app deploy app.yaml --quiet
+      # 3️⃣ Install Google Cloud SDK
+      - name: Setup Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: python-microservice-hub
+
+      # 4️⃣ Deploy to App Engine
+      - name: Deploy to App Engine
+        run: gcloud app deploy app.yaml --quiet
