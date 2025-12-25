@@ -18,4 +18,8 @@ app.get('/',(req,res) => {
     res.send("server is running")
 })
 
+app.get('/health',(req,res) => {
+    res.send({'version' : '0.0.1','status' : 'ok','date':'25-12-2025'})
+})
+
 export default app;
