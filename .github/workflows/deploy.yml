@@ -20,12 +20,27 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      # 3️⃣ Install Google Cloud SDK
+      # 3️⃣ Setup Google Cloud SDK
       - name: Setup Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: python-microservice-hub
 
-      # 4️⃣ Deploy to App Engine
+      # 4️⃣ Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # 5️⃣ Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # 6️⃣ Build TypeScript
+      - name: Build project
+        run: npm run build
+
+      # 7️⃣ Deploy to App Engine
       - name: Deploy to App Engine
         run: gcloud app deploy app.yaml --quiet
