@@ -1,8 +1,11 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 import productRoute from "./Dashboard/Routes";
 import appRoutes from "./KariyanaApp/Routes";
+import authRoutes from "./AuthenticationModule/Routes";
+import { sessionConfig } from "./Config/session";
 
 const app = express();
 
@@ -22,8 +25,12 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(cookieParser());
+app.use(sessionConfig);
+
 app.use("/api/v1/dashboard", productRoute);
 app.use("/api/v1/app", appRoutes);
+app.use("/api/v1/auth", authRoutes);
 
 app.get("/", (req, res) => {
   res.send("server is running");

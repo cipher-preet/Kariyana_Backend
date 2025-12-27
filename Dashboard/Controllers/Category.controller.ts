@@ -10,7 +10,6 @@ import {
   getChildCategoryByParentIdServices,
 } from "../Services/Category.services";
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
-import { ParentCategory } from "./../Modals/Category.modal";
 
 //---------------------------------------------------------------------------------------------
 const addParentCategoryController = async (

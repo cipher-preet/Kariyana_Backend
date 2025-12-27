@@ -1,6 +1,5 @@
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 
-// Load .env ONLY in local / dev
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
@@ -19,7 +18,6 @@ if (!projectId) {
  * - Google Secret Manager in production
  */
 export async function getSecret(name: string): Promise<string> {
-  // ✅ Local / Dev → use .env
   if (process.env.NODE_ENV !== 'production') {
     const localValue = process.env[name];
 
@@ -30,7 +28,6 @@ export async function getSecret(name: string): Promise<string> {
     return localValue;
   }
 
-  // ✅ Production → Google Secret Manager
   const [version] = await client.accessSecretVersion({
     name: `projects/${projectId}/secrets/${name}/versions/latest`,
   });

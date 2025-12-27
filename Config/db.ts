@@ -1,9 +1,11 @@
 import mongoose from 'mongoose';
 import { getSecret } from './secretManager';
 
+const MONGO_URI = process.env.MONGO_URI
+
 const connectDB = async () => {
   try {
-    const MONGO_URI = await getSecret('MONGO_URI')
+    // const MONGO_URI = await getSecret('MONGO_URI')
     await mongoose.connect(MONGO_URI as string);
     console.log('MongoDB Connected succesfully');
   } catch (error) {
