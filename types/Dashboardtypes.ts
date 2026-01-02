@@ -35,7 +35,6 @@ export type VerifyOtpResult =
       };
     };
 
-
 //-------------------------------------
 
 export interface RegisterInput {
@@ -52,3 +51,11 @@ export interface RegisterInput {
 }
 
 //---------------------------------------
+
+export interface IUnitInterface {
+  _id?: string;
+  name: string;
+  shortName: string;
+  baseUnit: string;
+  multiplier?: number;
+}

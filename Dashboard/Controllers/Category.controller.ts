@@ -115,7 +115,7 @@ const editParentCategoryController = async (
       return ErrorResponse(
         res,
         (response as { status: number }).status,
-        "error while creating Parent Category"
+        "error while editing Parent Category"
       );
     }
 
@@ -188,10 +188,12 @@ const getParentCategoriesController = async (
       limit
     );
 
-    const categoriesWithSignedUrls = response.categories.map((cat: any) => ({
-      ...cat,
-      images: generateCloudFrontSignedUrl(cat.image),
-    }));
+    const categoriesWithSignedUrls = response.categories.map((cat: any) => {
+      return {
+        ...cat,
+        images: generateCloudFrontSignedUrl(cat.image),
+      };
+    });
 
     SuccessResponse(res, STATUS_CODE.OK, {
       categories: categoriesWithSignedUrls,
@@ -249,6 +251,8 @@ const getChildCategoryByParentIdController = async (
     next(error);
   }
 };
+//---------------------------------------------------------------------------------------------------------
+
 
 //------------------------------------
 export {

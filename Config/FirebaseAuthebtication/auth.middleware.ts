@@ -18,7 +18,12 @@ export const verifyFirebaseToken = async (
     }
 
     const decoded = await admin.auth().verifyIdToken(token);
-    req.user = decoded;
+
+    req.user = {
+      uid: decoded.uid,
+      phone_number: decoded.phone_number,
+    };
+  
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid or expired token" });

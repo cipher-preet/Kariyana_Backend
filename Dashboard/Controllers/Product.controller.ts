@@ -3,10 +3,12 @@ import { NextFunction, Request, Response } from "express";
 import {
   addNewProductServices,
   editProductServices,
+  getProductsBasicDetailsServices,
 } from "../Services/Product.services";
 import { parseIfString } from "../../utils/helper";
 import { IProduct } from "../../types/Dashboardtypes";
 import { Types } from "mongoose";
+import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
 
 const addNewProductController = async (
   req: Request,
@@ -129,5 +131,42 @@ const editProductController = async (
     next(error);
   }
 };
+
+// -----------------------------------------------------------------------------------------------------
+// make changes its not final
+
+const getProductsBasicDetailsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    const limit = Number(req.query.limit) || 10;
+    const cursor = req.query.cursor;
+
+    const product = await getProductsBasicDetailsServices(
+      limit,
+      cursor as string | undefined
+    );
+
+    const productsWithSignedUrl = product.products.map((product: any) => ({
+      ...product,
+      images: generateCloudFrontSignedUrl(product?.images[0]),
+    }));
+
+    SuccessResponse(res, STATUS_CODE.OK, {
+      products: productsWithSignedUrl,
+      nextCursor: product.nextCursor,
+      hasNextPage: product.hasNextPage,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 //------------------------------------
-export { addNewProductController, editProductController };
+export {
+  addNewProductController,
+  editProductController,
+  getProductsBasicDetailsController,
+};

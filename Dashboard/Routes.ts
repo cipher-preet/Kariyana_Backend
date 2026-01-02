@@ -1,8 +1,11 @@
 import { Router } from "express";
+//---------------------------------------------------------------
 import {
   addNewProductController,
   editProductController,
+  getProductsBasicDetailsController,
 } from "./Controllers/Product.controller";
+//---------------------------------------------------------------
 import {
   addParentCategoryController,
   addChildCategoryController,
@@ -11,6 +14,15 @@ import {
   getParentCategoriesController,
   getChildCategoryByParentIdController,
 } from "./Controllers/Category.controller";
+//---------------------------------------------------------------
+import {
+  addBrandController,
+  addUnitController,
+  editBrandController,
+  editUnitController
+} from "./Controllers/BrandAndUnit.controller";
+//---------------------------------------------------------------
+
 import { uploadCategory } from "../Middleware/Multer/CateogryResources";
 import { uploadProduct } from "../Middleware/Multer/ProductResources";
 const router = Router();
@@ -88,5 +100,15 @@ router.put(
 router.get("/getParentCategories", getParentCategoriesController);
 
 router.get("/getchildcategorybyparentId", getChildCategoryByParentIdController);
+
+router.get("/getProductsBasicDetails", getProductsBasicDetailsController);
+
+//---------------------- brand API's -----------------------
+router.post("/addBrand", addBrandController);
+router.post("/addUnit", addUnitController);
+
+//---- edit APi's -------
+router.put("/editBrand", editBrandController);
+router.put("/editUnit", editUnitController);
 
 export default router;

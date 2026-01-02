@@ -8,6 +8,7 @@ import {
 } from "../Services/Auth.services";
 import { RegisterInput } from "../../types/Dashboardtypes";
 import { User } from "../Modals/User.Modals";
+import { AuthRequest } from "../../Config/FirebaseAuthebtication/auth.middleware";
 
 //-----------------------------------------------------------------------------------------------------
 const verifyOtpController = async (
@@ -128,14 +129,18 @@ const registerUserController = async (
 };
 
 //-------------------------------------------------------------------------
-
 const loginUserController = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { uid, phone_number } = req.user as any;
+
+    if (!req.user) {
+      return ErrorResponse(res, 401, "Unauthorized");
+    }
+
+    const { uid, phone_number } = req.user;
 
     let user = await User.findOne({ firebaseUid: uid });
 

@@ -1,4 +1,4 @@
-import mongoose, { Schema, Types, Document } from "mongoose";
+import mongoose, { Document } from "mongoose";
 
 export interface ParentCategory extends Document {
   name: string;

@@ -31,7 +31,6 @@ const ProductSchema = new mongoose.Schema<product>(
     sku: {
       type: Number,
       required: true,
-      unique: true,
     },
 
     categoryId: {
@@ -109,7 +108,4 @@ const ProductSchema = new mongoose.Schema<product>(
   }
 );
 
-export const productModel = mongoose.model<product>(
-  "product",
-  ProductSchema
-);
+export const productModel = mongoose.model<product>("product", ProductSchema);
