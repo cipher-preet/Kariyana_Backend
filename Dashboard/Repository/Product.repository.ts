@@ -8,6 +8,7 @@ import { productModel } from "../Modals/Product.modals";
 import { NoSuchKey } from "@aws-sdk/client-s3";
 import { productDetailsModel } from "../Modals/ProductDetails.modal";
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
+import path from "path";
 // ------------------------------------------------------------------------------------------------
 
 export const addNewProductRepository = async (finalData: IProduct) => {
@@ -78,6 +79,11 @@ export const getProductsBasicDetailsRepository = async (
 
     const products = await productModel
       .find(query)
+      .populate([
+        { path: "categoryId", select: "name" },
+        { path: "brandId", select: "name" },
+        { path: "subcategoryId", select: "name" },
+      ])
       .sort({ _id: -1 })
       .limit(limit + 1)
       .lean();
