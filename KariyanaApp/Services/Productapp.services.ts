@@ -1,7 +1,10 @@
+import { Icart } from "../../types/CartTypes";
 import {
   getProductsBycategoryIdRepository,
   getAllChildCategoriesRepository,
   getProductByChildCategoryIdRepository,
+  syncCartRepository,
+  getCartByUserIdRepository,
 } from "../Repository/Productapp.repository";
 
 //-----------------------------------------------------------------------------
@@ -46,5 +49,32 @@ export const getProductByChildCategoryIdServices = async (
       cursor,
     });
     return response;
-  } catch (error) {}
+  } catch (error) {
+    console.log("error in product app services", error);
+    throw error;
+  }
+};
+
+//------------------------------------------------------------------------------------
+
+export const syncCartService = async (FinalData: Icart) => {
+  try {
+    const response = await syncCartRepository(FinalData);
+    return response;
+  } catch (error) {
+    console.log("error in product app services", error);
+    throw error;
+  }
+};
+
+//------------------------------------------------------------------------------------
+
+export const getCartByUserIdService = async (userId:string) => {
+  try {
+    const response = await getCartByUserIdRepository(userId);
+    return response;
+  } catch (error) {
+    console.log("error in product app services", error);
+    throw error;
+  }
 };

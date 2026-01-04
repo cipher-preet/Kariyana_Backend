@@ -7,6 +7,7 @@ export interface product extends Document {
   subcategoryId: Types.ObjectId;
   brandId: Types.ObjectId;
   mrp: number;
+  marketPrice: number;
   sellingPrice: number;
   rating: number;
   isActive: boolean;
@@ -52,6 +53,11 @@ const ProductSchema = new mongoose.Schema<product>(
     },
 
     mrp: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    marketPrice : {
       type: Number,
       required: true,
       min: 0,

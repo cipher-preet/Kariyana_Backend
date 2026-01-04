@@ -3,6 +3,7 @@ import mongoose, { Types, Document } from "mongoose";
 export interface productDetails extends Document {
   productId: Types.ObjectId;
   heighlights: Array<object>;
+  images: string[];
 }
 
 const productDetailSchema = new mongoose.Schema<productDetails>(
@@ -10,6 +11,9 @@ const productDetailSchema = new mongoose.Schema<productDetails>(
     productId: {
       type: Types.ObjectId,
       ref: "product",
+    },
+    images:{
+      type: [String],
     },
     heighlights: [
       {
@@ -22,9 +26,6 @@ const productDetailSchema = new mongoose.Schema<productDetails>(
       },
     ],
   },
-  {
-    timestamps: true
-  }
 );
 
 export const productDetailsModel = mongoose.model<productDetails>(

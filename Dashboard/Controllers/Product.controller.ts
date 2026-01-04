@@ -4,9 +4,14 @@ import {
   addNewProductServices,
   editProductServices,
   getProductsBasicDetailsServices,
+  addProductImagsAndHiglightsServices,
+  getProductImagesAndHighlightsServices,
 } from "../Services/Product.services";
 import { parseIfString } from "../../utils/helper";
-import { IProduct } from "../../types/Dashboardtypes";
+import {
+  IProduct,
+  IProductHighlightsDetails,
+} from "../../types/Dashboardtypes";
 import { Types } from "mongoose";
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
 
@@ -23,6 +28,7 @@ const addNewProductController = async (
       subcategoryId,
       brandId,
       mrp,
+      marketPrice,
       sellingPrice,
       unit,
       quantityPerUnit,
@@ -46,6 +52,7 @@ const addNewProductController = async (
       subcategoryId: new Types.ObjectId(subcategoryId),
       brandId: new Types.ObjectId(brandId),
       mrp: parseIfString<number>(mrp)!,
+      marketPrice: parseIfString<number>(marketPrice)!,
       sellingPrice: parseIfString<number>(sellingPrice)!,
       unit: parseIfString<string>(unit)!,
       quantityPerUnit: parseIfString<number>(quantityPerUnit)!,
@@ -163,10 +170,91 @@ const getProductsBasicDetailsController = async (
     next(error);
   }
 };
+//--------------------------------------------------------------------------------------
+
+const addProductImagsAndHiglightsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    let { productId, heighlights } = req.body;
+
+    let images: string[] = [];
+    if (
+      req.files &&
+      (req as any).files.images &&
+      Array.isArray((req as any).files.images)
+    ) {
+      images = (req as any).files.images.map((file: any) => file.key);
+    }
+
+    const finalData: IProductHighlightsDetails = {
+      productId: productId,
+      heighlights: JSON.parse(heighlights),
+      images: images,
+    };
+
+    console.log("finalData in controller", finalData);
+
+    const response = await addProductImagsAndHiglightsServices(finalData);
+
+    if (!response) {
+      return ErrorResponse(
+        res,
+        STATUS_CODE.BAD_REQUEST,
+        "Failed to add product images and highlights"
+      );
+    }
+    if (response.status === STATUS_CODE.BAD_REQUEST) {
+      return ErrorResponse(res, response.status, response.message);
+    }
+
+    SuccessResponse(res, response.status, response.message);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//-----------------------------------------------------------------------------------------------------------------
+
+const getProductImagesAndHighlightsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    const productId = req.query.productId as string;
+
+    const response = await getProductImagesAndHighlightsServices(productId);
+
+    if (!response) {
+      return ErrorResponse(
+        res,
+        STATUS_CODE.BAD_REQUEST,
+        "Failed to add product images and highlights"
+      );
+    }
+
+    if (response.status === STATUS_CODE.BAD_REQUEST) {
+      return ErrorResponse(
+        res,
+        response.status,
+        (response as { message: string }).message
+      );
+    }
+
+    SuccessResponse(res, response.status, response);
+  } catch (error) {
+    next(error);
+  }
+};
 
 //------------------------------------
 export {
   addNewProductController,
   editProductController,
   getProductsBasicDetailsController,
+  addProductImagsAndHiglightsController,
+  getProductImagesAndHighlightsController,
 };

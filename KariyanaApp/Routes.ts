@@ -3,6 +3,8 @@ import {
   getProductsBycategoryIdController,
   getAllChildCategoriesController,
   getProductByChildCategoryIdController,
+  syncCartController,
+  getCartByUserIdController,
 } from "./Controllers/Productapp.controller";
 
 const router = Router();
@@ -18,5 +20,9 @@ router.get(
   "/getProductByChildCategoryId/:childCatId",
   getProductByChildCategoryIdController
 );
+
+router.post("/syncCart", syncCartController);
+
+router.get("/getCartByUserId/:userId", getCartByUserIdController);
 
 export default router;

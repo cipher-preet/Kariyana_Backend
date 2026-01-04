@@ -4,6 +4,8 @@ import {
   addNewProductController,
   editProductController,
   getProductsBasicDetailsController,
+  addProductImagsAndHiglightsController,
+  getProductImagesAndHighlightsController,
 } from "./Controllers/Product.controller";
 //---------------------------------------------------------------
 import {
@@ -19,7 +21,7 @@ import {
   addBrandController,
   addUnitController,
   editBrandController,
-  editUnitController
+  editUnitController,
 } from "./Controllers/BrandAndUnit.controller";
 //---------------------------------------------------------------
 
@@ -110,5 +112,22 @@ router.post("/addUnit", addUnitController);
 //---- edit APi's -------
 router.put("/editBrand", editBrandController);
 router.put("/editUnit", editUnitController);
+
+// ------------------ add product images and more detail -------------------------
+router.put(
+  "/addProductImagsAndHiglights",
+  uploadProduct.fields([
+    {
+      name: "images",
+      maxCount: 5,
+    },
+  ]),
+  addProductImagsAndHiglightsController
+);
+
+router.get(
+  "/getProductImagesAndHighlights",
+  getProductImagesAndHighlightsController
+);
 
 export default router;

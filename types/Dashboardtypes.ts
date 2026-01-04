@@ -8,6 +8,7 @@ export interface IProduct {
   subcategoryId: Types.ObjectId;
   brandId: Types.ObjectId;
   mrp: number;
+  marketPrice?: number;
   sellingPrice: number;
   unit: string;
   quantityPerUnit: number;
@@ -58,4 +59,12 @@ export interface IUnitInterface {
   shortName: string;
   baseUnit: string;
   multiplier?: number;
+}
+
+//---------------------------------------
+
+export interface IProductHighlightsDetails {
+   productId: Types.ObjectId;
+  heighlights: Array<object>;
+  images: string[];
 }

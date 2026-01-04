@@ -1,8 +1,13 @@
-import { IProduct } from "../../types/Dashboardtypes";
+import {
+  IProduct,
+  IProductHighlightsDetails,
+} from "../../types/Dashboardtypes";
 import {
   addNewProductRepository,
   editProductRepository,
   getProductsBasicDetailsRepository,
+  addProductImagsAndHiglightsRepository,
+  getProductImagesAndHighlightsRepository,
 } from "../Repository/Product.repository";
 
 export const addNewProductServices = async (finalData: IProduct) => {
@@ -38,6 +43,34 @@ export const getProductsBasicDetailsServices = async (
 ) => {
   try {
     const response = await getProductsBasicDetailsRepository(limit, cursor);
+    return response;
+  } catch (error) {
+    console.log("error in product services layer", error);
+    throw error;
+  }
+};
+
+//-----------------------------------------------------------------------
+
+export const addProductImagsAndHiglightsServices = async (
+  finalData: IProductHighlightsDetails
+) => {
+  try {
+    const response = await addProductImagsAndHiglightsRepository(finalData);
+    return response;
+  } catch (error) {
+    console.log("error in product services layer", error);
+    throw error;
+  }
+};
+
+//-----------------------------------------------------------------------
+
+export const getProductImagesAndHighlightsServices = async (
+  productId: string
+) => {
+  try {
+    const response = await getProductImagesAndHighlightsRepository(productId);
     return response;
   } catch (error) {
     console.log("error in product services layer", error);
