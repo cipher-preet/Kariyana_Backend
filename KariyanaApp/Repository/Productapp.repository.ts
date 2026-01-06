@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { STATUS_CODE } from "../../Api";
 import { productModel } from "../../Dashboard/Modals/Product.modals";
 import { ParentCategoryModel } from "../../Dashboard/Modals/Category.modal";
@@ -7,6 +7,7 @@ import { childCategoryModel } from "../../Dashboard/Modals/ChildCategory.modal";
 import { cartSchemaModel } from "../../Dashboard/Modals/cart.model";
 import { productDetailsModel } from "../../Dashboard/Modals/ProductDetails.modal";
 import { Icart } from "../../types/CartTypes";
+import { STATUS_CODES } from "node:http";
 
 interface PaginationParams {
   limit?: number;
@@ -250,6 +251,124 @@ export const getCartByUserIdRepository = async (userId: string) => {
     };
 
     return FinalResponse;
+  } catch (error) {
+    console.log("error in product repo ", error);
+    throw error;
+  }
+};
+
+//--------------------------------------------------------------------------------------------------------------------
+
+export const incAndDecCartQuantityRepository = async (
+  userId: string,
+  productId: string,
+  delta: number
+) => {
+  try {
+    const cartUpdate = await cartSchemaModel.updateOne(
+      { userId },
+      [
+        {
+          $set: {
+            _computed: {
+              $let: {
+                vars: {
+                  newItems: {
+                    $filter: {
+                      input: {
+                        $map: {
+                          input: "$items",
+                          as: "item",
+                          in: {
+                            $cond: [
+                              {
+                                $eq: [
+                                  "$$item.productId",
+                                  new Types.ObjectId(productId),
+                                ],
+                              },
+                              {
+                                $cond: [
+                                  {
+                                    $lte: [
+                                      { $add: ["$$item.quantity", delta] },
+                                      0,
+                                    ],
+                                  },
+                                  null,
+                                  {
+                                    $mergeObjects: [
+                                      "$$item",
+                                      {
+                                        quantity: {
+                                          $add: ["$$item.quantity", delta],
+                                        },
+                                      },
+                                    ],
+                                  },
+                                ],
+                              },
+                              "$$item",
+                            ],
+                          },
+                        },
+                      },
+                      as: "item",
+                      cond: { $ne: ["$$item", null] },
+                    },
+                  },
+                },
+                in: {
+                  items: "$$newItems",
+                  totalItems: {
+                    $sum: "$$newItems.quantity",
+                  },
+                  subtotal: {
+                    $sum: {
+                      $map: {
+                        input: "$$newItems",
+                        as: "i",
+                        in: {
+                          $multiply: ["$$i.quantity", "$$i.price"],
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+
+            lastUpdatedAt: Date.now(),
+          },
+        },
+
+        {
+          $set: {
+            items: "$_computed.items",
+            totalItems: "$_computed.totalItems",
+            subtotal: "$_computed.subtotal",
+          },
+        },
+        {
+          $unset: "_computed",
+        },
+      ],
+      {
+        updatePipeline: true,
+      }
+    );
+
+    if (!cartUpdate) {
+      return {
+        status: STATUS_CODE.BAD_REQUEST,
+        message: "error while quantity updated",
+      };
+    }
+
+    return {
+      status: STATUS_CODE.OK,
+      message: "Quantity Updated",
+    };
   } catch (error) {
     console.log("error in product repo ", error);
     throw error;

@@ -8,6 +8,8 @@ import {
   editChildCategoryServices,
   getParentCategoriesService,
   getChildCategoryByParentIdServices,
+  getParentCategoriesForFormsServices,
+  getchildCategoriesForFormsServices,
 } from "../Services/Category.services";
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
 
@@ -253,6 +255,36 @@ const getChildCategoryByParentIdController = async (
 };
 //---------------------------------------------------------------------------------------------------------
 
+const getParentCategoriesForFormsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const response = await getParentCategoriesForFormsServices();
+    SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
+//---------------------------------------------------------------------------------------------------------
+
+const getchildCategoriesForFormsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const ParentCategoryId = req.query.ParentCategoryId as string;
+
+    const response =
+      (await getchildCategoriesForFormsServices(ParentCategoryId)) ?? [];
+
+    SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
 
 //------------------------------------
 export {
@@ -262,4 +294,6 @@ export {
   editChildCategoryController,
   getParentCategoriesController,
   getChildCategoryByParentIdController,
+  getParentCategoriesForFormsController,
+  getchildCategoriesForFormsController,
 };

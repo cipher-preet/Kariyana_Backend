@@ -5,6 +5,7 @@ import {
   getProductByChildCategoryIdRepository,
   syncCartRepository,
   getCartByUserIdRepository,
+  incAndDecCartQuantityRepository,
 } from "../Repository/Productapp.repository";
 
 //-----------------------------------------------------------------------------
@@ -69,9 +70,29 @@ export const syncCartService = async (FinalData: Icart) => {
 
 //------------------------------------------------------------------------------------
 
-export const getCartByUserIdService = async (userId:string) => {
+export const getCartByUserIdService = async (userId: string) => {
   try {
     const response = await getCartByUserIdRepository(userId);
+    return response;
+  } catch (error) {
+    console.log("error in product app services", error);
+    throw error;
+  }
+};
+
+//------------------------------------------------------------------------------------
+
+export const incAndDecCartQuantityServices = async (
+  userId: string,
+  productId: string,
+  delta: number
+) => {
+  try {
+    const response = await incAndDecCartQuantityRepository(
+      userId,
+      productId,
+      delta
+    );
     return response;
   } catch (error) {
     console.log("error in product app services", error);

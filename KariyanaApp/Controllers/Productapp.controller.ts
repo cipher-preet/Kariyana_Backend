@@ -6,6 +6,7 @@ import {
   getProductByChildCategoryIdServices,
   syncCartService,
   getCartByUserIdService,
+  incAndDecCartQuantityServices,
 } from "../Services/Productapp.services";
 
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
@@ -175,11 +176,41 @@ const getCartByUserIdController = async (
     }
 
     SuccessResponse(res, STATUS_CODE.OK, response);
-
   } catch (error) {
     next(error);
   }
 };
+
+//----------------------------------------------------------------------------------------------------
+
+const incAndDecCartQuantityController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    const { userId, productId, delta } = req.body;
+
+    const response = await incAndDecCartQuantityServices(
+      userId,
+      productId,
+      delta
+    );
+
+    if ((response as { status: number }).status === STATUS_CODE.BAD_REQUEST) {
+      return ErrorResponse(
+        res,
+        (response as { status: number }).status,
+        (response as { message: string }).message
+      );
+    }
+
+    SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
+
 //----------------------------------------------------
 export {
   getProductsBycategoryIdController,
@@ -187,4 +218,5 @@ export {
   getProductByChildCategoryIdController,
   syncCartController,
   getCartByUserIdController,
+  incAndDecCartQuantityController,
 };

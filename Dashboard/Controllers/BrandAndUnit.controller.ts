@@ -6,6 +6,8 @@ import {
   addUnitServices,
   editBrandServices,
   editUnitServices,
+  getBrandsForFormsServices,
+  getUnitServices
 } from "../Services/BrandAndUnit.services";
 import { IUnitInterface } from "../../types/Dashboardtypes";
 //----------------------------------------------------------------------------------
@@ -120,6 +122,34 @@ const editUnitController = async (
     next(error);
   }
 };
+//-------------------------------------------------------------------------------------------
+
+const getBrandsForFormsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    const response = await getBrandsForFormsServices();
+    return SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
+//-------------------------------------------------------------------------------------------
+
+const getUnitController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    const response = await getUnitServices();
+    return SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
 
 //--------------------------------------------
 export {
@@ -127,4 +157,6 @@ export {
   addUnitController,
   editUnitController,
   editBrandController,
+  getBrandsForFormsController,
+  getUnitController,
 };

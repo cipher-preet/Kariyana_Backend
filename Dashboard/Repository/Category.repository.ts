@@ -185,7 +185,7 @@ export const getChildCategoryByParentIdRepository = async (
       parentCategoryId: new Types.ObjectId(ParentCategoryId),
       isActive: true,
     };
-    console.log()
+    console.log();
 
     if (cursor) {
       query._id = { $lt: new Types.ObjectId(cursor) };
@@ -209,6 +209,52 @@ export const getChildCategoryByParentIdRepository = async (
       nextCursor: hasNextPage ? childcat[childcat.length - 1]._id : null,
       hasNextPage,
     };
+  } catch (error) {
+    console.log("this is the error in category repository ", error);
+    throw error;
+  }
+};
+
+//-------------------------------------------------------------------------------------------------
+
+export const getParentCategoriesForFormsRepository = async () => {
+  try {
+    const categories = await ParentCategoryModel.find({ isActive: true })
+      .select({ name: 1, _id: 1 })
+      .lean();
+
+    if (!categories) {
+      return [];
+    }
+
+    return categories;
+  } catch (error) {
+    console.log("this is the error in category repository ", error);
+    throw error;
+  }
+};
+
+//-------------------------------------------------------------------------------------------------
+export const getchildCategoriesForFormsRepository = async (
+  ParentCategoryId?: string
+) => {
+  try {
+    console.log("this is __________ >> ", ParentCategoryId);
+
+    if (!ParentCategoryId) {
+      return [];
+    }
+
+    const categories = await childCategoryModel
+      .find({ parentCategoryId: ParentCategoryId, isActive: true })
+      .select({ name: 1, _id: 1 })
+      .lean();
+
+    if (!categories) {
+      return [];
+    }
+
+    return categories;
   } catch (error) {
     console.log("this is the error in category repository ", error);
     throw error;

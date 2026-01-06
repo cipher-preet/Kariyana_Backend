@@ -43,9 +43,9 @@ const cartSchema = new mongoose.Schema<cart>(
       required: true,
     },
     items: [cartItemSchema],
-    totalItems: Number,
-    subtotal: Number,
-    lastUpdatedAt: Number,
+    totalItems: { type: Number, default: 0 },
+    subtotal: { type: Number, default: 0 },
+    lastUpdatedAt: { type: Number, default: Date.now },
   },
   { timestamps: true }
 );

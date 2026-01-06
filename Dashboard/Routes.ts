@@ -15,6 +15,8 @@ import {
   editChildCategoryController,
   getParentCategoriesController,
   getChildCategoryByParentIdController,
+  getParentCategoriesForFormsController,
+  getchildCategoriesForFormsController
 } from "./Controllers/Category.controller";
 //---------------------------------------------------------------
 import {
@@ -22,6 +24,8 @@ import {
   addUnitController,
   editBrandController,
   editUnitController,
+  getBrandsForFormsController,
+  getUnitController
 } from "./Controllers/BrandAndUnit.controller";
 //---------------------------------------------------------------
 
@@ -129,5 +133,15 @@ router.get(
   "/getProductImagesAndHighlights",
   getProductImagesAndHighlightsController
 );
+
+// ------------------------------------------------------------
+router.get('/getParentCategoriesForForms', getParentCategoriesForFormsController);
+router.get('/getchildCategoriesForForms', getchildCategoriesForFormsController);
+router.get('/getBrandsForForms', getBrandsForFormsController);
+router.get('/getUnit', getUnitController);
+
+//-----------------------------------------------------------
+
+
 
 export default router;

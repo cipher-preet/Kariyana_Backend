@@ -5,6 +5,7 @@ import {
   getProductByChildCategoryIdController,
   syncCartController,
   getCartByUserIdController,
+  incAndDecCartQuantityController
 } from "./Controllers/Productapp.controller";
 
 const router = Router();
@@ -24,5 +25,7 @@ router.get(
 router.post("/syncCart", syncCartController);
 
 router.get("/getCartByUserId/:userId", getCartByUserIdController);
+
+router.post('/incAndDecCartQuantity', incAndDecCartQuantityController)
 
 export default router;

@@ -3,7 +3,9 @@ import {
   addBrandRepository,
   addUnitRepository,
   editBrandRepository,
-  editUnitRepository
+  editUnitRepository,
+  getBrandsForFormsRepository,
+  getUnitRepository
 } from "../Repository/BrandAndUnit.repository";
 //-------------------------------------------------------------------------------
 
@@ -50,6 +52,29 @@ export const editBrandServices = async (
 export const editUnitServices = async (data: IUnitInterface) => {
   try {
     const response = await editUnitRepository(data);
+    return response;
+  } catch (error) {
+    console.log("error in brand and unit section ", error);
+    throw error;
+  }
+};
+
+//-------------------------------------------------------------------------------
+
+export const getBrandsForFormsServices = async () => {
+  try {
+    const response = await getBrandsForFormsRepository();
+    return response;
+  } catch (error) {
+    console.log("error in brand and unit section ", error);
+    throw error;
+  }
+};
+//-------------------------------------------------------------------------------
+
+export const getUnitServices = async () => {
+  try {
+    const response = await getUnitRepository();
     return response;
   } catch (error) {
     console.log("error in brand and unit section ", error);

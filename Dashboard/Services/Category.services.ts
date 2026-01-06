@@ -4,7 +4,9 @@ import {
   editParentCategoryRepository,
   editChildCategoryRepository,
   getParentCategoriesRepository,
-  getChildCategoryByParentIdRepository
+  getChildCategoryByParentIdRepository,
+  getParentCategoriesForFormsRepository,
+  getchildCategoriesForFormsRepository,
 } from "../Repository/Category.repository";
 
 //-------------------------------------------------------------------------------
@@ -100,7 +102,35 @@ export const getChildCategoryByParentIdServices = async (
   limit: number
 ) => {
   try {
-    const response = await getChildCategoryByParentIdRepository(cursor,ParentCategoryId,limit);
+    const response = await getChildCategoryByParentIdRepository(
+      cursor,
+      ParentCategoryId,
+      limit
+    );
+    return response;
+  } catch (error) {
+    console.log("error in product app services", error);
+    throw error;
+  }
+};
+//-----------------------------------------------------------------------------
+export const getParentCategoriesForFormsServices = async () => {
+  try {
+    const response = await getParentCategoriesForFormsRepository();
+    return response;
+  } catch (error) {
+    console.log("error in product app services", error);
+    throw error;
+  }
+};
+//-----------------------------------------------------------------------------
+export const getchildCategoriesForFormsServices = async (
+  ParentCategoryId?: string
+) => {
+  try {
+    const response = await getchildCategoriesForFormsRepository(
+      ParentCategoryId
+    );
     return response;
   } catch (error) {
     console.log("error in product app services", error);

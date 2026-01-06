@@ -112,3 +112,33 @@ export const editUnitRepository = async (data: IUnitInterface) => {
     throw error;
   }
 };
+
+//--------------------------------------------------------------------------------------
+
+export const getBrandsForFormsRepository = async () => {
+  try {
+    const getBrands = await BrandModel.find({ isActive: true }).select("name");
+    if (!getBrands) {
+      return [];
+    }
+    return getBrands;
+  } catch (error) {
+    console.log("error in brand and unit repository", error);
+    throw error;
+  }
+};
+
+//---------------------------------------------------------------------------------------
+
+export const getUnitRepository = async () => {
+  try {
+    const getUnit = await UnitModal.find({ isActive: true }).select("name");
+    if (!getUnit) {
+      return [];
+    }
+    return getUnit;
+  } catch (error) {
+    console.log("error in brand and unit repository", error);
+    throw error;
+  }
+};
