@@ -9,14 +9,19 @@ import { sessionConfig } from "./Config/session";
 
 const app = express();
 
+
 app.use(
   cors({
-    origin: "*", 
+    origin: (origin, cb) => cb(null, true),
+    credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-    credentials: false,
   })
 );
+
+app.options(/.*/, cors());
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
