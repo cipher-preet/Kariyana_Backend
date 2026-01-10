@@ -142,3 +142,21 @@ export const getUnitRepository = async () => {
     throw error;
   }
 };
+
+//---------------------------------------------------------------------------------------
+
+export const getUnitFordashboardRepository = async () => {
+  try {
+    const getUnit = await UnitModal.find().select(
+      "-createdAt -updatedAt -__v"
+    ).lean();
+
+    if (!getUnit) {
+      return [];
+    }
+    return getUnit;
+  } catch (error) {
+    console.log("error in brand and unit repository", error);
+    throw error;
+  }
+};

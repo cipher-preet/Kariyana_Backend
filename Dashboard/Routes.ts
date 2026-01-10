@@ -25,7 +25,8 @@ import {
   editBrandController,
   editUnitController,
   getBrandsForFormsController,
-  getUnitController
+  getUnitController,
+  getUnitFordashboardController
 } from "./Controllers/BrandAndUnit.controller";
 //---------------------------------------------------------------
 
@@ -141,6 +142,8 @@ router.get('/getBrandsForForms', getBrandsForFormsController);
 router.get('/getUnit', getUnitController);
 
 //-----------------------------------------------------------
+
+router.get("/getUnitFordashboard", getUnitFordashboardController)
 
 
 

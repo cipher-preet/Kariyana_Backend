@@ -158,34 +158,136 @@ export const getProductByChildCategoryIdRepository = async (
 
 //------------------------------------------------------------------------------------
 
+// import mongoose from "mongoose";
+
 export const syncCartRepository = async (FinalData: Icart) => {
   try {
-    const cart = await cartSchemaModel.findOneAndUpdate(
-      { userId: FinalData.userId },
-      {
-        $set: {
-          items: FinalData.items,
-          totalItems: FinalData.totalItems,
-          subtotal: FinalData.subtotal,
-          lastUpdatedAt: FinalData.lastUpdatedAt,
-        },
-      },
-      { new: true, upsert: true }
-    );
+    const userId = new mongoose.Types.ObjectId(FinalData.userId);
 
-    if (!cart) {
-      return {
-        status: STATUS_CODE.INTERNAL_SERVER_ERROR,
-        message: "Failed to sync cart",
-      };
-    }
+    const incomingItems = FinalData.items.map((item) => ({
+      productId: new mongoose.Types.ObjectId(item.productId),
+      quantity: item.quantity,
+      price: item.price,
+    }));
+
+    const cart = await cartSchemaModel.findOneAndUpdate(
+      { userId },
+      [
+        {
+          $set: {
+            items: { $ifNull: ["$items", []] },
+          },
+        },
+        {
+          $set: {
+            items: {
+              $let: {
+                vars: {
+                  existing: "$items",
+                  incoming: incomingItems,
+                },
+                in: {
+                  $concatArrays: [
+                    {
+                      $map: {
+                        input: "$$existing",
+                        as: "ex",
+                        in: {
+                          $let: {
+                            vars: {
+                              match: {
+                                $first: {
+                                  $filter: {
+                                    input: "$$incoming",
+                                    as: "in",
+                                    cond: {
+                                      $eq: ["$$in.productId", "$$ex.productId"],
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                            in: {
+                              $cond: [
+                                { $ne: ["$$match", null] },
+                                {
+                                  $mergeObjects: [
+                                    "$$ex",
+                                    { quantity: "$$match.quantity" },
+                                  ],
+                                },
+                                "$$ex",
+                              ],
+                            },
+                          },
+                        },
+                      },
+                    },
+                    {
+                      $filter: {
+                        input: "$$incoming",
+                        as: "in",
+                        cond: {
+                          $not: {
+                            $in: [
+                              "$$in.productId",
+                              {
+                                $map: {
+                                  input: "$$existing",
+                                  as: "ex",
+                                  in: "$$ex.productId",
+                                },
+                              },
+                            ],
+                          },
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+        {
+          $set: {
+            totalItems: {
+              $reduce: {
+                input: "$items",
+                initialValue: 0,
+                in: { $add: ["$$value", "$$this.quantity"] },
+              },
+            },
+            subtotal: {
+              $reduce: {
+                input: "$items",
+                initialValue: 0,
+                in: {
+                  $add: [
+                    "$$value",
+                    { $multiply: ["$$this.quantity", "$$this.price"] },
+                  ],
+                },
+              },
+            },
+            lastUpdatedAt: FinalData.lastUpdatedAt,
+          },
+        },
+      ],
+      {
+        new: true,
+        upsert: true,
+        updatePipeline: true,
+      }
+    );
 
     return {
       status: STATUS_CODE.OK,
-      message: "Cart updated successfully",
+      message: "Cart synced successfully",
+      cart,
     };
   } catch (error) {
-    console.log("error in product repo ", error);
+    console.error("Pipeline sync cart error", error);
     throw error;
   }
 };
