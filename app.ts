@@ -9,15 +9,19 @@ import { sessionConfig } from "./Config/session";
 
 const app = express();
 
+
 app.use(
   cors({
-    // origin: "*",
-    origin:["http://localhost:5173"], 
+    origin: (origin, cb) => cb(null, true),
+    credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    // allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-    credentials: false,
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   })
 );
+
+app.options(/.*/, cors());
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
