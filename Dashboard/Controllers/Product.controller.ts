@@ -159,7 +159,7 @@ const getProductsBasicDetailsController = async (
     );
 
     const productsWithSignedUrl = product.products.map((product: any) => ({
-      product,
+      ...product,
       image: generateCloudFrontSignedUrl(product?.images[0]),
     }));
 
@@ -196,8 +196,6 @@ const addProductImagsAndHiglightsController = async (
       heighlights: JSON.parse(heighlights),
       images: images,
     };
-
-    console.log("finalData in controller", finalData);
 
     const response = await addProductImagsAndHiglightsServices(finalData);
 

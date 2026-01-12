@@ -150,4 +150,7 @@ router.get("/getUnit", getUnitController);
 router.get("/getUnitFordashboard", getUnitFordashboardController);
 router.get("/getBrandFordashboard", getBrandFordashboardController);
 
+//-----------   route for tag and banner page ----------------------
+
+
 export default router;
