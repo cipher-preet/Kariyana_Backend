@@ -68,6 +68,8 @@ export const editBrandRepository = async (
       },
     });
 
+    console.log(response);
+
     if (!response) {
       return {
         status: STATUS_CODE.INTERNAL_SERVER_ERROR,
@@ -147,14 +149,30 @@ export const getUnitRepository = async () => {
 
 export const getUnitFordashboardRepository = async () => {
   try {
-    const getUnit = await UnitModal.find().select(
-      "-createdAt -updatedAt -__v"
-    ).lean();
+    const getUnit = await UnitModal.find()
+      .select("-createdAt -updatedAt -__v")
+      .lean();
 
     if (!getUnit) {
       return [];
     }
     return getUnit;
+  } catch (error) {
+    console.log("error in brand and unit repository", error);
+    throw error;
+  }
+};
+
+//---------------------------------------------------------------------------------------
+export const getBrandFordashboardRepository = async () => {
+  try {
+    const getBrands = await BrandModel.find().select(
+      "-createdAt -updatedAt -__v"
+    );
+    if (!getBrands) {
+      return [];
+    }
+    return getBrands;
   } catch (error) {
     console.log("error in brand and unit repository", error);
     throw error;

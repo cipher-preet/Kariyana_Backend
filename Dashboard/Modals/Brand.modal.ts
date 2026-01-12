@@ -21,7 +21,7 @@ const BrandSchema = new mongoose.Schema<IBrand>({
 
   isActive: {
     type: Boolean,
-    default: false,
+    default: true,
   },
 });
 

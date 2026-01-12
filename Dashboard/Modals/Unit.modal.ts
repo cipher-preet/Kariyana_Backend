@@ -33,7 +33,7 @@ const UnitSchema = new mongoose.Schema<IUnit>(
     },
     isActive: {
       type: Boolean,
-      default: false,
+      default: true,
     },
   }
 );

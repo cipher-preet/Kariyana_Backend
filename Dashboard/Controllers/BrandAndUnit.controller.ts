@@ -8,7 +8,8 @@ import {
   editUnitServices,
   getBrandsForFormsServices,
   getUnitServices,
-  getUnitFordashboardServices
+  getUnitFordashboardServices,
+  getBrandFordashboardServices,
 } from "../Services/BrandAndUnit.services";
 import { IUnitInterface } from "../../types/Dashboardtypes";
 //----------------------------------------------------------------------------------
@@ -91,6 +92,7 @@ const editBrandController = async (
 
     SuccessResponse(res, response.status, response.message);
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };
@@ -167,6 +169,21 @@ const getUnitFordashboardController = async (
   }
 };
 
+//--------------------------------------------------------------------------------------
+
+const getBrandFordashboardController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    const response = await getBrandFordashboardServices();
+    return SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
+
 //--------------------------------------------
 export {
   addBrandController,
@@ -176,4 +193,5 @@ export {
   getBrandsForFormsController,
   getUnitController,
   getUnitFordashboardController,
+  getBrandFordashboardController,
 };

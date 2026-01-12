@@ -159,8 +159,8 @@ const getProductsBasicDetailsController = async (
     );
 
     const productsWithSignedUrl = product.products.map((product: any) => ({
-      ...product,
-      images: generateCloudFrontSignedUrl(product?.images[0]),
+      product,
+      image: generateCloudFrontSignedUrl(product?.images[0]),
     }));
 
     SuccessResponse(res, STATUS_CODE.OK, {

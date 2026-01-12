@@ -6,7 +6,8 @@ import {
   editUnitRepository,
   getBrandsForFormsRepository,
   getUnitRepository,
-  getUnitFordashboardRepository
+  getUnitFordashboardRepository,
+  getBrandFordashboardRepository
 } from "../Repository/BrandAndUnit.repository";
 //-------------------------------------------------------------------------------
 
@@ -88,6 +89,18 @@ export const getUnitServices = async () => {
 export const getUnitFordashboardServices = async () => {
   try {
     const response = await getUnitFordashboardRepository();
+    return response;
+  } catch (error) {
+    console.log("error in brand and unit section ", error);
+    throw error;
+  }
+}
+
+//---------------------------------------------------------------------------------
+
+export const getBrandFordashboardServices = async () => {
+  try {
+    const response = await getBrandFordashboardRepository();
     return response;
   } catch (error) {
     console.log("error in brand and unit section ", error);

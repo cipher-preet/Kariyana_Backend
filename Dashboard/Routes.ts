@@ -16,7 +16,7 @@ import {
   getParentCategoriesController,
   getChildCategoryByParentIdController,
   getParentCategoriesForFormsController,
-  getchildCategoriesForFormsController
+  getchildCategoriesForFormsController,
 } from "./Controllers/Category.controller";
 //---------------------------------------------------------------
 import {
@@ -26,7 +26,8 @@ import {
   editUnitController,
   getBrandsForFormsController,
   getUnitController,
-  getUnitFordashboardController
+  getUnitFordashboardController,
+  getBrandFordashboardController,
 } from "./Controllers/BrandAndUnit.controller";
 //---------------------------------------------------------------
 
@@ -136,15 +137,17 @@ router.get(
 );
 
 // ------------------------------------------------------------
-router.get('/getParentCategoriesForForms', getParentCategoriesForFormsController);
-router.get('/getchildCategoriesForForms', getchildCategoriesForFormsController);
-router.get('/getBrandsForForms', getBrandsForFormsController);
-router.get('/getUnit', getUnitController);
+router.get(
+  "/getParentCategoriesForForms",
+  getParentCategoriesForFormsController
+);
+router.get("/getchildCategoriesForForms", getchildCategoriesForFormsController);
+router.get("/getBrandsForForms", getBrandsForFormsController);
+router.get("/getUnit", getUnitController);
 
 //-----------------------------------------------------------
 
-router.get("/getUnitFordashboard", getUnitFordashboardController)
-
-
+router.get("/getUnitFordashboard", getUnitFordashboardController);
+router.get("/getBrandFordashboard", getBrandFordashboardController);
 
 export default router;
