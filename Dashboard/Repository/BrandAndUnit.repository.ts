@@ -3,6 +3,7 @@ import { BrandModel } from "../Modals/Brand.modal";
 import { STATUS_CODE } from "../../Api";
 import { IUnitInterface } from "../../types/Dashboardtypes";
 import { UnitModal } from "../Modals/Unit.modal";
+import { TagModel } from "../Modals/Tags.modal";
 
 //-----------------------------------------------------------------------------------------------------
 
@@ -173,6 +174,56 @@ export const getBrandFordashboardRepository = async () => {
       return [];
     }
     return getBrands;
+  } catch (error) {
+    console.log("error in brand and unit repository", error);
+    throw error;
+  }
+};
+
+//------------------------------------------------------------------------------------
+
+export const addTagsRepository = async (name: string) => {
+  try {
+    const addTags = await TagModel.create({
+      name,
+    });
+
+    if (!addTags) {
+      return {
+        status: STATUS_CODE.INTERNAL_SERVER_ERROR,
+        message: "error while creating Tags",
+      };
+    }
+
+    return {
+      status: STATUS_CODE.OK,
+      message: "Tags Created Successfully",
+    };
+  } catch (error) {
+    console.log("error in brand and unit repository", error);
+    throw error;
+  }
+};
+
+//------------------------------------------------------------------------------------
+
+export const getTagsRepository = async (_id: string, name: string) => {
+  try {
+
+    const editTags = await TagModel.findByIdAndUpdate(_id,{name});
+
+     if (!editTags) {
+      return {
+        status: STATUS_CODE.INTERNAL_SERVER_ERROR,
+        message: "error while creating Tags",
+      };
+    }
+
+    return {
+      status: STATUS_CODE.OK,
+      message: "Tags updated Successfully",
+    };
+
   } catch (error) {
     console.log("error in brand and unit repository", error);
     throw error;

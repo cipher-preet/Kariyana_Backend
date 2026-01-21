@@ -28,6 +28,7 @@ import {
   getUnitController,
   getUnitFordashboardController,
   getBrandFordashboardController,
+  addTagsController
 } from "./Controllers/BrandAndUnit.controller";
 //---------------------------------------------------------------
 
@@ -151,6 +152,6 @@ router.get("/getUnitFordashboard", getUnitFordashboardController);
 router.get("/getBrandFordashboard", getBrandFordashboardController);
 
 //-----------   route for tag and banner page ----------------------
-
+router.post("/addTags", addTagsController)
 
 export default router;

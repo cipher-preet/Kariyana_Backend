@@ -7,7 +7,9 @@ import {
   getBrandsForFormsRepository,
   getUnitRepository,
   getUnitFordashboardRepository,
-  getBrandFordashboardRepository
+  getBrandFordashboardRepository,
+  addTagsRepository,
+  getTagsRepository,
 } from "../Repository/BrandAndUnit.repository";
 //-------------------------------------------------------------------------------
 
@@ -94,7 +96,7 @@ export const getUnitFordashboardServices = async () => {
     console.log("error in brand and unit section ", error);
     throw error;
   }
-}
+};
 
 //---------------------------------------------------------------------------------
 
@@ -106,4 +108,28 @@ export const getBrandFordashboardServices = async () => {
     console.log("error in brand and unit section ", error);
     throw error;
   }
-}
+};
+
+//------------------------------------------------------------------------------
+
+export const addTagsServices = async (name: string) => {
+  try {
+    const response = await addTagsRepository(name);
+    return response;
+  } catch (error) {
+    console.log("error in brand and unit section ", error);
+    throw error;
+  }
+};
+
+//-----------------------------------------------------------------------------
+
+export const getTagsServices = async (_id: string, name: string) => {
+  try {
+    const response = await getTagsRepository(_id, name);
+    return response;
+  } catch (error) {
+    console.log("error in brand and unit section ", error);
+    throw error;
+  }
+};

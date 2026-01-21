@@ -10,6 +10,8 @@ import {
   getUnitServices,
   getUnitFordashboardServices,
   getBrandFordashboardServices,
+  addTagsServices,
+  getTagsServices,
 } from "../Services/BrandAndUnit.services";
 import { IUnitInterface } from "../../types/Dashboardtypes";
 //----------------------------------------------------------------------------------
@@ -184,6 +186,54 @@ const getBrandFordashboardController = async (
   }
 };
 
+//--------------------------------------------------------------------------------------
+
+const addTagsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    const { name } = req.body;
+
+    if (!name) {
+      return ErrorResponse(
+        res,
+        STATUS_CODE.NOT_FOUND,
+        "please provide name as well !"
+      );
+    }
+
+    const response = await addTagsServices(name);
+
+    if (response.status === STATUS_CODE.INTERNAL_SERVER_ERROR) {
+      return ErrorResponse(res, response.status, response.message);
+    }
+
+    return SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//------------------------------------------------------------------------------------------
+
+const getTagsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+
+    const { _id, name } = req.body;
+
+    const response = await getTagsServices(_id, name);
+
+  } catch (error) {
+    next(error);
+  }
+};
+
 //--------------------------------------------
 export {
   addBrandController,
@@ -194,4 +244,6 @@ export {
   getUnitController,
   getUnitFordashboardController,
   getBrandFordashboardController,
+  addTagsController,
+  getTagsController
 };
