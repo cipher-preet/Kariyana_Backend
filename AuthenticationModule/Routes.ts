@@ -23,7 +23,7 @@ router.post(
     },
     {
       name: "pan",
-      maxCount: 2,
+      maxCount: 2,  
     },
     {
       name: "shopLicense",

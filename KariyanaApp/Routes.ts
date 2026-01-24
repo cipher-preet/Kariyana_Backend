@@ -26,6 +26,8 @@ router.post("/syncCart", syncCartController);
 
 router.get("/getCartByUserId/:userId", getCartByUserIdController);
 
-router.post('/incAndDecCartQuantity', incAndDecCartQuantityController)
+router.post('/incAndDecCartQuantity', incAndDecCartQuantityController);
+
+
 
 export default router;

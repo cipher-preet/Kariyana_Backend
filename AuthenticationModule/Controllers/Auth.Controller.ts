@@ -14,7 +14,7 @@ import { AuthRequest } from "../../Config/FirebaseAuthebtication/auth.middleware
 const verifyOtpController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { phone, otp } = req.body;
@@ -23,7 +23,7 @@ const verifyOtpController = async (
       return ErrorResponse(
         res,
         STATUS_CODE.NOT_FOUND,
-        "Please provide both PhoneNumber and Otp for Login"
+        "Please provide both PhoneNumber and Otp for Login",
       );
     }
 
@@ -38,7 +38,7 @@ const verifyOtpController = async (
         return ErrorResponse(
           res,
           STATUS_CODE.INTERNAL_SERVER_ERROR,
-          "Session creation failed"
+          "Session creation failed",
         );
       }
 
@@ -60,7 +60,7 @@ const verifyOtpController = async (
 const sendOtpController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const { phone } = req.body;
@@ -71,7 +71,7 @@ const sendOtpController = async (
       return ErrorResponse(
         res,
         (response as { status: number }).status,
-        (response as { message: string }).message
+        (response as { message: string }).message,
       );
     }
 
@@ -86,7 +86,7 @@ const sendOtpController = async (
 const registerUserController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const { phone, shopName, ownerName, address, gstNumber } = req.body;
@@ -118,7 +118,7 @@ const registerUserController = async (
       return ErrorResponse(
         res,
         (response as { status: number }).status,
-        (response as { message: string }).message
+        (response as { message: string }).message,
       );
     }
 
@@ -132,26 +132,58 @@ const registerUserController = async (
 const loginUserController = async (
   req: AuthRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
-
     if (!req.user) {
       return ErrorResponse(res, 401, "Unauthorized");
     }
 
     const { uid, phone_number } = req.user;
-
     let user = await User.findOne({ firebaseUid: uid });
 
     if (!user) {
       user = await User.create({
         firebaseUid: uid,
         phone: phone_number,
+        status: "REGISTER",
+      });
+      return SuccessResponse(res, 200, {
+        nextScreen: "REGISTER",
+        userId: user._id,
       });
     }
 
-    SuccessResponse(res, STATUS_CODE.OK, user);
+    if (!user.isActive) {
+      return ErrorResponse(res, 403, "Account disabled");
+    }
+
+    if (user.status === "REGISTER") {
+      return SuccessResponse(res, 200, {
+        nextScreen: "REGISTER",
+        userId: user._id,
+      });
+    }
+
+    if (user.status === "PENDING") {
+      return SuccessResponse(res, 200, {
+        nextScreen: "PENDING",
+        userId: user._id,
+      });
+    }
+
+    if (user.status === "REJECTED") {
+      return SuccessResponse(res, 200, {
+        nextScreen: "REJECTED",
+        userId: user._id,
+      });
+    }
+
+    return SuccessResponse(res, 200, {
+      nextScreen: "APPROVED",
+      userId: user._id,
+      role: user.role,
+    });
   } catch (error) {
     next(error);
   }
