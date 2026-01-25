@@ -16,7 +16,7 @@ const UserSchema = new Schema<IUser>(
     isActive: { type: Boolean, default: true },
     status: {
       type: String,
-      enum: ["PENDING", "APPROVED", "REJECTED","REGISTER"],
+      enum: ["PENDING", "APPROVED", "REJECTED", "REGISTER"],
       default: "PENDING",
     },
   },

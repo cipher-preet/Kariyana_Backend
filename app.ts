@@ -12,7 +12,12 @@ const app = express();
 
 app.use(
   cors({
-    origin: (origin, cb) => cb(null, true),
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:5173",
+      "http://127.0.0.1:3000",
+      "https://7862b8962a32.ngrok-free.app"
+],
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],

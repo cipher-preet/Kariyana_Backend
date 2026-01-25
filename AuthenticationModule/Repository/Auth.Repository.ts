@@ -9,7 +9,7 @@ import crypto from "crypto";
 
 export const verifyOtpRepository = async (
   phone: number,
-  otp: number
+  otp: number,
 ): Promise<VerifyOtpResult> => {
   try {
     const user = await User.findOne({ phone });
@@ -100,33 +100,48 @@ export const registerUserRepository = async (data: RegisterInput) => {
   try {
     const existingUser = await User.findOne({ phone: data.phone });
 
-    if (existingUser) {
+    if (!existingUser) {
       return {
         status: STATUS_CODE.UNAUTHORIZED,
-        message: "User is already registered",
+        message: "User is not registered yet",
       };
     }
 
-    const user = await User.create({
-      phone: data.phone,
-      role: "BUYER",
-    });
+    try {
+      await new ShopProfileModel({
+        userId: existingUser._id,
+        shopName: data.shopName,
+        ownerName: data.name,
+        address: data.address,
+        gstNumber: data.gstNumber,
+        documents: data.documents,
+        dateofbirth: data.dateofbirth,
+        Type: data.Type,
+        tenureOfShop: data.tenureOfShop,
+        Dailysales: data.Dsale,
+        Monthlysales: data.Msales,
+      }).save();
+    } catch (err: any) {
+      if (err.code === 11000) {
+        return {
+          status: STATUS_CODE.BAD_REQUEST,
+          message: "Shop profile already registered",
+        };
+      }
+      throw err;
+    }
 
-    await ShopProfileModel.create({
-      userId: user._id,
-      shopName: data.shopName,
-      ownerName: data.ownerName,
-      address: data.address,
-      gstNumber: data.gstNumber,
-      documents: data.documents,
-    });
+    await User.updateOne(
+      { _id: existingUser._id },
+      { $set: { status: "PENDING" } },
+    );
 
     return {
       status: STATUS_CODE.OK,
-      message: "Registration Submitted. Awaiting approval",
+      message: "Registration submitted. Awaiting approval",
     };
   } catch (error) {
-    console.log("error in auth repository ", error);
+    console.error("error in auth repository", error);
     throw error;
   }
 };

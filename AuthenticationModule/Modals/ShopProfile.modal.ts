@@ -6,6 +6,11 @@ export interface IShopProfile extends Document {
   ownerName: string;
   address: string;
   gstNumber?: string;
+  dateofbirth: Date;
+  Type: string;
+  tenureOfShop: number;
+  Dailysales: number;
+  Monthlysales: number;
 
   documents: {
     aadhar?: string | null;
@@ -27,16 +32,20 @@ const ShopProfileSchema = new Schema<IShopProfile>(
     address: { type: String, required: true },
     gstNumber: { type: String },
 
+    dateofbirth: { type: Date, required: true },
+    Type: { type: String, required: true },
+    tenureOfShop: { type: Number, required: true },
+    Dailysales: { type: Number, required: true },
+    Monthlysales: { type: Number, required: true },
+
     documents: {
-      aadhar: String,
-      pan: String,
-      shopLicense: String,
+      shopPhotos: String,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const ShopProfileModel = mongoose.model<IShopProfile>(
   "ShopProfile",
-  ShopProfileSchema
+  ShopProfileSchema,
 );

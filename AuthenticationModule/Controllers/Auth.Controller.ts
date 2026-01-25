@@ -11,49 +11,49 @@ import { User } from "../Modals/User.Modals";
 import { AuthRequest } from "../../Config/FirebaseAuthebtication/auth.middleware";
 
 //-----------------------------------------------------------------------------------------------------
-const verifyOtpController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { phone, otp } = req.body;
+// const verifyOtpController = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction,
+// ) => {
+//   try {
+//     const { phone, otp } = req.body;
 
-    if (!phone && !otp) {
-      return ErrorResponse(
-        res,
-        STATUS_CODE.NOT_FOUND,
-        "Please provide both PhoneNumber and Otp for Login",
-      );
-    }
+//     if (!phone && !otp) {
+//       return ErrorResponse(
+//         res,
+//         STATUS_CODE.NOT_FOUND,
+//         "Please provide both PhoneNumber and Otp for Login",
+//       );
+//     }
 
-    const response = await verifyOtpServices(phone, otp);
+//     const response = await verifyOtpServices(phone, otp);
 
-    if (!response.success) {
-      return ErrorResponse(res, response.status, response.message);
-    }
+//     if (!response.success) {
+//       return ErrorResponse(res, response.status, response.message);
+//     }
 
-    req.session.regenerate((err) => {
-      if (err) {
-        return ErrorResponse(
-          res,
-          STATUS_CODE.INTERNAL_SERVER_ERROR,
-          "Session creation failed",
-        );
-      }
+//     req.session.regenerate((err) => {
+//       if (err) {
+//         return ErrorResponse(
+//           res,
+//           STATUS_CODE.INTERNAL_SERVER_ERROR,
+//           "Session creation failed",
+//         );
+//       }
 
-      req.session.userId = response.user.id;
-      req.session.role = response.user.role;
+//       req.session.userId = response.user.id;
+//       req.session.role = response.user.role;
 
-      return SuccessResponse(res, STATUS_CODE.OK, {
-        userId: response.user.id,
-        role: response.user.role,
-      });
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+//       return SuccessResponse(res, STATUS_CODE.OK, {
+//         userId: response.user.id,
+//         role: response.user.role,
+//       });
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 //---------------------------------------------------------------------------------------------------
 
@@ -89,26 +89,38 @@ const registerUserController = async (
   next: NextFunction,
 ): Promise<any> => {
   try {
-    const { phone, shopName, ownerName, address, gstNumber } = req.body;
+    const {
+      phone,
+      name,
+      dateofbirth,
+      address,
+      shopName,
+      Type,
+      gstNumber,
+      tenureOfShop,
+      Dsale,
+      Msales,
+    } = req.body;
 
     const files = req.files as {
-      aadhar?: Express.MulterS3.File[];
-      pan?: Express.MulterS3.File[];
-      shopLicense?: Express.MulterS3.File[];
+      shopPhotos?: Express.MulterS3.File[];
     };
 
     const documents = {
-      aadhar: files?.aadhar?.[0]?.key || null,
-      pan: files?.pan?.[0]?.key || null,
-      shopLicense: files?.shopLicense?.[0]?.key || null,
+      shopPhotos: files?.shopPhotos?.[0]?.key || null,
     };
 
     const data: RegisterInput = {
       phone,
-      shopName,
-      ownerName,
+      name,
+      dateofbirth,
       address,
+      shopName,
+      Type,
       gstNumber,
+      tenureOfShop,
+      Dsale,
+      Msales,
       documents,
     };
 
@@ -147,10 +159,7 @@ const loginUserController = async (
         firebaseUid: uid,
         phone: phone_number,
         status: "REGISTER",
-      });
-      return SuccessResponse(res, 200, {
-        nextScreen: "REGISTER",
-        userId: user._id,
+        isActive: true,
       });
     }
 
@@ -158,40 +167,70 @@ const loginUserController = async (
       return ErrorResponse(res, 403, "Account disabled");
     }
 
-    if (user.status === "REGISTER") {
-      return SuccessResponse(res, 200, {
-        nextScreen: "REGISTER",
-        userId: user._id,
-      });
-    }
+    req.session.user = {
+      _id: user._id.toString(),
+      firebaseUid: user.firebaseUid,
+      role: user.role,
+      status: user.status,
+    };
 
-    if (user.status === "PENDING") {
-      return SuccessResponse(res, 200, {
-        nextScreen: "PENDING",
-        userId: user._id,
+    await new Promise<void>((resolve, reject) => {
+      req.session.save((err) => {
+        if (err) reject(err);
+        resolve();
       });
-    }
-
-    if (user.status === "REJECTED") {
-      return SuccessResponse(res, 200, {
-        nextScreen: "REJECTED",
-        userId: user._id,
-      });
-    }
+    });
 
     return SuccessResponse(res, 200, {
-      nextScreen: "APPROVED",
+      nextScreen: user.status,
       userId: user._id,
       role: user.role,
+      status: user.status,
+      isActive: user.isActive,
     });
   } catch (error) {
     next(error);
   }
 };
 
+//---------------------------------------------------------------------------------------------------------------
+
+const verifyMeController = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
+  try {
+    if (!req.session.user) {
+      return ErrorResponse(
+        res,
+        STATUS_CODE.UNAUTHORIZED,
+        "authentication token missing",
+      );
+    }
+
+    const user = await User.findById(req.session.user._id);
+
+    if (!user) {
+      req.session.destroy(() => {});
+      return res.status(401).json({ authenticated: false });
+    }
+    const response = {
+      userId: user._id,
+      role: user.role,
+      status: user.status,
+    };
+
+    SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export {
-  verifyOtpController,
+  // verifyOtpController,
   sendOtpController,
   registerUserController,
   loginUserController,
+  verifyMeController,
 };

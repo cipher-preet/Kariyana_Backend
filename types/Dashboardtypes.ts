@@ -40,14 +40,17 @@ export type VerifyOtpResult =
 
 export interface RegisterInput {
   phone: number;
-  shopName: string;
-  ownerName: string;
+  name: string;
+  dateofbirth: Date;
   address: string;
+  shopName: string;
+  Type: string;
   gstNumber?: string;
+  tenureOfShop?: number;
+  Dsale: number;
+  Msales: number;
   documents: {
-    aadhar?: string | null;
-    pan?: string | null;
-    shopLicense?: string | null;
+    shopPhotos?: string | null;
   };
 }
 
@@ -64,7 +67,7 @@ export interface IUnitInterface {
 //---------------------------------------
 
 export interface IProductHighlightsDetails {
-   productId: Types.ObjectId;
+  productId: Types.ObjectId;
   heighlights: Array<object>;
   images: string[];
 }

@@ -2,7 +2,11 @@ import "express-session";
 
 declare module "express-session" {
   interface SessionData {
-    userId?: string;
-    role?: string;
+    user?: {
+      _id: string;
+      firebaseUid: string;
+      role?: string;
+      status: "REGISTER" | "PENDING" | "REJECTED" | "APPROVED";
+    };
   }
 }

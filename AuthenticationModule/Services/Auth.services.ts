@@ -2,14 +2,14 @@ import { RegisterInput } from "../../types/Dashboardtypes";
 import {
   verifyOtpRepository,
   sendOtpRepository,
-  registerUserRepository
+  registerUserRepository,
 } from "../Repository/Auth.Repository";
 
 //-----------------------------------------------------------------------------------------------------------
 
-export const verifyOtpServices = async (phone:number,otp:number) => {
+export const verifyOtpServices = async (phone: number, otp: number) => {
   try {
-    const response = await verifyOtpRepository(phone,otp);
+    const response = await verifyOtpRepository(phone, otp);
     return response;
   } catch (error) {
     console.log("this is authservice error", error);
@@ -29,10 +29,9 @@ export const sendOtpServices = async (phone: number) => {
   }
 };
 
-
 //---------------------------------------------------------------------------------------------------------------
 
-export const registerUserServices = async (data:RegisterInput) => {
+export const registerUserServices = async (data: RegisterInput) => {
   try {
     const response = registerUserRepository(data);
     return response;
@@ -40,4 +39,4 @@ export const registerUserServices = async (data:RegisterInput) => {
     console.log("this is authservice error", error);
     throw error;
   }
-}
+};
