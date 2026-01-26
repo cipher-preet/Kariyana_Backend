@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IUser extends Document {
-  phone: Number;
+  phone: number;
   role: "ADMIN" | "VENDOR" | "BUYER";
   isActive: boolean;
   status: "PENDING" | "APPROVED" | "REJECTED" | "REGISTER";

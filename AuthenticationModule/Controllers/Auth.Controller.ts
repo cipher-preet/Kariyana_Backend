@@ -89,8 +89,9 @@ const registerUserController = async (
   next: NextFunction,
 ): Promise<any> => {
   try {
+    const phone = req?.session?.user?.phone;
+
     const {
-      phone,
       name,
       dateofbirth,
       address,
@@ -170,6 +171,7 @@ const loginUserController = async (
     req.session.user = {
       _id: user._id.toString(),
       firebaseUid: user.firebaseUid,
+      phone: user.phone,
       role: user.role,
       status: user.status,
     };

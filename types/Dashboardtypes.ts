@@ -39,16 +39,16 @@ export type VerifyOtpResult =
 //-------------------------------------
 
 export interface RegisterInput {
-  phone: number;
+  phone?: number;
   name: string;
   dateofbirth: Date;
   address: string;
   shopName: string;
   Type: string;
   gstNumber?: string;
-  tenureOfShop?: number;
-  Dsale: number;
-  Msales: number;
+  tenureOfShop?: string;
+  Dsale: string;
+  Msales: string;
   documents: {
     shopPhotos?: string | null;
   };

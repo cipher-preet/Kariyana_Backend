@@ -8,14 +8,12 @@ export interface IShopProfile extends Document {
   gstNumber?: string;
   dateofbirth: Date;
   Type: string;
-  tenureOfShop: number;
-  Dailysales: number;
-  Monthlysales: number;
+  tenureOfShop: string;
+  Dailysales: string;
+  Monthlysales: string;
 
   documents: {
-    aadhar?: string | null;
-    pan?: string | null;
-    shopLicense?: string | null;
+    shopPhotos: string;
   };
 }
 
@@ -34,9 +32,9 @@ const ShopProfileSchema = new Schema<IShopProfile>(
 
     dateofbirth: { type: Date, required: true },
     Type: { type: String, required: true },
-    tenureOfShop: { type: Number, required: true },
-    Dailysales: { type: Number, required: true },
-    Monthlysales: { type: Number, required: true },
+    tenureOfShop: { type: String, required: true },
+    Dailysales: { type: String, required: true },
+    Monthlysales: { type: String, required: true },
 
     documents: {
       shopPhotos: String,
