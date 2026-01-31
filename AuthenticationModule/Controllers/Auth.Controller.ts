@@ -91,6 +91,8 @@ const registerUserController = async (
   try {
     const phone = req?.session?.user?.phone;
 
+    console.log(req.session)
+
     const {
       name,
       dateofbirth,

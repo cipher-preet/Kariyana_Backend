@@ -18,7 +18,6 @@ export const verifyFirebaseToken = async (
     }
 
     const decoded = await admin.auth().verifyIdToken(token);
-
     req.user = {
       uid: decoded.uid,
       phone_number: decoded.phone_number,

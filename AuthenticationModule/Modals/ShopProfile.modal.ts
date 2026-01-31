@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
+import { BlobOptions } from "node:buffer";
 
 export interface IShopProfile extends Document {
   userId: mongoose.Types.ObjectId;
@@ -11,6 +12,7 @@ export interface IShopProfile extends Document {
   tenureOfShop: string;
   Dailysales: string;
   Monthlysales: string;
+  isApprove: boolean;
 
   documents: {
     shopPhotos: string;
@@ -35,6 +37,8 @@ const ShopProfileSchema = new Schema<IShopProfile>(
     tenureOfShop: { type: String, required: true },
     Dailysales: { type: String, required: true },
     Monthlysales: { type: String, required: true },
+
+    isApprove: { type: Boolean, default: false },
 
     documents: {
       shopPhotos: String,

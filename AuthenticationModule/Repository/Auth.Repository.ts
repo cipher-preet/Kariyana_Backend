@@ -98,6 +98,9 @@ export const sendOtpRepository = async (phone: number) => {
 
 export const registerUserRepository = async (data: RegisterInput) => {
   try {
+
+    console.log(data)
+
     const existingUser = await User.findOne({ phone: data.phone });
 
     if (!existingUser) {

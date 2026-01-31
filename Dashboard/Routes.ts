@@ -28,9 +28,16 @@ import {
   getUnitController,
   getUnitFordashboardController,
   getBrandFordashboardController,
-  addTagsController
+  addTagsController,
 } from "./Controllers/BrandAndUnit.controller";
 //---------------------------------------------------------------
+import {
+  getUserProfileForCardsInDashboardController,
+  getUserAdditionalProfileDetailController,
+  approveShopController,
+  getPendingApprovalProfileCardsInDashboardController,
+} from "./Controllers/UserInfo.controller";
+//-----------------------------------------------------------------------
 
 import { uploadCategory } from "../Middleware/Multer/CateogryResources";
 import { uploadProduct } from "../Middleware/Multer/ProductResources";
@@ -45,7 +52,7 @@ router.post(
       maxCount: 5,
     },
   ]),
-  addNewProductController
+  addNewProductController,
 );
 
 router.put(
@@ -56,7 +63,7 @@ router.put(
       maxCount: 5,
     },
   ]),
-  editProductController
+  editProductController,
 );
 
 // ------------------- caetgory routes -------------------------------
@@ -68,7 +75,7 @@ router.post(
       maxCount: 1,
     },
   ]),
-  addParentCategoryController
+  addParentCategoryController,
 );
 
 router.post(
@@ -79,7 +86,7 @@ router.post(
       maxCount: 1,
     },
   ]),
-  addChildCategoryController
+  addChildCategoryController,
 );
 
 router.put(
@@ -90,7 +97,7 @@ router.put(
       maxCount: 1,
     },
   ]),
-  editParentCategoryController
+  editParentCategoryController,
 );
 
 router.put(
@@ -101,7 +108,7 @@ router.put(
       maxCount: 1,
     },
   ]),
-  editChildCategoryController
+  editChildCategoryController,
 );
 
 // -------------------------- get API's ---------------------------------
@@ -129,18 +136,18 @@ router.put(
       maxCount: 5,
     },
   ]),
-  addProductImagsAndHiglightsController
+  addProductImagsAndHiglightsController,
 );
 
 router.get(
   "/getProductImagesAndHighlights",
-  getProductImagesAndHighlightsController
+  getProductImagesAndHighlightsController,
 );
 
 // ------------------------------------------------------------
 router.get(
   "/getParentCategoriesForForms",
-  getParentCategoriesForFormsController
+  getParentCategoriesForFormsController,
 );
 router.get("/getchildCategoriesForForms", getchildCategoriesForFormsController);
 router.get("/getBrandsForForms", getBrandsForFormsController);
@@ -152,6 +159,26 @@ router.get("/getUnitFordashboard", getUnitFordashboardController);
 router.get("/getBrandFordashboard", getBrandFordashboardController);
 
 //-----------   route for tag and banner page ----------------------
-router.post("/addTags", addTagsController)
+router.post("/addTags", addTagsController);
+
+//------------- dashboard UserSection all apis goes here --------------------------
+router.get(
+  "/getUserProfileForCardsInDashboard",
+  getUserProfileForCardsInDashboardController,
+);
+
+router.get(
+  "/getPendingApprovalProfileCardsInDashboard",
+  getPendingApprovalProfileCardsInDashboardController,
+);
+
+router.get(
+  "/getUserAdditionalProfileDetail",
+  getUserAdditionalProfileDetailController,
+);
+
+router.post("/approveshop", approveShopController);
+
+//---------------------------------------------------------------------------------
 
 export default router;
