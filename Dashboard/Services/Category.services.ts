@@ -7,13 +7,14 @@ import {
   getChildCategoryByParentIdRepository,
   getParentCategoriesForFormsRepository,
   getchildCategoriesForFormsRepository,
+  getAllChildCategoriesRepository,
 } from "../Repository/Category.repository";
 
 //-------------------------------------------------------------------------------
 
 export const addParentCategoryServices = async (
   name: string,
-  images: Array<string>
+  images: Array<string>,
 ) => {
   try {
     const response = await addParentCategoryRepository(name, images);
@@ -27,13 +28,13 @@ export const addParentCategoryServices = async (
 export const addChildtCategoryServices = async (
   name: string,
   parentcategoryId: string,
-  images: Array<string>
+  images: Array<string>,
 ) => {
   try {
     const response = await addChildtCategoryRepository(
       name,
       parentcategoryId,
-      images
+      images,
     );
     return response;
   } catch (error) {
@@ -47,7 +48,7 @@ export const addChildtCategoryServices = async (
 export const editParentCategoryServices = async (
   name: string,
   id: string,
-  finalImages: Array<string>
+  finalImages: Array<string>,
 ) => {
   try {
     const response = await editParentCategoryRepository(name, id, finalImages);
@@ -64,14 +65,14 @@ export const editChildCategoryServices = async (
   id: string,
   name: string,
   finalImages: Array<string>,
-  parentcategoryId: string
+  parentcategoryId: string,
 ) => {
   try {
     const response = await editChildCategoryRepository(
       id,
       name,
       finalImages,
-      parentcategoryId
+      parentcategoryId,
     );
     return response;
   } catch (error) {
@@ -83,7 +84,7 @@ export const editChildCategoryServices = async (
 //------------------------------------------------------------------------------
 export const getParentCategoriesService = (
   cursor: string | undefined,
-  limit: number
+  limit: number,
 ) => {
   try {
     const response = getParentCategoriesRepository(cursor, limit);
@@ -99,13 +100,13 @@ export const getParentCategoriesService = (
 export const getChildCategoryByParentIdServices = async (
   cursor: string | undefined,
   ParentCategoryId: string,
-  limit: number
+  limit: number,
 ) => {
   try {
     const response = await getChildCategoryByParentIdRepository(
       cursor,
       ParentCategoryId,
-      limit
+      limit,
     );
     return response;
   } catch (error) {
@@ -125,15 +126,30 @@ export const getParentCategoriesForFormsServices = async () => {
 };
 //-----------------------------------------------------------------------------
 export const getchildCategoriesForFormsServices = async (
-  ParentCategoryId?: string
+  ParentCategoryId?: string,
 ) => {
   try {
-    const response = await getchildCategoriesForFormsRepository(
-      ParentCategoryId
-    );
+    const response =
+      await getchildCategoriesForFormsRepository(ParentCategoryId);
     return response;
   } catch (error) {
     console.log("error in product app services", error);
     throw error;
   }
 };
+
+//--------------------------------------------------------------------------------
+
+export const getAllChildCategoriesServices = async () => {
+  try {
+    const response = await getAllChildCategoriesRepository();
+    return response;
+  } catch (error) {
+    console.log("error in product app services", error);
+    throw error;
+  }
+};
+
+//----------------------------------------------------------------------------------
+
+

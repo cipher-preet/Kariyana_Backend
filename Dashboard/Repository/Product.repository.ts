@@ -1,14 +1,12 @@
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { STATUS_CODE } from "../../Api";
 import {
   IProduct,
   IProductHighlightsDetails,
 } from "../../types/Dashboardtypes";
-import { productModel } from "../Modals/Product.modals";
-import { NoSuchKey } from "@aws-sdk/client-s3";
+import { productModel, product } from '../Modals/Product.modals';
 import { productDetailsModel } from "../Modals/ProductDetails.modal";
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
-import path from "path";
 // ------------------------------------------------------------------------------------------------
 
 export const addNewProductRepository = async (finalData: IProduct) => {
@@ -36,13 +34,13 @@ export const addNewProductRepository = async (finalData: IProduct) => {
 
 export const editProductRepository = async (
   finalData: IProduct,
-  productId: string
+  productId: string,
 ) => {
   try {
     const response = await productModel.findByIdAndUpdate(
       productId,
       { $set: finalData },
-      { new: true }
+      { new: true },
     );
 
     if (!response) {
@@ -66,7 +64,7 @@ export const editProductRepository = async (
 
 export const getProductsBasicDetailsRepository = async (
   limit: number = 10,
-  cursor?: string
+  cursor?: string,
 ) => {
   try {
     const query: any = {
@@ -108,7 +106,7 @@ export const getProductsBasicDetailsRepository = async (
 //-------------------------------------------------------------------------------------------------
 
 export const addProductImagsAndHiglightsRepository = async (
-  finalData: IProductHighlightsDetails
+  finalData: IProductHighlightsDetails,
 ) => {
   try {
     const response = await productDetailsModel.create(finalData);
@@ -130,7 +128,7 @@ export const addProductImagsAndHiglightsRepository = async (
 //-------------------------------------------------------------------------------------------------
 
 export const getProductImagesAndHighlightsRepository = async (
-  productId: string
+  productId: string,
 ) => {
   try {
     const response = await productDetailsModel
@@ -145,7 +143,7 @@ export const getProductImagesAndHighlightsRepository = async (
     }
 
     const signedImageUrls = response.images.map((imageKey: string) =>
-      generateCloudFrontSignedUrl(imageKey)
+      generateCloudFrontSignedUrl(imageKey),
     );
 
     const updatedResponse = {
@@ -162,3 +160,85 @@ export const getProductImagesAndHighlightsRepository = async (
     throw error;
   }
 };
+
+//------------------------------------------------------------------------------------------------------------------------------
+
+export const getProductBasicInfoByChildCategoryIdrepository = async (
+  childCategoryId: string,
+) => {
+  try {
+    const query: any = {
+      subcategoryId: childCategoryId,
+      isActive: true,
+    };
+    const products = await productModel
+      .find(query)
+      .limit(20)
+      .select("name images mrp").lean();
+    if (!products) {
+      return [];
+    }
+    return products;
+  } catch (error) {
+    console.log("this is the error in category repository ", error);
+    throw error;
+  }
+};
+
+
+//-------------------------------------------------------------------------------------------------------------
+
+export const buildHomePageRepository = async (homepageDetails:Array<object>) => {
+
+  try {
+
+    console.log("homepageDetails -------------->>> ", homepageDetails);
+
+   const producIds = [
+    ...new Set(homepageDetails.flatMap((item: any) => item.products || []).map(id => new Types.ObjectId(id))),
+   ];
+
+   if(!producIds.length){
+    return {
+      status: STATUS_CODE.BAD_REQUEST,
+      message: "No products found to build homepage",
+    }
+   }
+
+   const products = await productModel.find({
+    _id:{ $in: producIds },
+    isActive: true,
+   }).select("_id name mrp sellingPrice unit")
+      .lean();
+
+
+
+   console.log("producIds -------------->>> ", producIds);
+
+   console.log("producIds -------------->>> ", products);
+    
+  const productMap = new Map<string, any>();
+
+  products.forEach((product) => {
+    productMap.set(product._id.toString(), {
+        _id: product._id,
+        name: product.name,
+        mrp: product.mrp,
+        sellingPrice: product.sellingPrice,
+        unit: product.unit,
+      });
+  })
+
+  const finalSection = homepageDetails.map((section: any) => ({
+     categoryId: new Types.ObjectId(section.categoryId),
+    categoryName: section.categoryName,
+    products: section.products.map((pid:string) => productMap.get(pid)).filter(Boolean)
+  }))
+
+  console.log("finalSection -------------->>> ", JSON.stringify(finalSection, null, 2));
+
+  } catch (error) {
+    console.log("this is the error in category repository ", error);
+    throw error;
+  }
+}

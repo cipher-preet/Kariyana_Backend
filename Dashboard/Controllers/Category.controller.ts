@@ -10,6 +10,7 @@ import {
   getChildCategoryByParentIdServices,
   getParentCategoriesForFormsServices,
   getchildCategoriesForFormsServices,
+  getAllChildCategoriesServices,
 } from "../Services/Category.services";
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
 
@@ -17,7 +18,7 @@ import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
 const addParentCategoryController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { name } = req.body;
@@ -37,7 +38,7 @@ const addParentCategoryController = async (
       return ErrorResponse(
         res,
         (response as { status: number }).status,
-        "error while creating Parent Category"
+        "error while creating Parent Category",
       );
     }
 
@@ -51,7 +52,7 @@ const addParentCategoryController = async (
 const addChildCategoryController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const { name, parentcategoryId } = req.body;
@@ -68,14 +69,14 @@ const addChildCategoryController = async (
     const response = await addChildtCategoryServices(
       name,
       parentcategoryId,
-      images
+      images,
     );
 
     if ((response as { status: number }).status === STATUS_CODE.BAD_REQUEST) {
       return ErrorResponse(
         res,
         (response as { status: number }).status,
-        "error while creating Parent Category"
+        "error while creating Parent Category",
       );
     }
 
@@ -90,7 +91,7 @@ const addChildCategoryController = async (
 const editParentCategoryController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     let { name, id } = req.body;
@@ -117,7 +118,7 @@ const editParentCategoryController = async (
       return ErrorResponse(
         res,
         (response as { status: number }).status,
-        "error while editing Parent Category"
+        "error while editing Parent Category",
       );
     }
 
@@ -132,7 +133,7 @@ const editParentCategoryController = async (
 const editChildCategoryController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const { id, name, parentcategoryId } = req.body;
@@ -157,14 +158,14 @@ const editChildCategoryController = async (
       id,
       name,
       finalImages,
-      parentcategoryId
+      parentcategoryId,
     );
 
     if ((response as { status: number }).status === STATUS_CODE.BAD_REQUEST) {
       return ErrorResponse(
         res,
         (response as { status: number }).status,
-        "error while editing child Category"
+        "error while editing child Category",
       );
     }
 
@@ -179,7 +180,7 @@ const editChildCategoryController = async (
 const getParentCategoriesController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const { cursor } = req.query;
@@ -187,7 +188,7 @@ const getParentCategoriesController = async (
 
     const response = await getParentCategoriesService(
       cursor as string | undefined,
-      limit
+      limit,
     );
 
     const categoriesWithSignedUrls = response.categories.map((cat: any) => {
@@ -212,7 +213,7 @@ const getParentCategoriesController = async (
 const getChildCategoryByParentIdController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const cursor =
@@ -229,14 +230,14 @@ const getChildCategoryByParentIdController = async (
       return ErrorResponse(
         res,
         STATUS_CODE.BAD_REQUEST,
-        "please provide ParentCategory Id"
+        "please provide ParentCategory Id",
       );
     }
 
     const response = await getChildCategoryByParentIdServices(
       cursor as string | undefined,
       ParentCategoryId,
-      limit
+      limit,
     );
 
     const categoriesWithSignedUrls = response.childcat.map((cat: any) => ({
@@ -258,7 +259,7 @@ const getChildCategoryByParentIdController = async (
 const getParentCategoriesForFormsController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const response = await getParentCategoriesForFormsServices();
@@ -272,7 +273,7 @@ const getParentCategoriesForFormsController = async (
 const getchildCategoriesForFormsController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const ParentCategoryId = req.query.ParentCategoryId as string;
@@ -286,6 +287,26 @@ const getchildCategoriesForFormsController = async (
   }
 };
 
+//----------------------------------------------------------------------------------------------------------------
+
+const getAllChildCategoriesController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const response = (await getAllChildCategoriesServices()) ?? [];
+
+    SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//---------------------------------------------------------------------------------------------------------------
+
+
+
 //------------------------------------
 export {
   addParentCategoryController,
@@ -296,4 +317,5 @@ export {
   getChildCategoryByParentIdController,
   getParentCategoriesForFormsController,
   getchildCategoriesForFormsController,
+  getAllChildCategoriesController,
 };

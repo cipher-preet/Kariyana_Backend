@@ -5,7 +5,7 @@ import { childCategoryModel } from "../Modals/ChildCategory.modal";
 
 export const addParentCategoryRepository = async (
   name: string,
-  images: Array<string>
+  images: Array<string>,
 ) => {
   try {
     if (!images?.length) {
@@ -38,7 +38,7 @@ export const addParentCategoryRepository = async (
 export const addChildtCategoryRepository = async (
   name: string,
   parentcategoryId: string,
-  images: Array<string>
+  images: Array<string>,
 ) => {
   try {
     if (!images?.length) {
@@ -73,7 +73,7 @@ export const addChildtCategoryRepository = async (
 export const editParentCategoryRepository = async (
   name: string,
   id: string,
-  finalImages: Array<string>
+  finalImages: Array<string>,
 ) => {
   try {
     const response = await ParentCategoryModel.findByIdAndUpdate(id, {
@@ -106,7 +106,7 @@ export const editChildCategoryRepository = async (
   id: string,
   name: string,
   finalImages: Array<string>,
-  parentcategoryId: string
+  parentcategoryId: string,
 ) => {
   try {
     const response = await childCategoryModel.findByIdAndUpdate(id, {
@@ -138,7 +138,7 @@ export const editChildCategoryRepository = async (
 
 export const getParentCategoriesRepository = async (
   cursor?: string | undefined,
-  limit = 10
+  limit = 10,
 ) => {
   try {
     const query: any = {};
@@ -178,7 +178,7 @@ export const getParentCategoriesRepository = async (
 export const getChildCategoryByParentIdRepository = async (
   cursor: string | undefined,
   ParentCategoryId: string,
-  limit: number
+  limit: number,
 ) => {
   try {
     const query: any = {
@@ -236,11 +236,9 @@ export const getParentCategoriesForFormsRepository = async () => {
 
 //-------------------------------------------------------------------------------------------------
 export const getchildCategoriesForFormsRepository = async (
-  ParentCategoryId?: string
+  ParentCategoryId?: string,
 ) => {
   try {
-    console.log("this is __________ >> ", ParentCategoryId);
-
     if (!ParentCategoryId) {
       return [];
     }
@@ -260,3 +258,27 @@ export const getchildCategoriesForFormsRepository = async (
     throw error;
   }
 };
+
+//--------------------------------------------------------------------------------------------------
+
+export const getAllChildCategoriesRepository = async () => {
+  try {
+    const childCategoryresult = await childCategoryModel
+      .find({
+        isActive: true,
+      })
+      .select("name");
+
+    if (!childCategoryresult) {
+      return [];
+    }
+
+    return childCategoryresult;
+  } catch (error) {
+    console.log("this is the error in category repository ", error);
+    throw error;
+  }
+};
+
+//----------------------------------------------------------------------------------------------
+

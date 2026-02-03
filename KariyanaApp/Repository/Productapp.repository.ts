@@ -1,13 +1,10 @@
 import mongoose, { Types } from "mongoose";
 import { STATUS_CODE } from "../../Api";
 import { productModel } from "../../Dashboard/Modals/Product.modals";
-import { ParentCategoryModel } from "../../Dashboard/Modals/Category.modal";
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
 import { childCategoryModel } from "../../Dashboard/Modals/ChildCategory.modal";
 import { cartSchemaModel } from "../../Dashboard/Modals/cart.model";
-import { productDetailsModel } from "../../Dashboard/Modals/ProductDetails.modal";
 import { Icart } from "../../types/CartTypes";
-import { STATUS_CODES } from "node:http";
 
 interface PaginationParams {
   limit?: number;

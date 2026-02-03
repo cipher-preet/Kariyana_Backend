@@ -8,6 +8,8 @@ import {
   getProductsBasicDetailsRepository,
   addProductImagsAndHiglightsRepository,
   getProductImagesAndHighlightsRepository,
+  getProductBasicInfoByChildCategoryIdrepository,
+  buildHomePageRepository
 } from "../Repository/Product.repository";
 
 export const addNewProductServices = async (finalData: IProduct) => {
@@ -77,3 +79,27 @@ export const getProductImagesAndHighlightsServices = async (
     throw error;
   }
 };
+
+//------------------------------------------------------------------------------------------------------------
+
+export const getProductBasicInfoByChildCategoryIdServices = async (childCategoryId:string) => {
+  try {
+    const response = await getProductBasicInfoByChildCategoryIdrepository(childCategoryId);
+    return response;
+  } catch (error) {
+    console.log("error in product app services", error);
+    throw error;
+  }
+};
+
+//------------------------------------------------------------------------------------------------------------
+
+export const buildHomePageServices = async (homepageDetails:Array<object>) => {
+  try {
+    const response = await buildHomePageRepository(homepageDetails);
+    return response;
+  } catch (error) {
+    console.log("error in product app services", error);
+    throw error;
+  }
+}

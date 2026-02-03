@@ -29,5 +29,13 @@ router.get("/getCartByUserId/:userId", getCartByUserIdController);
 router.post('/incAndDecCartQuantity', incAndDecCartQuantityController);
 
 
+//---------------------App Home Page Routes --------------------------------------
+
+// router.get()
+
+//--------------------------------------------------------------------------------
+
+
+
 
 export default router;

@@ -6,6 +6,8 @@ import {
   getProductsBasicDetailsServices,
   addProductImagsAndHiglightsServices,
   getProductImagesAndHighlightsServices,
+  getProductBasicInfoByChildCategoryIdServices,
+  buildHomePageServices
 } from "../Services/Product.services";
 import { parseIfString } from "../../utils/helper";
 import {
@@ -14,11 +16,12 @@ import {
 } from "../../types/Dashboardtypes";
 import { Types } from "mongoose";
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
+import { childCategory } from "../Modals/ChildCategory.modal";
 
 const addNewProductController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     let {
@@ -78,7 +81,7 @@ const addNewProductController = async (
 const editProductController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     let {
@@ -145,7 +148,7 @@ const editProductController = async (
 const getProductsBasicDetailsController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const limit = Number(req.query.limit) || 10;
@@ -153,7 +156,7 @@ const getProductsBasicDetailsController = async (
 
     const product = await getProductsBasicDetailsServices(
       limit,
-      cursor as string | undefined
+      cursor as string | undefined,
     );
 
     const productsWithSignedUrl = product.products.map((product: any) => ({
@@ -175,7 +178,7 @@ const getProductsBasicDetailsController = async (
 const addProductImagsAndHiglightsController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     let { productId, heighlights } = req.body;
@@ -201,7 +204,7 @@ const addProductImagsAndHiglightsController = async (
       return ErrorResponse(
         res,
         STATUS_CODE.BAD_REQUEST,
-        "Failed to add product images and highlights"
+        "Failed to add product images and highlights",
       );
     }
     if (response.status === STATUS_CODE.BAD_REQUEST) {
@@ -219,7 +222,7 @@ const addProductImagsAndHiglightsController = async (
 const getProductImagesAndHighlightsController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const productId = req.query.productId as string;
@@ -230,7 +233,7 @@ const getProductImagesAndHighlightsController = async (
       return ErrorResponse(
         res,
         STATUS_CODE.BAD_REQUEST,
-        "Failed to add product images and highlights"
+        "Failed to add product images and highlights",
       );
     }
 
@@ -238,7 +241,7 @@ const getProductImagesAndHighlightsController = async (
       return ErrorResponse(
         res,
         response.status,
-        (response as { message: string }).message
+        (response as { message: string }).message,
       );
     }
 
@@ -248,6 +251,49 @@ const getProductImagesAndHighlightsController = async (
   }
 };
 
+//---------------------------------------------------------------------------------------------------------
+
+const getProductBasicInfoByChildCategoryIdController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const childCategoryId = req.query.childCategoryId;
+
+    const response = await getProductBasicInfoByChildCategoryIdServices(
+      childCategoryId as string,
+    );
+
+    const productsWithSignedUrls = response.map((product: any) => ({
+      ...product,
+      images: product.images.map((key: string) =>
+        generateCloudFrontSignedUrl(key),
+      ),
+    }));
+
+    SuccessResponse(res, STATUS_CODE.OK, productsWithSignedUrls);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//----------------------------------------------------------------------------------------------------------------
+
+const buildHomePageController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+
+    const { homepageDetails } = req.body;
+    const response = await buildHomePageServices(homepageDetails);
+
+  } catch (error) {
+    next(error);
+  }
+};
 
 //------------------------------------
 export {
@@ -255,5 +301,7 @@ export {
   editProductController,
   getProductsBasicDetailsController,
   addProductImagsAndHiglightsController,
-  getProductImagesAndHighlightsController
+  getProductImagesAndHighlightsController,
+  getProductBasicInfoByChildCategoryIdController,
+  buildHomePageController
 };

@@ -6,6 +6,8 @@ import {
   getProductsBasicDetailsController,
   addProductImagsAndHiglightsController,
   getProductImagesAndHighlightsController,
+  getProductBasicInfoByChildCategoryIdController,
+  buildHomePageController
 } from "./Controllers/Product.controller";
 //---------------------------------------------------------------
 import {
@@ -17,6 +19,7 @@ import {
   getChildCategoryByParentIdController,
   getParentCategoriesForFormsController,
   getchildCategoriesForFormsController,
+  getAllChildCategoriesController,
 } from "./Controllers/Category.controller";
 //---------------------------------------------------------------
 import {
@@ -112,6 +115,7 @@ router.put(
 );
 
 // -------------------------- get API's ---------------------------------
+router.get("/getAllChildCategories", getAllChildCategoriesController);
 
 router.get("/getParentCategories", getParentCategoriesController);
 
@@ -179,6 +183,12 @@ router.get(
 
 router.post("/approveshop", approveShopController);
 
+router.get("/getProductBasicInfoByChildCategoryId", getProductBasicInfoByChildCategoryIdController)
+
 //---------------------------------------------------------------------------------
+
+//--------------------------- Build Home API's ---------------------------------
+router.post("/buildHomePage", buildHomePageController);
+//------------------------------------------------------------------------------
 
 export default router;
