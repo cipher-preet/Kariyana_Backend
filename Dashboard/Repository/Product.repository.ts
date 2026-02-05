@@ -298,27 +298,49 @@ export const getHomePageDetailsForDashboardRepository = async () => {
 export const addProductCaresolsAndbannersRepository = async (
   banners: Array<string>,
   carosels: Array<string>,
+  keepBanners: Array<string>,
+  keepCarosels: Array<string>,
 ) => {
   try {
-    
-    const response = await BannersAndCaroselsModel.create({
-      banners,
-      carosels,
-    });
+    const existingDoc = await BannersAndCaroselsModel.findOne({});
+
+    const finalBanners = [...keepBanners, ...banners];
+    const finalCarosels = [...keepCarosels, ...carosels];
+    const uniqueBanners = Array.from(new Set(finalBanners));
+    const uniqueCarosels = Array.from(new Set(finalCarosels));
+
+    let response;
+
+    if (existingDoc) {
+      response = await BannersAndCaroselsModel.findOneAndUpdate(
+        { _id: existingDoc._id },
+        {
+          $set: {
+            banners: uniqueBanners,
+            carosels: uniqueCarosels,
+          },
+        },
+        { new: true },
+      );
+    } else {
+      response = await BannersAndCaroselsModel.create({
+        banners: uniqueBanners,
+        carosels: uniqueCarosels,
+      });
+    }
 
     if (!response) {
       return {
         status: STATUS_CODE.BAD_REQUEST,
-        message: "Server error while adding banners and carosels",
+        message: "Failed to save banners and carousels",
       };
     }
 
     return {
       status: STATUS_CODE.OK,
-      message: "Banners and Carosels added Successfully",
+      message: "Banners and carousels saved successfully",
+      data: response,
     };
-
-
   } catch (error) {
     console.log("this is the error in category repository ", error);
     throw error;

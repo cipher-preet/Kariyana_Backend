@@ -11,7 +11,7 @@ import {
   getProductBasicInfoByChildCategoryIdrepository,
   buildHomePageRepository,
   getHomePageDetailsForDashboardRepository,
-  addProductCaresolsAndbannersRepository
+  addProductCaresolsAndbannersRepository,
 } from "../Repository/Product.repository";
 
 export const addNewProductServices = async (finalData: IProduct) => {
@@ -28,7 +28,7 @@ export const addNewProductServices = async (finalData: IProduct) => {
 
 export const editProductServices = async (
   finalData: IProduct,
-  productId: string
+  productId: string,
 ) => {
   try {
     const response = await editProductRepository(finalData, productId);
@@ -43,7 +43,7 @@ export const editProductServices = async (
 
 export const getProductsBasicDetailsServices = async (
   limit: number,
-  cursor?: string
+  cursor?: string,
 ) => {
   try {
     const response = await getProductsBasicDetailsRepository(limit, cursor);
@@ -57,7 +57,7 @@ export const getProductsBasicDetailsServices = async (
 //-----------------------------------------------------------------------
 
 export const addProductImagsAndHiglightsServices = async (
-  finalData: IProductHighlightsDetails
+  finalData: IProductHighlightsDetails,
 ) => {
   try {
     const response = await addProductImagsAndHiglightsRepository(finalData);
@@ -71,7 +71,7 @@ export const addProductImagsAndHiglightsServices = async (
 //-----------------------------------------------------------------------
 
 export const getProductImagesAndHighlightsServices = async (
-  productId: string
+  productId: string,
 ) => {
   try {
     const response = await getProductImagesAndHighlightsRepository(productId);
@@ -84,9 +84,12 @@ export const getProductImagesAndHighlightsServices = async (
 
 //------------------------------------------------------------------------------------------------------------
 
-export const getProductBasicInfoByChildCategoryIdServices = async (childCategoryId:string) => {
+export const getProductBasicInfoByChildCategoryIdServices = async (
+  childCategoryId: string,
+) => {
   try {
-    const response = await getProductBasicInfoByChildCategoryIdrepository(childCategoryId);
+    const response =
+      await getProductBasicInfoByChildCategoryIdrepository(childCategoryId);
     return response;
   } catch (error) {
     console.log("error in product app services", error);
@@ -96,7 +99,7 @@ export const getProductBasicInfoByChildCategoryIdServices = async (childCategory
 
 //------------------------------------------------------------------------------------------------------------
 
-export const buildHomePageServices = async (homepageDetails:Array<object>) => {
+export const buildHomePageServices = async (homepageDetails: Array<object>) => {
   try {
     const response = await buildHomePageRepository(homepageDetails);
     return response;
@@ -104,7 +107,7 @@ export const buildHomePageServices = async (homepageDetails:Array<object>) => {
     console.log("error in product app services", error);
     throw error;
   }
-}
+};
 
 //-----------------------------------------------------------------------------------------------------------------
 
@@ -116,16 +119,26 @@ export const getHomePageDetailsForDashboardServices = async () => {
     console.log("error in getHomePageDetailsForDashboardServices", error);
     throw error;
   }
-}
+};
 
 //-----------------------------------------------------------------------------------------------------------------
 
-export const addProductCaresolsAndbannersServices = async (banners:Array<string>, carosels:Array<string>) => {
+export const addProductCaresolsAndbannersServices = async (
+  banners: Array<string>,
+  carosels: Array<string>,
+  keepBanners: Array<string>,
+  keepCarosels: Array<string>,
+) => {
   try {
-    const response = await addProductCaresolsAndbannersRepository(banners, carosels);
+    const response = await addProductCaresolsAndbannersRepository(
+      banners,
+      carosels,
+      keepBanners,
+      keepCarosels,
+    );
     return response;
   } catch (error) {
     console.log("error in getHomePageDetailsForDashboardServices", error);
     throw error;
   }
-}
+};

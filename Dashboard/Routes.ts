@@ -198,7 +198,7 @@ router.post("/buildHomePage", buildHomePageController);
 
 router.get(
   "/getHomePageDetailsForDashboard",
-  getHomePageDetailsForDashboardController
+  getHomePageDetailsForDashboardController,
 );
 
 router.post(

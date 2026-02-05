@@ -5,6 +5,8 @@ import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
 import { childCategoryModel } from "../../Dashboard/Modals/ChildCategory.modal";
 import { cartSchemaModel } from "../../Dashboard/Modals/cart.model";
 import { Icart } from "../../types/CartTypes";
+import { homePageModel } from "../../Dashboard/Modals/BuilfHomePage.modal";
+import { BannersAndCaroselsModel } from "../../Dashboard/Modals/BannersAndCarosels";
 
 interface PaginationParams {
   limit?: number;
@@ -13,7 +15,7 @@ interface PaginationParams {
 
 export const getProductsBycategoryIdRepository = async (
   categoryId: string,
-  { limit = 10, cursor }: PaginationParams
+  { limit = 10, cursor }: PaginationParams,
 ) => {
   try {
     const query: any = {
@@ -91,7 +93,7 @@ export const getAllChildCategoriesRepository = async () => {
 
         return acc;
       },
-      {}
+      {},
     );
 
     return categoriesWithSignedUrls;
@@ -105,7 +107,7 @@ export const getAllChildCategoriesRepository = async () => {
 
 export const getProductByChildCategoryIdRepository = async (
   childCatId: string,
-  { limit = 10, cursor }: PaginationParams
+  { limit = 10, cursor }: PaginationParams,
 ) => {
   try {
     const query: any = {
@@ -275,7 +277,7 @@ export const syncCartRepository = async (FinalData: Icart) => {
         new: true,
         upsert: true,
         updatePipeline: true,
-      }
+      },
     );
 
     return {
@@ -361,7 +363,7 @@ export const getCartByUserIdRepository = async (userId: string) => {
 export const incAndDecCartQuantityRepository = async (
   userId: string,
   productId: string,
-  delta: number
+  delta: number,
 ) => {
   try {
     const cartUpdate = await cartSchemaModel.updateOne(
@@ -454,7 +456,7 @@ export const incAndDecCartQuantityRepository = async (
       ],
       {
         updatePipeline: true,
-      }
+      },
     );
 
     if (!cartUpdate) {
@@ -467,6 +469,56 @@ export const incAndDecCartQuantityRepository = async (
     return {
       status: STATUS_CODE.OK,
       message: "Quantity Updated",
+    };
+  } catch (error) {
+    console.log("error in product repo ", error);
+    throw error;
+  }
+};
+
+//------------------------------------------------------------------------------------
+
+export const getHomePageBannerAndProductRepository = async (
+  limit = 2,
+  cursor?: string,
+) => {
+  try {
+    const query: any = {};  // to be correct the api
+
+    if (cursor) {
+      query._id = {
+        $lt: new mongoose.Types.ObjectId(cursor),
+      };
+    }
+
+    const homePages = await homePageModel
+      .find(query)
+      .sort({ _id: -1 })
+      .limit(limit + 1)
+      .select("-__v")
+      .lean();
+
+    const hasNextPage = homePages.length > limit;
+    if (hasNextPage) homePages.pop();
+
+    const bannersAndCarosels = await BannersAndCaroselsModel.findOne({})
+      .select("-__v")
+      .lean();
+
+    const data = homePages.map((item) => ({
+      ...item,
+      products: item.products.map((product: any) => ({
+        ...product,
+        images: generateCloudFrontSignedUrl(product.images),
+      })),
+    }));
+
+    return {
+      data,
+      banners: bannersAndCarosels?.banners ?? [],
+      carosels: bannersAndCarosels?.carosels ?? [],
+      nextCursor: hasNextPage ? homePages[homePages.length - 1]._id : null,
+      hasNextPage,
     };
   } catch (error) {
     console.log("error in product repo ", error);

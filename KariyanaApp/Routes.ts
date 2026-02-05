@@ -5,7 +5,8 @@ import {
   getProductByChildCategoryIdController,
   syncCartController,
   getCartByUserIdController,
-  incAndDecCartQuantityController
+  incAndDecCartQuantityController,
+  getHomePageBannerAndProductController
 } from "./Controllers/Productapp.controller";
 
 const router = Router();
@@ -31,7 +32,7 @@ router.post('/incAndDecCartQuantity', incAndDecCartQuantityController);
 
 //---------------------App Home Page Routes --------------------------------------
 
-// router.get()
+router.get('/getHomePageBannerAndProduct', getHomePageBannerAndProductController);
 
 //--------------------------------------------------------------------------------
 

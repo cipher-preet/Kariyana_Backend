@@ -7,6 +7,7 @@ import {
   syncCartService,
   getCartByUserIdService,
   incAndDecCartQuantityServices,
+  getHomePageBannerAndProductServices,
 } from "../Services/Productapp.services";
 
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
@@ -15,7 +16,7 @@ import { Icart } from "../../types/CartTypes";
 const getProductsBycategoryIdController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const categoryId = req.params.categoryId as string;
@@ -26,13 +27,13 @@ const getProductsBycategoryIdController = async (
     const response = await getProductsBycategoryIdService(
       categoryId,
       limit,
-      cursor as string | undefined
+      cursor as string | undefined,
     );
 
     const productsWithSignedUrls = response.products.map((product: any) => ({
       ...product,
       images: product.images.map((key: string) =>
-        generateCloudFrontSignedUrl(key)
+        generateCloudFrontSignedUrl(key),
       ),
     }));
 
@@ -51,7 +52,7 @@ const getProductsBycategoryIdController = async (
 const getAllChildCategoriesController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const response = await getAllChildCategoriesServices();
@@ -60,7 +61,7 @@ const getAllChildCategoriesController = async (
       return ErrorResponse(
         res,
         (response as { status: number }).status,
-        "error while editing child Category"
+        "error while editing child Category",
       );
     }
 
@@ -75,7 +76,7 @@ const getAllChildCategoriesController = async (
 const getProductByChildCategoryIdController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const childCatId = req.params.childCatId as string;
@@ -87,7 +88,7 @@ const getProductByChildCategoryIdController = async (
     const response: any = await getProductByChildCategoryIdServices(
       childCatId,
       limit,
-      cursor as string | undefined
+      cursor as string | undefined,
     );
 
     const productsWithSignedUrls = response.products.map((product: any) => ({
@@ -109,7 +110,7 @@ const getProductByChildCategoryIdController = async (
 const syncCartController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { userId, items, totalItems, subtotal, lastUpdatedAt } = req.body;
@@ -118,7 +119,7 @@ const syncCartController = async (
       return ErrorResponse(
         res,
         STATUS_CODE.BAD_REQUEST,
-        "Invalid request body"
+        "Invalid request body",
       );
     }
 
@@ -152,7 +153,7 @@ const syncCartController = async (
 const getCartByUserIdController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const userId = req.params.userId as string;
@@ -163,7 +164,7 @@ const getCartByUserIdController = async (
       return ErrorResponse(
         res,
         STATUS_CODE.BAD_REQUEST,
-        "Invalid request parameters"
+        "Invalid request parameters",
       );
     }
 
@@ -171,7 +172,7 @@ const getCartByUserIdController = async (
       return ErrorResponse(
         res,
         (response as { status: number }).status,
-        (response as { message: string }).message
+        (response as { message: string }).message,
       );
     }
 
@@ -186,7 +187,7 @@ const getCartByUserIdController = async (
 const incAndDecCartQuantityController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const { userId, productId, delta } = req.body;
@@ -194,18 +195,35 @@ const incAndDecCartQuantityController = async (
     const response = await incAndDecCartQuantityServices(
       userId,
       productId,
-      delta
+      delta,
     );
 
     if ((response as { status: number }).status === STATUS_CODE.BAD_REQUEST) {
       return ErrorResponse(
         res,
         (response as { status: number }).status,
-        (response as { message: string }).message
+        (response as { message: string }).message,
       );
     }
 
     SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//----------------------------------------------------------------------------------------------------------------------
+
+const getHomePageBannerAndProductController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const limit = Math.min(Number(req.query.limit) || 2, 5);
+    const cursor = req.query.cursor as string | undefined;
+    const response = await getHomePageBannerAndProductServices(limit, cursor);
+    return SuccessResponse(res, STATUS_CODE.OK, response);
   } catch (error) {
     next(error);
   }
@@ -219,4 +237,5 @@ export {
   syncCartController,
   getCartByUserIdController,
   incAndDecCartQuantityController,
+  getHomePageBannerAndProductController,
 };

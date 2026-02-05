@@ -324,8 +324,17 @@ const addProductCaresolsAndbannersController = async (
   next: NextFunction,
 ) => {
   try {
+    const keepBanners: string[] = req.body.keepBanners
+      ? JSON.parse(req.body.keepBanners)
+      : [];
+
+    const keepCarosels: string[] = req.body.keepCarosels
+      ? JSON.parse(req.body.keepCarosels)
+      : [];
+
     let banners: string[] = [];
     let carosels: string[] = [];
+
     if (
       req.files &&
       (req as any).files.banners &&
@@ -341,9 +350,19 @@ const addProductCaresolsAndbannersController = async (
     ) {
       carosels = (req as any).files.caresols.map((file: any) => file.key);
     }
-    
-    const response = await addProductCaresolsAndbannersServices(banners, carosels);
 
+    const response = await addProductCaresolsAndbannersServices(
+      banners,
+      carosels,
+      keepBanners,
+      keepCarosels,
+    );
+
+    if (response.status === STATUS_CODE.BAD_REQUEST) {
+      return ErrorResponse(res, response.status, response.message);
+    }
+
+    SuccessResponse(res, response.status, response.message);
   } catch (error) {
     next(error);
   }
