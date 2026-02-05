@@ -7,7 +7,9 @@ import {
   addProductImagsAndHiglightsServices,
   getProductImagesAndHighlightsServices,
   getProductBasicInfoByChildCategoryIdServices,
-  buildHomePageServices
+  buildHomePageServices,
+  getHomePageDetailsForDashboardServices,
+  addProductCaresolsAndbannersServices,
 } from "../Services/Product.services";
 import { parseIfString } from "../../utils/helper";
 import {
@@ -286,9 +288,61 @@ const buildHomePageController = async (
   next: NextFunction,
 ) => {
   try {
-
     const { homepageDetails } = req.body;
     const response = await buildHomePageServices(homepageDetails);
+
+    if (response.status === STATUS_CODE.BAD_REQUEST) {
+      return ErrorResponse(res, response.status, response.message);
+    }
+
+    SuccessResponse(res, response.status, response.message);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//---------------------------------------------------------------------------------------------------------------------
+
+const getHomePageDetailsForDashboardController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const response = await getHomePageDetailsForDashboardServices();
+    SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//---------------------------------------------------------------------------------------------------------------------
+
+const addProductCaresolsAndbannersController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    let banners: string[] = [];
+    let carosels: string[] = [];
+    if (
+      req.files &&
+      (req as any).files.banners &&
+      Array.isArray((req as any).files.banners)
+    ) {
+      banners = (req as any).files.banners.map((file: any) => file.key);
+    }
+
+    if (
+      req.files &&
+      (req as any).files.caresols &&
+      Array.isArray((req as any).files.caresols)
+    ) {
+      carosels = (req as any).files.caresols.map((file: any) => file.key);
+    }
+    
+    const response = await addProductCaresolsAndbannersServices(banners, carosels);
 
   } catch (error) {
     next(error);
@@ -303,5 +357,7 @@ export {
   addProductImagsAndHiglightsController,
   getProductImagesAndHighlightsController,
   getProductBasicInfoByChildCategoryIdController,
-  buildHomePageController
+  buildHomePageController,
+  getHomePageDetailsForDashboardController,
+  addProductCaresolsAndbannersController,
 };

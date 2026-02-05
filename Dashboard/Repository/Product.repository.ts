@@ -4,9 +4,11 @@ import {
   IProduct,
   IProductHighlightsDetails,
 } from "../../types/Dashboardtypes";
-import { productModel, product } from '../Modals/Product.modals';
+import { productModel, product } from "../Modals/Product.modals";
 import { productDetailsModel } from "../Modals/ProductDetails.modal";
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
+import { homePageModel } from "../Modals/BuilfHomePage.modal";
+import { BannersAndCaroselsModel } from "../Modals/BannersAndCarosels";
 // ------------------------------------------------------------------------------------------------
 
 export const addNewProductRepository = async (finalData: IProduct) => {
@@ -174,7 +176,8 @@ export const getProductBasicInfoByChildCategoryIdrepository = async (
     const products = await productModel
       .find(query)
       .limit(20)
-      .select("name images mrp").lean();
+      .select("name images mrp")
+      .lean();
     if (!products) {
       return [];
     }
@@ -185,60 +188,139 @@ export const getProductBasicInfoByChildCategoryIdrepository = async (
   }
 };
 
-
 //-------------------------------------------------------------------------------------------------------------
 
-export const buildHomePageRepository = async (homepageDetails:Array<object>) => {
-
+export const buildHomePageRepository = async (
+  homepageDetails: Array<object>,
+) => {
   try {
+    const producIds = [
+      ...new Set(
+        homepageDetails
+          .flatMap((item: any) => item.products || [])
+          .map((id) => new Types.ObjectId(id)),
+      ),
+    ];
 
-    console.log("homepageDetails -------------->>> ", homepageDetails);
-
-   const producIds = [
-    ...new Set(homepageDetails.flatMap((item: any) => item.products || []).map(id => new Types.ObjectId(id))),
-   ];
-
-   if(!producIds.length){
-    return {
-      status: STATUS_CODE.BAD_REQUEST,
-      message: "No products found to build homepage",
+    if (!producIds.length) {
+      return {
+        status: STATUS_CODE.BAD_REQUEST,
+        message: "No products found to build homepage",
+      };
     }
-   }
 
-   const products = await productModel.find({
-    _id:{ $in: producIds },
-    isActive: true,
-   }).select("_id name mrp sellingPrice unit")
+    const products = await productModel
+      .find({
+        _id: { $in: producIds },
+        isActive: true,
+      })
+      .select(
+        "_id name images mrp sellingPrice reviewCount unit quantityPerUnit rating marketPrice sku",
+      )
       .lean();
 
+    const productMap = new Map<string, any>();
 
-
-   console.log("producIds -------------->>> ", producIds);
-
-   console.log("producIds -------------->>> ", products);
-    
-  const productMap = new Map<string, any>();
-
-  products.forEach((product) => {
-    productMap.set(product._id.toString(), {
+    products.forEach((product) => {
+      productMap.set(product._id.toString(), {
         _id: product._id,
         name: product.name,
+        images: product.images[0],
         mrp: product.mrp,
         sellingPrice: product.sellingPrice,
+        reviewCount: product.reviewCount,
         unit: product.unit,
+        quantityPerUnit: product.quantityPerUnit,
+        rating: product.rating,
+        marketPrice: product.marketPrice,
+        sku: product.sku,
       });
-  })
+    });
 
-  const finalSection = homepageDetails.map((section: any) => ({
-     categoryId: new Types.ObjectId(section.categoryId),
-    categoryName: section.categoryName,
-    products: section.products.map((pid:string) => productMap.get(pid)).filter(Boolean)
-  }))
+    const finalSection = homepageDetails.map((section: any) => ({
+      categoryId: new Types.ObjectId(section.categoryId),
+      categoryName: section.categoryName,
+      products: section.products
+        .map((pid: string) => productMap.get(pid))
+        .filter(Boolean),
+    }));
 
-  console.log("finalSection -------------->>> ", JSON.stringify(finalSection, null, 2));
+    const bulkOps = finalSection.map((section) => ({
+      updateOne: {
+        filter: { categoryId: section.categoryId },
+        update: { $set: section },
+        upsert: true,
+      },
+    }));
+
+    await homePageModel.bulkWrite(bulkOps);
+
+    return {
+      status: STATUS_CODE.OK,
+      message: "Homepage built successfully",
+    };
+  } catch (error) {
+    console.log("this is the error in category repository ", error);
+    throw error;
+  }
+};
+
+//---------------------------------------------------------------------------------------------------------------------
+
+export const getHomePageDetailsForDashboardRepository = async () => {
+  try {
+    const response = await homePageModel.find({}).lean();
+
+    if (!response) {
+      return [];
+    }
+
+    const finalResult = response.map((section) => ({
+      categoryId: section.categoryId,
+      categoryName: section.categoryName,
+      products: section.products.map((product) => ({
+        _id: product._id,
+        name: product.name,
+        images: generateCloudFrontSignedUrl(product.images),
+        mrp: product.mrp,
+      })),
+    }));
+
+    return finalResult;
+  } catch (error) {
+    console.log("this is the error in category repository ", error);
+    throw error;
+  }
+};
+
+//-----------------------------------------------------------------------------------------------------------------
+
+export const addProductCaresolsAndbannersRepository = async (
+  banners: Array<string>,
+  carosels: Array<string>,
+) => {
+  try {
+    
+    const response = await BannersAndCaroselsModel.create({
+      banners,
+      carosels,
+    });
+
+    if (!response) {
+      return {
+        status: STATUS_CODE.BAD_REQUEST,
+        message: "Server error while adding banners and carosels",
+      };
+    }
+
+    return {
+      status: STATUS_CODE.OK,
+      message: "Banners and Carosels added Successfully",
+    };
+
 
   } catch (error) {
     console.log("this is the error in category repository ", error);
     throw error;
   }
-}
+};

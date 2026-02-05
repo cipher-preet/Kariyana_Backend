@@ -7,7 +7,9 @@ import {
   addProductImagsAndHiglightsController,
   getProductImagesAndHighlightsController,
   getProductBasicInfoByChildCategoryIdController,
-  buildHomePageController
+  buildHomePageController,
+  getHomePageDetailsForDashboardController,
+  addProductCaresolsAndbannersController,
 } from "./Controllers/Product.controller";
 //---------------------------------------------------------------
 import {
@@ -44,6 +46,7 @@ import {
 
 import { uploadCategory } from "../Middleware/Multer/CateogryResources";
 import { uploadProduct } from "../Middleware/Multer/ProductResources";
+import { BannerAndCaresolsUploads } from "../Middleware/Multer/BannerAndCaresols";
 const router = Router();
 
 // ---------------------- Products Routes ---------------------------
@@ -183,12 +186,36 @@ router.get(
 
 router.post("/approveshop", approveShopController);
 
-router.get("/getProductBasicInfoByChildCategoryId", getProductBasicInfoByChildCategoryIdController)
+router.get(
+  "/getProductBasicInfoByChildCategoryId",
+  getProductBasicInfoByChildCategoryIdController,
+);
 
 //---------------------------------------------------------------------------------
 
 //--------------------------- Build Home API's ---------------------------------
 router.post("/buildHomePage", buildHomePageController);
+
+router.get(
+  "/getHomePageDetailsForDashboard",
+  getHomePageDetailsForDashboardController
+);
+
+router.post(
+  "/addProductCaresolsAndbanners",
+  BannerAndCaresolsUploads.fields([
+    {
+      name: "banners",
+      maxCount: 5,
+    },
+    {
+      name: "caresols",
+      maxCount: 5,
+    },
+  ]),
+  addProductCaresolsAndbannersController
+);
+
 //------------------------------------------------------------------------------
 
 export default router;

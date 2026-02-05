@@ -9,7 +9,9 @@ import {
   addProductImagsAndHiglightsRepository,
   getProductImagesAndHighlightsRepository,
   getProductBasicInfoByChildCategoryIdrepository,
-  buildHomePageRepository
+  buildHomePageRepository,
+  getHomePageDetailsForDashboardRepository,
+  addProductCaresolsAndbannersRepository
 } from "../Repository/Product.repository";
 
 export const addNewProductServices = async (finalData: IProduct) => {
@@ -100,6 +102,30 @@ export const buildHomePageServices = async (homepageDetails:Array<object>) => {
     return response;
   } catch (error) {
     console.log("error in product app services", error);
+    throw error;
+  }
+}
+
+//-----------------------------------------------------------------------------------------------------------------
+
+export const getHomePageDetailsForDashboardServices = async () => {
+  try {
+    const response = await getHomePageDetailsForDashboardRepository();
+    return response;
+  } catch (error) {
+    console.log("error in getHomePageDetailsForDashboardServices", error);
+    throw error;
+  }
+}
+
+//-----------------------------------------------------------------------------------------------------------------
+
+export const addProductCaresolsAndbannersServices = async (banners:Array<string>, carosels:Array<string>) => {
+  try {
+    const response = await addProductCaresolsAndbannersRepository(banners, carosels);
+    return response;
+  } catch (error) {
+    console.log("error in getHomePageDetailsForDashboardServices", error);
     throw error;
   }
 }
