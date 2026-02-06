@@ -16,8 +16,8 @@ const getUserProfileForCardsInDashboardController = async (
   next: NextFunction,
 ): Promise<any> => {
   try {
-    const limit = Number(req.query.limit) || 10;
-    const cursor = req.query.cursor;
+    const limit = Number(req.query.limit) || 4;
+    const cursor = req?.query?.cursor;
 
     const response = await getUserProfileForCardsInDashboardServices(
       limit,
@@ -52,7 +52,7 @@ const getUserAdditionalProfileDetailController = async (
   next: NextFunction,
 ) => {
   try {
-    const shopId = req.query._id;
+    const shopId = req?.query?._id;
 
     const response = await getUserAdditionalProfileDetailServices(
       shopId as string,

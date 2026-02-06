@@ -213,7 +213,7 @@ router.post(
       maxCount: 5,
     },
   ]),
-  addProductCaresolsAndbannersController
+  addProductCaresolsAndbannersController,
 );
 
 //------------------------------------------------------------------------------

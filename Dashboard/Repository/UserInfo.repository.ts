@@ -20,7 +20,7 @@ export const getUserProfileForCardsInDashboardrepository = async (
 
     const userData = await ShopProfileModel.find(query)
       .select("shopName ownerName address documents")
-      .sort({ _id: 1 })
+      .sort({ _id: -1 })
       .limit(limit + 1)
       .lean();
 
@@ -52,15 +52,14 @@ export const getUserAdditionalProfileDetailRepository = async (
       .select("-createdAt -updatedAt -__v -isApprove -documents")
       .populate({ path: "userId", select: "phone" });
 
-    const { userId, ...finalShopData } = shopData;
-    finalShopData.phone = userId.phone;
-
     if (!shopData) {
       return {
         status: STATUS_CODE.NOT_FOUND,
         message: "No shop Details is present.",
       };
     }
+    const { userId, ...finalShopData } = shopData;
+    finalShopData.phone = userId.phone;
 
     return finalShopData;
   } catch (error) {

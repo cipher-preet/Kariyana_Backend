@@ -483,7 +483,7 @@ export const getHomePageBannerAndProductRepository = async (
   cursor?: string,
 ) => {
   try {
-    const query: any = {};  // to be correct the api
+    const query: any = {};
 
     if (cursor) {
       query._id = {
@@ -499,13 +499,11 @@ export const getHomePageBannerAndProductRepository = async (
       .lean();
 
     const hasNextPage = homePages.length > limit;
+    const pageDocs = hasNextPage ? homePages.slice(0, limit) : homePages;
+
     if (hasNextPage) homePages.pop();
 
-    const bannersAndCarosels = await BannersAndCaroselsModel.findOne({})
-      .select("-__v")
-      .lean();
-
-    const data = homePages.map((item) => ({
+    const data = pageDocs.map((item) => ({
       ...item,
       products: item.products.map((product: any) => ({
         ...product,
@@ -513,11 +511,21 @@ export const getHomePageBannerAndProductRepository = async (
       })),
     }));
 
+    let banners: string[] = [];
+    let carosels: string[] = [];
+    if (!cursor) {
+      const bannersAndCarosels = await BannersAndCaroselsModel.findOne({})
+        .select("-__v")
+        .lean();
+
+      banners = bannersAndCarosels?.banners ?? [];
+      carosels = bannersAndCarosels?.carosels ?? [];
+    }
+
     return {
       data,
-      banners: bannersAndCarosels?.banners ?? [],
-      carosels: bannersAndCarosels?.carosels ?? [],
-      nextCursor: hasNextPage ? homePages[homePages.length - 1]._id : null,
+      ...(!cursor && { banners, carosels }),
+      nextCursor: hasNextPage ? pageDocs[pageDocs.length - 1]._id : null,
       hasNextPage,
     };
   } catch (error) {

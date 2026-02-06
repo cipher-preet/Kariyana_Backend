@@ -1,7 +1,4 @@
 import mongoose, { Types, Document } from "mongoose";
-import { ref } from "node:process";
-import { product } from "./Product.modals";
-
 export interface homePage extends Document {
   categoryId: Types.ObjectId;
   categoryName: string;
@@ -82,4 +79,7 @@ const HomePageSchema = new mongoose.Schema<homePage>({
   ],
 });
 
-export const homePageModel = mongoose.model<homePage>("HomePageBuilder", HomePageSchema);
+export const homePageModel = mongoose.model<homePage>(
+  "HomePageBuilder",
+  HomePageSchema,
+);
