@@ -43,6 +43,8 @@ import {
   getPendingApprovalProfileCardsInDashboardController,
 } from "./Controllers/UserInfo.controller";
 //-----------------------------------------------------------------------
+import { getBannerAndCarsolsForDashboardController } from "./Controllers/BannerAndCaresols.controller";
+//---------------------------------------------------------------
 
 import { uploadCategory } from "../Middleware/Multer/CateogryResources";
 import { uploadProduct } from "../Middleware/Multer/ProductResources";
@@ -217,5 +219,10 @@ router.post(
 );
 
 //------------------------------------------------------------------------------
+// baneer and caresols for dashboard
+router.get(
+  "/getBannerAndCarsolsForDashboard",
+  getBannerAndCarsolsForDashboardController,
+);
 
 export default router;

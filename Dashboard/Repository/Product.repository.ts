@@ -190,28 +190,25 @@ export const getProductBasicInfoByChildCategoryIdrepository = async (
 
 //-------------------------------------------------------------------------------------------------------------
 
-export const buildHomePageRepository = async (
-  homepageDetails: Array<object>,
-) => {
+export const buildHomePageRepository = async (homepageDetails: Array<any>) => {
   try {
-    const producIds = [
+    const productIds = [
       ...new Set(
         homepageDetails
-          .flatMap((item: any) => item.products || [])
-          .map((id) => new Types.ObjectId(id)),
+          .flatMap((item) => item.products || [])
+          .map((id) => id.toString()),
       ),
-    ];
+    ].map((id) => new Types.ObjectId(id));
 
-    if (!producIds.length) {
+    if (!productIds.length) {
       return {
         status: STATUS_CODE.BAD_REQUEST,
         message: "No products found to build homepage",
       };
     }
-
     const products = await productModel
       .find({
-        _id: { $in: producIds },
+        _id: { $in: productIds },
         isActive: true,
       })
       .select(
@@ -225,7 +222,7 @@ export const buildHomePageRepository = async (
       productMap.set(product._id.toString(), {
         _id: product._id,
         name: product.name,
-        images: product.images[0],
+        images: product.images?.[0],
         mrp: product.mrp,
         sellingPrice: product.sellingPrice,
         reviewCount: product.reviewCount,
@@ -237,15 +234,21 @@ export const buildHomePageRepository = async (
       });
     });
 
-    const finalSection = homepageDetails.map((section: any) => ({
+    const finalSections = homepageDetails.map((section: any) => ({
       categoryId: new Types.ObjectId(section.categoryId),
       categoryName: section.categoryName,
       products: section.products
-        .map((pid: string) => productMap.get(pid))
+        .map((pid: string) => productMap.get(pid.toString()))
         .filter(Boolean),
     }));
 
-    const bulkOps = finalSection.map((section) => ({
+    const incomingCategoryIds = finalSections.map((s) => s.categoryId);
+
+    await homePageModel.deleteMany({
+      categoryId: { $nin: incomingCategoryIds },
+    });
+
+    const bulkOps = finalSections.map((section) => ({
       updateOne: {
         filter: { categoryId: section.categoryId },
         update: { $set: section },
@@ -253,14 +256,16 @@ export const buildHomePageRepository = async (
       },
     }));
 
-    await homePageModel.bulkWrite(bulkOps);
+    if (bulkOps.length) {
+      await homePageModel.bulkWrite(bulkOps);
+    }
 
     return {
       status: STATUS_CODE.OK,
       message: "Homepage built successfully",
     };
   } catch (error) {
-    console.log("this is the error in category repository ", error);
+    console.error("Error in buildHomePageRepository:", error);
     throw error;
   }
 };
