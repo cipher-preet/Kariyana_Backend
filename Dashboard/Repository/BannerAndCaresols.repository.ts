@@ -7,17 +7,17 @@ export const getBannerAndCarsolsForDashboardRepository = async () => {
       .lean()
       .select({ __v: 0 });
 
-    const finalResponse = response.map((item) => {
-      return {
-        ...item,
-        banners: item.banners.map((banner) =>
-          generateCloudFrontSignedUrl(banner),
-        ),
-        carosels: item.carosels.map((carosel) =>
-          generateCloudFrontSignedUrl(carosel),
-        ),
-      };
-    });
+    const finalResponse = response.map((item) => ({
+      ...item,
+      banners: item.banners.map((key) => ({
+        key,
+        url: generateCloudFrontSignedUrl(key),
+      })),
+      carosels: item.carosels.map((key) => ({
+        key,
+        url: generateCloudFrontSignedUrl(key),
+      })),
+    }));
 
     return finalResponse ?? [];
   } catch (error) {

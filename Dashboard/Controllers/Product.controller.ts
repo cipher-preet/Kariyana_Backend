@@ -324,13 +324,14 @@ const addProductCaresolsAndbannersController = async (
   next: NextFunction,
 ) => {
   try {
-    const keepBanners: string[] = req.body.keepBanners
-      ? JSON.parse(req.body.keepBanners)
-      : [];
+    const normalizeToArray = (value: any): string[] => {
+      if (!value) return [];
+      if (Array.isArray(value)) return value;
+      return [value];
+    };
 
-    const keepCarosels: string[] = req.body.keepCarosels
-      ? JSON.parse(req.body.keepCarosels)
-      : [];
+    const keepBanners = normalizeToArray(req.body.keepBanners);
+    const keepCarosels = normalizeToArray(req.body.keepCarosels);
 
     let banners: string[] = [];
     let carosels: string[] = [];
