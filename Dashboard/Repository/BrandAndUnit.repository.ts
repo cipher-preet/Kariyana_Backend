@@ -4,6 +4,7 @@ import { STATUS_CODE } from "../../Api";
 import { IUnitInterface } from "../../types/Dashboardtypes";
 import { UnitModal } from "../Modals/Unit.modal";
 import { TagModel } from "../Modals/Tags.modal";
+import { cartSchemaModel } from "../Modals/cart.model";
 
 //-----------------------------------------------------------------------------------------------------
 
@@ -59,7 +60,7 @@ export const addUnitRepository = async (data: IUnitInterface) => {
 export const editBrandRepository = async (
   _id: string,
   name: string,
-  description: string
+  description: string,
 ) => {
   try {
     const response = await BrandModel.findByIdAndUpdate(_id, {
@@ -168,7 +169,7 @@ export const getUnitFordashboardRepository = async () => {
 export const getBrandFordashboardRepository = async () => {
   try {
     const getBrands = await BrandModel.find().select(
-      "-createdAt -updatedAt -__v"
+      "-createdAt -updatedAt -__v",
     );
     if (!getBrands) {
       return [];
@@ -207,25 +208,51 @@ export const addTagsRepository = async (name: string) => {
 
 //------------------------------------------------------------------------------------
 
-export const getTagsRepository = async (_id: string, name: string) => {
+export const getTagsRepository = async () => {
   try {
-
-    const editTags = await TagModel.findByIdAndUpdate(_id,{name});
-
-     if (!editTags) {
-      return {
-        status: STATUS_CODE.INTERNAL_SERVER_ERROR,
-        message: "error while creating Tags",
-      };
-    }
-
-    return {
-      status: STATUS_CODE.OK,
-      message: "Tags updated Successfully",
-    };
-
+    const getTags = await TagModel.find({}).select("-__v");
+    return getTags ?? [];
   } catch (error) {
     console.log("error in brand and unit repository", error);
     throw error;
   }
 };
+
+//--------------------------------------------------------------------------------------
+
+export const editTagRepository = async (
+  _id: string,
+  name: string,
+  isActive: boolean,
+) => {
+  try {
+    const editTags = await TagModel.findByIdAndUpdate(_id, { name, isActive });
+    if (!editTags) {
+      return {
+        status: STATUS_CODE.BAD_REQUEST,
+        message: "Error while Updating tags",
+      };
+    }
+    return {
+      status: STATUS_CODE.OK,
+      message: "Tags Update successfully",
+    };
+  } catch (error) {
+    console.log("error in brand and unit repository", error);
+    throw error;
+  }
+};
+
+//---------------------------------------------------------------------------------------
+
+export const getuserCartDataForDashboardRepository = async (userId:string) => {
+  try {
+    const cartDetails = await cartSchemaModel.find({userId})
+
+    console.log("this is cart details ------------->>> ", cartDetails)
+
+  } catch (error) {
+    console.log("error in cart repository", error);
+    throw error;
+  }
+}

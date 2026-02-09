@@ -49,7 +49,7 @@ export const getUserAdditionalProfileDetailRepository = async (
   try {
     const shopData: any = await ShopProfileModel.findById(shopId)
       .lean()
-      .select("-createdAt -updatedAt -__v -isApprove -documents")
+      .select("-createdAt -updatedAt -__v -isApprove")
       .populate({ path: "userId", select: "phone" });
 
     if (!shopData) {
@@ -116,7 +116,7 @@ export const getPendingApprovalProfileCardsInDashboardRepository = async (
 
     const userData = await ShopProfileModel.find(query)
       .select("shopName ownerName address documents")
-      .sort({ _id: 1 })
+      .sort({ _id: -1 })
       .limit(limit + 1)
       .lean();
 

@@ -34,6 +34,9 @@ import {
   getUnitFordashboardController,
   getBrandFordashboardController,
   addTagsController,
+  getTagsController,
+  editTagController,
+  getuserCartDataForDashboardController,
 } from "./Controllers/BrandAndUnit.controller";
 //---------------------------------------------------------------
 import {
@@ -169,6 +172,8 @@ router.get("/getBrandFordashboard", getBrandFordashboardController);
 
 //-----------   route for tag and banner page ----------------------
 router.post("/addTags", addTagsController);
+router.get("/getAllTags", getTagsController);
+router.put("/editTags", editTagController);
 
 //------------- dashboard UserSection all apis goes here --------------------------
 router.get(
@@ -223,6 +228,12 @@ router.post(
 router.get(
   "/getBannerAndCarsolsForDashboard",
   getBannerAndCarsolsForDashboardController,
+);
+
+//-------------- cart data API's ------------------
+router.get(
+  "/getuserCartDataForDashboard",
+  getuserCartDataForDashboardController,
 );
 
 export default router;

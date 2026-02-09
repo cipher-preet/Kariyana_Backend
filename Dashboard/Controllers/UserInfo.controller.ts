@@ -7,6 +7,7 @@ import {
   getPendingApprovalProfileCardsInDashboardServices,
 } from "../Services/UserInfo.services";
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 //-----------------------------------------------------------------------------------------------
 
@@ -16,7 +17,7 @@ const getUserProfileForCardsInDashboardController = async (
   next: NextFunction,
 ): Promise<any> => {
   try {
-    const limit = Number(req.query.limit) || 4;
+    const limit = Number(req.query.limit) || 10;
     const cursor = req?.query?.cursor;
 
     const response = await getUserProfileForCardsInDashboardServices(
@@ -65,8 +66,16 @@ const getUserAdditionalProfileDetailController = async (
         response.message,
       );
     }
+    const signedImage = generateCloudFrontSignedUrl(
+      response.documents.shopPhotos,
+    );
 
-    SuccessResponse(res, STATUS_CODE.OK, response);
+    const finalResponse = {
+      ...response,
+      documents: signedImage,
+    };
+
+    SuccessResponse(res, STATUS_CODE.OK, finalResponse);
   } catch (error) {
     next(error);
   }

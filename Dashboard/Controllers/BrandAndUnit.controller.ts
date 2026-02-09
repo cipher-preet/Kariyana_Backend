@@ -12,6 +12,8 @@ import {
   getBrandFordashboardServices,
   addTagsServices,
   getTagsServices,
+  editTagServices,
+  getuserCartDataForDashboardServices,
 } from "../Services/BrandAndUnit.services";
 import { IUnitInterface } from "../../types/Dashboardtypes";
 //----------------------------------------------------------------------------------
@@ -19,7 +21,7 @@ import { IUnitInterface } from "../../types/Dashboardtypes";
 const addBrandController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const { name, description } = req.body;
@@ -45,7 +47,7 @@ const addBrandController = async (
 const addUnitController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const { name, shortName, baseUnit, multiplier } = req.body;
@@ -54,7 +56,7 @@ const addUnitController = async (
       return ErrorResponse(
         res,
         STATUS_CODE.NOT_FOUND,
-        "please provide name or shortName"
+        "please provide name or shortName",
       );
     }
 
@@ -81,7 +83,7 @@ const addUnitController = async (
 const editBrandController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const { _id, name, description } = req.body;
@@ -103,7 +105,7 @@ const editBrandController = async (
 const editUnitController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const { _id, name, shortName, baseUnit, multiplier } = req.body;
@@ -132,7 +134,7 @@ const editUnitController = async (
 const getBrandsForFormsController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const response = await getBrandsForFormsServices();
@@ -146,7 +148,7 @@ const getBrandsForFormsController = async (
 const getUnitController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const response = await getUnitServices();
@@ -161,7 +163,7 @@ const getUnitController = async (
 const getUnitFordashboardController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const response = await getUnitFordashboardServices();
@@ -176,7 +178,7 @@ const getUnitFordashboardController = async (
 const getBrandFordashboardController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const response = await getBrandFordashboardServices();
@@ -191,7 +193,7 @@ const getBrandFordashboardController = async (
 const addTagsController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
     const { name } = req.body;
@@ -200,7 +202,7 @@ const addTagsController = async (
       return ErrorResponse(
         res,
         STATUS_CODE.NOT_FOUND,
-        "please provide name as well !"
+        "please provide name as well !",
       );
     }
 
@@ -221,14 +223,45 @@ const addTagsController = async (
 const getTagsController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<any> => {
   try {
+    const response = await getTagsServices();
+    return SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
 
-    const { _id, name } = req.body;
+//-----------------------------------------------------------------------------------------
 
-    const response = await getTagsServices(_id, name);
+const editTagController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { _id, name, isActive } = req.body;
+    const response = await editTagServices(_id, name, isActive);
+    if (response.status === STATUS_CODE.BAD_REQUEST) {
+      return ErrorResponse(res, response.status, response.message);
+    }
+    return SuccessResponse(res, response.status, response.message);
+  } catch (error) {
+    next(error);
+  }
+};
 
+//-------------------------------------------------------------------------------------------
+
+const getuserCartDataForDashboardController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.query.userId as string;
+    const response = await getuserCartDataForDashboardServices(userId);
   } catch (error) {
     next(error);
   }
@@ -245,5 +278,7 @@ export {
   getUnitFordashboardController,
   getBrandFordashboardController,
   addTagsController,
-  getTagsController
+  getTagsController,
+  editTagController,
+  getuserCartDataForDashboardController,
 };

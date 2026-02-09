@@ -10,6 +10,8 @@ import {
   getBrandFordashboardRepository,
   addTagsRepository,
   getTagsRepository,
+  editTagRepository,
+  getuserCartDataForDashboardRepository,
 } from "../Repository/BrandAndUnit.repository";
 //-------------------------------------------------------------------------------
 
@@ -40,7 +42,7 @@ export const addUnitServices = async (data: IUnitInterface) => {
 export const editBrandServices = async (
   _id: string,
   name: string,
-  description: string
+  description: string,
 ) => {
   try {
     const response = await editBrandRepository(_id, name, description);
@@ -124,12 +126,40 @@ export const addTagsServices = async (name: string) => {
 
 //-----------------------------------------------------------------------------
 
-export const getTagsServices = async (_id: string, name: string) => {
+export const getTagsServices = async () => {
   try {
-    const response = await getTagsRepository(_id, name);
+    const response = await getTagsRepository();
     return response;
   } catch (error) {
-    console.log("error in brand and unit section ", error);
+    console.log("error in tags section ", error);
+    throw error;
+  }
+};
+
+//-------------------------------------------------------------------------------
+
+export const editTagServices = async (
+  _id: string,
+  name: string,
+  isActive: boolean,
+) => {
+  try {
+    const response = await editTagRepository(_id, name, isActive);
+    return response;
+  } catch (error) {
+    console.log("error in tags section ", error);
+    throw error;
+  }
+};
+
+//---------------------------------------------------------------------------------
+
+export const getuserCartDataForDashboardServices = async (userId: string) => {
+  try {
+    const response = await getuserCartDataForDashboardRepository(userId);
+    return response;
+  } catch (error) {
+    console.log("error in cart section ", error);
     throw error;
   }
 };
