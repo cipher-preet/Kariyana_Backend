@@ -183,21 +183,29 @@ const addProductImagsAndHiglightsController = async (
   next: NextFunction,
 ): Promise<any> => {
   try {
-    let { productId, heighlights } = req.body;
+    let { productId, heighlights, existingImages } = req.body;
+    const parsedHighlights = heighlights ? JSON.parse(heighlights) : [];
 
-    let images: string[] = [];
+    const parsedExistingImages = existingImages
+      ? JSON.parse(existingImages)
+      : [];
+
+    let newImages: string[] = [];
+
     if (
       req.files &&
       (req as any).files.images &&
       Array.isArray((req as any).files.images)
     ) {
-      images = (req as any).files.images.map((file: any) => file.key);
+      newImages = (req as any).files.images.map((file: any) => file.key);
     }
+
+    const finalImages = [...parsedExistingImages, ...newImages];
 
     const finalData: IProductHighlightsDetails = {
       productId: productId,
-      heighlights: JSON.parse(heighlights),
-      images: images,
+      heighlights: parsedHighlights,
+      images: finalImages,
     };
 
     const response = await addProductImagsAndHiglightsServices(finalData);

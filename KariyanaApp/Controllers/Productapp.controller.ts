@@ -12,6 +12,7 @@ import {
 
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
 import { Icart } from "../../types/CartTypes";
+import mongoose from "mongoose";
 //----------------------------------------------------------------------------------
 const getProductsBycategoryIdController = async (
   req: Request,
@@ -158,6 +159,7 @@ const getCartByUserIdController = async (
   try {
     const userId = req.params.userId as string;
 
+
     const response = await getCartByUserIdService(userId);
 
     if (!userId) {
@@ -221,7 +223,14 @@ const getHomePageBannerAndProductController = async (
 ) => {
   try {
     const limit = Math.min(Number(req.query.limit) || 2, 5);
-    const cursor = req.query.cursor as string | undefined;
+    let cursor: string | null = null;
+
+    if (
+      typeof req.query.cursor === "string" &&
+      mongoose.Types.ObjectId.isValid(req.query.cursor)
+    ) {
+      cursor = req.query.cursor;
+    }
     const response = await getHomePageBannerAndProductServices(limit, cursor);
     return SuccessResponse(res, STATUS_CODE.OK, response);
   } catch (error) {

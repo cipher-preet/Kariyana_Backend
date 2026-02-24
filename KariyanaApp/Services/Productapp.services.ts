@@ -105,7 +105,7 @@ export const incAndDecCartQuantityServices = async (
 
 export const getHomePageBannerAndProductServices = async (
   limit: number,
-  cursor?: string,
+  cursor?: string | null,
 ) => {
   try {
     const response = await getHomePageBannerAndProductRepository(limit, cursor);

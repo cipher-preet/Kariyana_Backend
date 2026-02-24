@@ -330,11 +330,10 @@ export const getCartByUserIdRepository = async (userId: string) => {
         message: "Cart not found",
       };
     }
-
     const FinalResponse = {
       userId: cart?.userId,
       items: cart?.items.map((item) => {
-        const { images, ...productWithoutImages } = item.productId as any;
+        const { images, ...productWithoutImages } = item?.productId as any;
 
         return {
           productId: productWithoutImages._id,
@@ -480,7 +479,7 @@ export const incAndDecCartQuantityRepository = async (
 
 export const getHomePageBannerAndProductRepository = async (
   limit = 2,
-  cursor?: string,
+  cursor?: string | null,
 ) => {
   try {
     const query: any = {};
@@ -518,8 +517,14 @@ export const getHomePageBannerAndProductRepository = async (
         .select("-__v")
         .lean();
 
-      banners = bannersAndCarosels?.banners ?? [];
-      carosels = bannersAndCarosels?.carosels ?? [];
+      banners =
+        bannersAndCarosels?.banners.map((item: any) =>
+          generateCloudFrontSignedUrl(item),
+        ) ?? [];
+      carosels =
+        bannersAndCarosels?.carosels.map((item: any) =>
+          generateCloudFrontSignedUrl(item),
+        ) ?? [];
     }
 
     return {

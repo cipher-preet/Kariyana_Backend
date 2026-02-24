@@ -6,37 +6,36 @@ import {
   syncCartController,
   getCartByUserIdController,
   incAndDecCartQuantityController,
-  getHomePageBannerAndProductController
+  getHomePageBannerAndProductController,
 } from "./Controllers/Productapp.controller";
 
 const router = Router();
 
 router.get(
   "/getProductsbycategoryid/:categoryId",
-  getProductsBycategoryIdController
+  getProductsBycategoryIdController,
 );
 
 router.get("/getAllChildCategories", getAllChildCategoriesController);
 
 router.get(
   "/getProductByChildCategoryId/:childCatId",
-  getProductByChildCategoryIdController
+  getProductByChildCategoryIdController,
 );
 
 router.post("/syncCart", syncCartController);
 
 router.get("/getCartByUserId/:userId", getCartByUserIdController);
 
-router.post('/incAndDecCartQuantity', incAndDecCartQuantityController);
-
+router.post("/incAndDecCartQuantity", incAndDecCartQuantityController);
 
 //---------------------App Home Page Routes --------------------------------------
 
-router.get('/getHomePageBannerAndProduct', getHomePageBannerAndProductController);
+router.get(
+  "/getHomePageBannerAndProduct",
+  getHomePageBannerAndProductController,
+);
 
 //--------------------------------------------------------------------------------
-
-
-
 
 export default router;

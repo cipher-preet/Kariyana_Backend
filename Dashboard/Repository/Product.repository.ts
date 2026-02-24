@@ -111,7 +111,21 @@ export const addProductImagsAndHiglightsRepository = async (
   finalData: IProductHighlightsDetails,
 ) => {
   try {
-    const response = await productDetailsModel.create(finalData);
+    const { productId, heighlights, images } = finalData;
+
+    const response = await productDetailsModel.findOneAndUpdate(
+      { productId },
+      {
+        $set: {
+          heighlights: heighlights,
+          images: images,
+        },
+      },
+      {
+        new: true,
+        upsert: true,
+      },
+    );
 
     if (!response) {
       return {
@@ -124,7 +138,10 @@ export const addProductImagsAndHiglightsRepository = async (
       status: STATUS_CODE.OK,
       message: "Product update Successfully",
     };
-  } catch (error) {}
+  } catch (error) {
+    console.log("error in product repository", error);
+    throw error;
+  }
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -150,7 +167,7 @@ export const getProductImagesAndHighlightsRepository = async (
 
     const updatedResponse = {
       ...response,
-      images: signedImageUrls,
+      url: signedImageUrls,
     };
 
     return {
