@@ -71,3 +71,13 @@ export interface IProductHighlightsDetails {
   heighlights: Array<object>;
   images: string[];
 }
+
+//--------------------------------------------
+
+export interface IcontactusType {
+  name: string;
+  address: string;
+  phone: number;
+  query: string;
+  message: string;
+}

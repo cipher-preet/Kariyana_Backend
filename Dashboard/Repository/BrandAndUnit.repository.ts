@@ -1,10 +1,11 @@
 import { STATES } from "mongoose";
 import { BrandModel } from "../Modals/Brand.modal";
 import { STATUS_CODE } from "../../Api";
-import { IUnitInterface } from "../../types/Dashboardtypes";
+import { IcontactusType, IUnitInterface } from "../../types/Dashboardtypes";
 import { UnitModal } from "../Modals/Unit.modal";
 import { TagModel } from "../Modals/Tags.modal";
 import { cartSchemaModel } from "../Modals/cart.model";
+import { contactModal } from "../Modals/Contactus.modal";
 
 //-----------------------------------------------------------------------------------------------------
 
@@ -245,14 +246,78 @@ export const editTagRepository = async (
 
 //---------------------------------------------------------------------------------------
 
-export const getuserCartDataForDashboardRepository = async (userId:string) => {
+export const getuserCartDataForDashboardRepository = async (userId: string) => {
   try {
-    const cartDetails = await cartSchemaModel.find({userId})
+    const cartDetails = await cartSchemaModel.find({ userId });
 
-    console.log("this is cart details ------------->>> ", cartDetails)
-
+    console.log("this is cart details ------------->>> ", cartDetails);
   } catch (error) {
     console.log("error in cart repository", error);
     throw error;
   }
-}
+};
+
+//---------------------------------------------------------------------------------------
+
+export const contactUsPageForWebsiteRepository = async (
+  finalData: IcontactusType,
+) => {
+  try {
+    const response = await contactModal.create(finalData);
+
+    if (!response) {
+      return {
+        status: STATUS_CODE.BAD_REQUEST,
+        message: "Error while try to Contact ! wait and try ...",
+      };
+    }
+
+    return {
+      status: STATUS_CODE.OK,
+      message: "Thanks for been contacting !!! ",
+    };
+  } catch (error) {
+    console.log("error in cart repository", error);
+    throw error;
+  }
+};
+
+//----------------------------------------------------------------------------------
+
+export const getContactUsPageDetailsFromWebsiteRepository = async () => {
+  try {
+    const response = await contactModal
+      .find({})
+      .sort({ _id: -1 })
+      .select("-__v -updatedAt");
+    return response ?? [];
+  } catch (error) {
+    console.log("error in cart repository", error);
+    throw error;
+  }
+};
+
+//-------------------------------------------------------------------------------
+
+export const markAsReadInContactUsRepository = async (queryId: string) => {
+  try {
+    const response = await contactModal.findByIdAndUpdate(queryId, {
+      isAction: true,
+    });
+
+    if (!response) {
+      return {
+        status: STATUS_CODE.NOT_FOUND,
+        message: "Contact us query not Found",
+      };
+    }
+
+    return {
+      status: STATUS_CODE.OK,
+      message: "Action Perform Sucessfully !!!",
+    };
+  } catch (error) {
+    console.log("error in cart repository", error);
+    throw error;
+  }
+};

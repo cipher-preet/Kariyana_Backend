@@ -37,6 +37,9 @@ import {
   getTagsController,
   editTagController,
   getuserCartDataForDashboardController,
+  contactUsPageForWebsiteController,
+  getContactUsPageDetailsFromWebsiteController,
+  markAsReadInContactUsController
 } from "./Controllers/BrandAndUnit.controller";
 //---------------------------------------------------------------
 import {
@@ -235,5 +238,13 @@ router.get(
   "/getuserCartDataForDashboard",
   getuserCartDataForDashboardController,
 );
+
+//--------- contactus page api -----------
+router.post("/contactuspage", contactUsPageForWebsiteController);
+router.get(
+  "/getcontactuspagedetailsfromwebsite",
+  getContactUsPageDetailsFromWebsiteController,
+);
+router.post("/markasreadincontactus", markAsReadInContactUsController)
 
 export default router;

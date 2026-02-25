@@ -1,4 +1,4 @@
-import mongoose, { Schema, Types, Document } from "mongoose";
+import mongoose, { Types, Document } from "mongoose";
 
 export interface childCategory extends Document {
   name: string;
@@ -29,10 +29,10 @@ const childCategorySchema = new mongoose.Schema<childCategory>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export const childCategoryModel = mongoose.model<childCategory>(
   "ChildCategory",
-  childCategorySchema
+  childCategorySchema,
 );

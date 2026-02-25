@@ -14,8 +14,11 @@ import {
   getTagsServices,
   editTagServices,
   getuserCartDataForDashboardServices,
+  contactUsPageForWebsiteServices,
+  getContactUsPageDetailsFromWebsiteServices,
+  markAsReadInContactUsServices,
 } from "../Services/BrandAndUnit.services";
-import { IUnitInterface } from "../../types/Dashboardtypes";
+import { IcontactusType, IUnitInterface } from "../../types/Dashboardtypes";
 //----------------------------------------------------------------------------------
 
 const addBrandController = async (
@@ -267,7 +270,81 @@ const getuserCartDataForDashboardController = async (
   }
 };
 
-//--------------------------------------------
+//--------------------------------------------------------------------------------------------
+
+const contactUsPageForWebsiteController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { name, address, phone, query, message } = req.body;
+
+    const errors: string[] = [];
+
+    if (!name?.trim()) errors.push("name is required.");
+    if (!phone) errors.push("Phone number is required.");
+    if (!message?.trim()) errors.push("Message cannot be empty.");
+
+    if (errors.length > 0) {
+      return ErrorResponse(res, STATUS_CODE.BAD_REQUEST, errors.join(" "));
+    }
+
+    const finalData: IcontactusType = {
+      name,
+      address,
+      phone,
+      query,
+      message,
+    };
+
+    const response = await contactUsPageForWebsiteServices(finalData);
+
+    if (response.status === STATUS_CODE.BAD_REQUEST) {
+      return ErrorResponse(res, response.status, response.message);
+    }
+    return SuccessResponse(res, response.status, response.message);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//--------------------------------------------------------------------------------------------------
+
+const getContactUsPageDetailsFromWebsiteController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
+  try {
+    const response = await getContactUsPageDetailsFromWebsiteServices();
+    return SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//--------------------------------------------------------------------------------------------------
+
+const markAsReadInContactUsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { queryId } = req.body;
+
+    const response = await markAsReadInContactUsServices(queryId);
+
+    if (response.status === STATUS_CODE.NOT_FOUND) {
+      return ErrorResponse(res, response.status, response.message);
+    }
+    return SuccessResponse(res, response.status, response.message);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export {
   addBrandController,
   addUnitController,
@@ -281,4 +358,7 @@ export {
   getTagsController,
   editTagController,
   getuserCartDataForDashboardController,
+  contactUsPageForWebsiteController,
+  getContactUsPageDetailsFromWebsiteController,
+  markAsReadInContactUsController,
 };

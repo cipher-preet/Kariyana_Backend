@@ -1,4 +1,4 @@
-import { IUnitInterface } from "../../types/Dashboardtypes";
+import { IcontactusType, IUnitInterface } from "../../types/Dashboardtypes";
 import {
   addBrandRepository,
   addUnitRepository,
@@ -12,6 +12,9 @@ import {
   getTagsRepository,
   editTagRepository,
   getuserCartDataForDashboardRepository,
+  contactUsPageForWebsiteRepository,
+  getContactUsPageDetailsFromWebsiteRepository,
+  markAsReadInContactUsRepository,
 } from "../Repository/BrandAndUnit.repository";
 //-------------------------------------------------------------------------------
 
@@ -160,6 +163,44 @@ export const getuserCartDataForDashboardServices = async (userId: string) => {
     return response;
   } catch (error) {
     console.log("error in cart section ", error);
+    throw error;
+  }
+};
+
+//-----------------------------------------------------------------------------------
+
+export const contactUsPageForWebsiteServices = async (
+  finalData: IcontactusType,
+) => {
+  try {
+    const response = await contactUsPageForWebsiteRepository(finalData);
+    return response;
+  } catch (error) {
+    console.log("error in WebsiteS section ", error);
+    throw error;
+  }
+};
+
+//-------------------------------------------------------------------------------------
+
+export const getContactUsPageDetailsFromWebsiteServices = async () => {
+  try {
+    const response = await getContactUsPageDetailsFromWebsiteRepository();
+    return response;
+  } catch (error) {
+    console.log("error in WebsiteS section ", error);
+    throw error;
+  }
+};
+
+//--------------------------------------------------------------------------------
+
+export const markAsReadInContactUsServices = async (queryId: string) => {
+  try {
+    const response = await markAsReadInContactUsRepository(queryId);
+    return response;
+  } catch (error) {
+    console.log("error in WebsiteS section ", error);
     throw error;
   }
 };
