@@ -8,6 +8,7 @@ import {
   getCartByUserIdService,
   incAndDecCartQuantityServices,
   getHomePageBannerAndProductServices,
+  getParentcatandTagDataServices,
 } from "../Services/Productapp.services";
 
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
@@ -159,7 +160,6 @@ const getCartByUserIdController = async (
   try {
     const userId = req.params.userId as string;
 
-
     const response = await getCartByUserIdService(userId);
 
     if (!userId) {
@@ -238,6 +238,27 @@ const getHomePageBannerAndProductController = async (
   }
 };
 
+//--------------------------------------------------------------------------------------------
+
+const getParentcatandTagDataController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const response = await getParentcatandTagDataServices();
+    const productsWithSignedUrls = response.map((cat: any) => ({
+      ...cat,
+      image: generateCloudFrontSignedUrl(cat.images),
+    }));
+    return SuccessResponse(res, STATUS_CODE.OK, productsWithSignedUrls);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
 //----------------------------------------------------
 export {
   getProductsBycategoryIdController,
@@ -247,4 +268,5 @@ export {
   getCartByUserIdController,
   incAndDecCartQuantityController,
   getHomePageBannerAndProductController,
+  getParentcatandTagDataController,
 };

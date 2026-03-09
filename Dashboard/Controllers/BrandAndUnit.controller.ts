@@ -330,7 +330,7 @@ const markAsReadInContactUsController = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<any> => {
   try {
     const { queryId } = req.body;
 
@@ -344,6 +344,11 @@ const markAsReadInContactUsController = async (
     next(error);
   }
 };
+
+//--------------------------------------------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------------------------------------
 
 export {
   addBrandController,
@@ -360,5 +365,5 @@ export {
   getuserCartDataForDashboardController,
   contactUsPageForWebsiteController,
   getContactUsPageDetailsFromWebsiteController,
-  markAsReadInContactUsController,
+  markAsReadInContactUsController
 };

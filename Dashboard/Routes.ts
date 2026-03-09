@@ -39,7 +39,7 @@ import {
   getuserCartDataForDashboardController,
   contactUsPageForWebsiteController,
   getContactUsPageDetailsFromWebsiteController,
-  markAsReadInContactUsController
+  markAsReadInContactUsController,
 } from "./Controllers/BrandAndUnit.controller";
 //---------------------------------------------------------------
 import {
@@ -51,7 +51,9 @@ import {
 //-----------------------------------------------------------------------
 import { getBannerAndCarsolsForDashboardController } from "./Controllers/BannerAndCaresols.controller";
 //---------------------------------------------------------------
+import { createTrendsController } from "./Controllers/TrendManagement.controller";
 
+//------------------------------------------------------------------
 import { uploadCategory } from "../Middleware/Multer/CateogryResources";
 import { uploadProduct } from "../Middleware/Multer/ProductResources";
 import { BannerAndCaresolsUploads } from "../Middleware/Multer/BannerAndCaresols";
@@ -245,6 +247,10 @@ router.get(
   "/getcontactuspagedetailsfromwebsite",
   getContactUsPageDetailsFromWebsiteController,
 );
-router.post("/markasreadincontactus", markAsReadInContactUsController)
+router.post("/markasreadincontactus", markAsReadInContactUsController);
+
+//----------------  Trend Management Api --------------------------------------
+router.post("/creteTrends", createTrendsController)
+//-----------------------------------------------------------------------------
 
 export default router;

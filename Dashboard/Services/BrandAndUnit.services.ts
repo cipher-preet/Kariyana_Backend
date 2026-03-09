@@ -204,3 +204,6 @@ export const markAsReadInContactUsServices = async (queryId: string) => {
     throw error;
   }
 };
+
+//----------------------------------------------------------------------------------
+

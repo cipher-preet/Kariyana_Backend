@@ -7,6 +7,7 @@ import {
   getCartByUserIdController,
   incAndDecCartQuantityController,
   getHomePageBannerAndProductController,
+  getParentcatandTagDataController,
 } from "./Controllers/Productapp.controller";
 
 const router = Router();
@@ -36,6 +37,7 @@ router.get(
   getHomePageBannerAndProductController,
 );
 
+router.get("/getParentcatandTagData", getParentcatandTagDataController);
 //--------------------------------------------------------------------------------
 
 export default router;
