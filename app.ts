@@ -6,9 +6,12 @@ import productRoute from "./Dashboard/Routes";
 import appRoutes from "./KariyanaApp/Routes";
 import authRoutes from "./AuthenticationModule/Routes";
 import { sessionConfig } from "./Config/session";
+import dns from "dns"
+
+// Set the DNS server to use for resolving hostnames
+dns.setServers(["1.1.1.1","8.8.8.8"]);
 
 const app = express();
-
 
 app.use(
   cors({
@@ -17,16 +20,15 @@ app.use(
       "http://localhost:3001",
       "http://localhost:5173",
       "http://127.0.0.1:3000",
-      "https://7862b8962a32.ngrok-free.app"
-],
+      "https://7862b8962a32.ngrok-free.app",
+    ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-  })
+  }),
 );
 
 app.options(/.*/, cors());
-
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -51,7 +51,10 @@ import {
 //-----------------------------------------------------------------------
 import { getBannerAndCarsolsForDashboardController } from "./Controllers/BannerAndCaresols.controller";
 //---------------------------------------------------------------
-import { createTrendsController } from "./Controllers/TrendManagement.controller";
+import {
+  createTrendsController,
+  getProductsForTrendBuildingController,
+} from "./Controllers/TrendManagement.controller";
 
 //------------------------------------------------------------------
 import { uploadCategory } from "../Middleware/Multer/CateogryResources";
@@ -250,7 +253,11 @@ router.get(
 router.post("/markasreadincontactus", markAsReadInContactUsController);
 
 //----------------  Trend Management Api --------------------------------------
-router.post("/creteTrends", createTrendsController)
+router.post("/creteTrends", createTrendsController);
+router.get(
+  "/getProductsForTrendBuilding",
+  getProductsForTrendBuildingController,
+);
 //-----------------------------------------------------------------------------
 
 export default router;
