@@ -60,6 +60,8 @@ const getProductsForTrendBuildingController = async (
       nextCursor: response.nextCursor,
       hasNextPage: response.hasNextPage,
 
+
+
       
     });
   } catch (error) {
