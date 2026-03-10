@@ -62,7 +62,10 @@ const getProductsForTrendBuildingController = async (
 
 
 
+
+
       
+
     });
   } catch (error) {
     next(error);
