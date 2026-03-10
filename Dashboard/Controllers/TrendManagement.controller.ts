@@ -59,6 +59,7 @@ const getProductsForTrendBuildingController = async (
       products: response.data,
       nextCursor: response.nextCursor,
       hasNextPage: response.hasNextPage,
+
       
     });
   } catch (error) {
