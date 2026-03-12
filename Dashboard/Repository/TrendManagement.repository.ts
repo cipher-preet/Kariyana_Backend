@@ -101,3 +101,50 @@ export const getProductsForTrendBuildingRepository = async (
     throw error;
   }
 };
+
+//-----------------------------------------------------------------------------------------
+
+export const getTrendsForDashboardRepository = async () => {
+  try {
+    const trends = await TrendModel.find().lean();
+
+    if (!trends.length) {
+      return [];
+    }
+    const finalTrends = trends.map((trend) => ({
+      _id: trend._id,
+      TrendName: trend.TrendName,
+      products: trend.products.map((product) => ({
+        _id: product._id,
+        name: product.name,
+        mrp: product.mrp,
+      })),
+    }));
+    return finalTrends || [];
+  } catch (error) {
+    console.log("Error in getTrendsForDashboardRepository", error);
+    throw error;
+  }
+};
+
+//-----------------------------------------------------------------------------------------
+
+export const deleteTrendsFromDashboardRepository = async (trendId: string) => {
+  try {
+    const response = await TrendModel.findByIdAndDelete(trendId);
+
+    if (!response) {
+      return {
+        status: STATUS_CODE.NOT_FOUND,
+        message: "Trend not found",
+      };
+    }
+    return {
+      status: STATUS_CODE.OK,
+      message: "Trend deleted successfully",
+    };
+  } catch (error) {
+    console.log("Error in deleteTrendsFromDashboardRepository", error);
+    throw error;
+  }
+};

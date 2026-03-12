@@ -3,6 +3,8 @@ import { NextFunction, Request, Response } from "express";
 import {
   createTrendsServices,
   getProductsForTrendBuildingServices,
+  getTrendsForDashboardServices,
+  deleteTrendsFromDashboardServices,
 } from "../Services/TrendManagement.services";
 import { ItrendData } from "../../types/TrendType";
 
@@ -59,17 +61,77 @@ const getProductsForTrendBuildingController = async (
       products: response.data,
       nextCursor: response.nextCursor,
       hasNextPage: response.hasNextPage,
-
-
-
-
-
-      
-
     });
   } catch (error) {
     next(error);
   }
 };
 
-export { createTrendsController, getProductsForTrendBuildingController };
+//-----------------------------------------------------------------------------------------
+
+const getTrendsForDashboardController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const response = await getTrendsForDashboardServices();
+    SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//-----------------------------------------------------------------------------------------
+
+const deleteTrendsFromDashboardController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { trendId } = req.body;
+
+    if (!trendId) {
+      return ErrorResponse(
+        res,
+        STATUS_CODE.BAD_REQUEST,
+        "Trend ID is required",
+      );
+    }
+
+    const response = await deleteTrendsFromDashboardServices(trendId);
+    if (response.status === STATUS_CODE.NOT_FOUND) {
+      return ErrorResponse(res, response.status, response.message);
+    }
+    SuccessResponse(res, response.status, response.message);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//-----------------------------------------------------------------------------------------
+
+const editTrendsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    
+    const { trendId, productId } = req.body;
+
+    // const response = await 
+
+  } catch (error) {
+    next(error);
+  }
+}
+
+export {
+  createTrendsController,
+  getProductsForTrendBuildingController,
+  getTrendsForDashboardController,
+  deleteTrendsFromDashboardController,
+  editTrendsController
+};

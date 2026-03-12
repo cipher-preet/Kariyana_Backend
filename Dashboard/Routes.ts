@@ -54,6 +54,8 @@ import { getBannerAndCarsolsForDashboardController } from "./Controllers/BannerA
 import {
   createTrendsController,
   getProductsForTrendBuildingController,
+  getTrendsForDashboardController,
+  deleteTrendsFromDashboardController,
 } from "./Controllers/TrendManagement.controller";
 
 //------------------------------------------------------------------
@@ -258,6 +260,9 @@ router.get(
   "/getProductsForTrendBuilding",
   getProductsForTrendBuildingController,
 );
+router.get("/getTrendsForDashboard", getTrendsForDashboardController);
+router.delete("/deleteTrends", deleteTrendsFromDashboardController);
+// router.put("/editTrends", editTrendsController);
 //-----------------------------------------------------------------------------
 
 export default router;

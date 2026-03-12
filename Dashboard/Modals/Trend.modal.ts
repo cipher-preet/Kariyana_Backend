@@ -23,7 +23,6 @@ export interface trend extends Document {
 const TrendSchema = new mongoose.Schema<trend>({
     trendDescription: {
         type: String,
-        required: true,
         trim: true
     }, 
     TrendName: {

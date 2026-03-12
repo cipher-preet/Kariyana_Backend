@@ -1,5 +1,5 @@
 export interface ItrendData {
     trendName: string;
-    trendDescription: string;
+    trendDescription?: string;
     productId: string[];
 }
