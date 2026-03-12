@@ -9,6 +9,7 @@ import {
   incAndDecCartQuantityServices,
   getHomePageBannerAndProductServices,
   getParentcatandTagDataServices,
+  getTrendSectionDataForHomePageServices,
 } from "../Services/Productapp.services";
 
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
@@ -257,7 +258,39 @@ const getParentcatandTagDataController = async (
   }
 };
 
+//----------------------------------------------------------------------------------------------
 
+const getTrendSectionDataForHomePageController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { cursor } = req.query;
+    const limit = Math.min(Number(req.query.limit) || 5, 10);
+
+    const response = await getTrendSectionDataForHomePageServices(
+      limit,
+      cursor as string | undefined,
+    );
+
+    const productsWithSignedUrls = response.trends.map((trend: any) => ({
+      ...trend,
+      products: trend.products?.map((product: any) => ({
+        ...product,
+        images: generateCloudFrontSignedUrl(product.images),
+      })),
+    }));
+
+    SuccessResponse(res, STATUS_CODE.OK, {
+      products: productsWithSignedUrls,
+      nextCursor: response.nextCursor,
+      hasNextPage: response.hasNextPage,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 //----------------------------------------------------
 export {
@@ -269,4 +302,5 @@ export {
   incAndDecCartQuantityController,
   getHomePageBannerAndProductController,
   getParentcatandTagDataController,
+  getTrendSectionDataForHomePageController,
 };

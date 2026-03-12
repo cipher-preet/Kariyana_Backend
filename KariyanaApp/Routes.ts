@@ -8,6 +8,7 @@ import {
   incAndDecCartQuantityController,
   getHomePageBannerAndProductController,
   getParentcatandTagDataController,
+  getTrendSectionDataForHomePageController,
 } from "./Controllers/Productapp.controller";
 
 const router = Router();
@@ -38,6 +39,11 @@ router.get(
 );
 
 router.get("/getParentcatandTagData", getParentcatandTagDataController);
+
+router.get(
+  "/getTrendSectionDataForHomePage",
+  getTrendSectionDataForHomePageController,
+);
 //--------------------------------------------------------------------------------
 
 export default router;

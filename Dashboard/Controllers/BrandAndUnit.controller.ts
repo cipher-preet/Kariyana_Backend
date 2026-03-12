@@ -265,6 +265,16 @@ const getuserCartDataForDashboardController = async (
   try {
     const userId = req.query.userId as string;
     const response = await getuserCartDataForDashboardServices(userId);
+
+    if ((response as { status: number }).status === STATUS_CODE.NOT_FOUND) {
+      return ErrorResponse(
+        res,
+        (response as { status: number }).status,
+        (response as { message: string }).message,
+      );
+    }
+
+    SuccessResponse(res, STATUS_CODE.OK, response);
   } catch (error) {
     next(error);
   }
@@ -347,7 +357,6 @@ const markAsReadInContactUsController = async (
 
 //--------------------------------------------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------------------------------------
 
 export {
@@ -365,5 +374,5 @@ export {
   getuserCartDataForDashboardController,
   contactUsPageForWebsiteController,
   getContactUsPageDetailsFromWebsiteController,
-  markAsReadInContactUsController
+  markAsReadInContactUsController,
 };

@@ -1,10 +1,13 @@
-import { ItrendData } from "../../types/TrendType";
+import { IEditTrendData, ItrendData } from "../../types/TrendType";
 import {
   createTrendsRepository,
   getProductsForTrendBuildingRepository,
   getTrendsForDashboardRepository,
   deleteTrendsFromDashboardRepository,
+  editTrendsRepository
 } from "../Repository/TrendManagement.repository";
+
+//----------------------------------------------------------------------------------------
 
 export const createTrendsServices = async (finalData: ItrendData) => {
   try {
@@ -58,3 +61,15 @@ export const deleteTrendsFromDashboardServices = async (trendId: string) => {
     throw error;
   }
 };
+
+//----------------------------------------------------------------------------------------
+
+export const editTrendsServices = async (finalData:IEditTrendData) => {
+  try {
+    const response = await editTrendsRepository(finalData);
+    return response;
+  } catch (error) {
+    console.log("Error in deleteTrendsFromDashboardServices", error);
+    throw error;
+  }
+}

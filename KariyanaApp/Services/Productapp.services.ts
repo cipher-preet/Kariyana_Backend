@@ -8,6 +8,7 @@ import {
   incAndDecCartQuantityRepository,
   getHomePageBannerAndProductRepository,
   getParentcatandTagDataRepository,
+  getTrendSectionDataForHomePageRepository,
 } from "../Repository/Productapp.repository";
 
 //-----------------------------------------------------------------------------
@@ -122,6 +123,24 @@ export const getHomePageBannerAndProductServices = async (
 export const getParentcatandTagDataServices = async () => {
   try {
     const response = await getParentcatandTagDataRepository();
+    return response;
+  } catch (error) {
+    console.log("error in product app services", error);
+    throw error;
+  }
+};
+
+//--------------------------------------------------------------------------------------------------------
+
+export const getTrendSectionDataForHomePageServices = async (
+  limit: number,
+  cursor?: string,
+) => {
+  try {
+    const response = await getTrendSectionDataForHomePageRepository(
+      limit,
+      cursor,
+    );
     return response;
   } catch (error) {
     console.log("error in product app services", error);

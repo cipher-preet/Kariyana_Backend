@@ -1,5 +1,5 @@
 import { STATES, Types } from "mongoose";
-import { ItrendData } from "../../types/TrendType";
+import { IEditTrendData, ItrendData } from "../../types/TrendType";
 import { product, productModel } from "../Modals/Product.modals";
 import { TrendModel } from "../Modals/Trend.modal";
 import { STATUS_CODE } from "../../Api";
@@ -142,6 +142,38 @@ export const deleteTrendsFromDashboardRepository = async (trendId: string) => {
     return {
       status: STATUS_CODE.OK,
       message: "Trend deleted successfully",
+    };
+  } catch (error) {
+    console.log("Error in deleteTrendsFromDashboardRepository", error);
+    throw error;
+  }
+};
+
+//--------------------------------------------------------------------------------------------
+
+export const editTrendsRepository = async (finalData: IEditTrendData) => {
+  try {
+    const findTrend = await TrendModel.updateOne(
+      { _id: finalData.trendId },
+      {
+        $pull: {
+          products: {
+            _id: { $in: finalData.productId },
+          },
+        },
+      },
+    );
+
+    if (!findTrend) {
+      return {
+        status: STATUS_CODE.NOT_FOUND,
+        message: "Error removing products",
+      };
+    }
+
+    return {
+      status: STATUS_CODE.OK,
+      message: "Products removed from trend",
     };
   } catch (error) {
     console.log("Error in deleteTrendsFromDashboardRepository", error);

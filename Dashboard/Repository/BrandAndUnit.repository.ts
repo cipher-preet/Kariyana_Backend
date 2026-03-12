@@ -1,4 +1,4 @@
-import { STATES } from "mongoose";
+import { STATES, Types } from "mongoose";
 import { BrandModel } from "../Modals/Brand.modal";
 import { STATUS_CODE } from "../../Api";
 import { IcontactusType, IUnitInterface } from "../../types/Dashboardtypes";
@@ -6,6 +6,7 @@ import { UnitModal } from "../Modals/Unit.modal";
 import { TagModel } from "../Modals/Tags.modal";
 import { cartSchemaModel } from "../Modals/cart.model";
 import { contactModal } from "../Modals/Contactus.modal";
+import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
 
 //-----------------------------------------------------------------------------------------------------
 
@@ -245,12 +246,66 @@ export const editTagRepository = async (
 };
 
 //---------------------------------------------------------------------------------------
+type PopulatedProduct = {
+  _id: Types.ObjectId;
+  name: string;
+  images: string[];
+  unit: string;
+  quantityPerUnit: string;
+};
+
+type CartItemPopulated = {
+  productId: PopulatedProduct;
+  quantity: number;
+  price: number;
+};
+
+type CartPopulated = {
+  userId: Types.ObjectId;
+  items: CartItemPopulated[];
+  totalItems: number;
+  subtotal: number;
+  lastUpdatedAt: number;
+};
 
 export const getuserCartDataForDashboardRepository = async (userId: string) => {
   try {
-    const cartDetails = await cartSchemaModel.find({ userId });
+    const cartDetails = await cartSchemaModel
+      .findOne({ userId })
+      .populate({
+        path: "items.productId",
+        select: "name images unit quantityPerUnit",
+      })
+      .lean<CartPopulated>();
 
-    console.log("this is cart details ------------->>> ", cartDetails);
+    if (!cartDetails) {
+      return {
+        status: STATUS_CODE.NOT_FOUND,
+        message: "Empty Cart",
+      };
+    }
+
+    const FinalResponse = {
+      userId: cartDetails?.userId,
+      items: cartDetails?.items.map((item) => {
+        const { images, ...productWithoutImages } = item?.productId as any;
+
+        return {
+          productId: productWithoutImages._id,
+          name: productWithoutImages.name,
+          quantity: item.quantity,
+          price: item.price,
+          image: images?.length ? generateCloudFrontSignedUrl(images[0]) : null,
+          unit: productWithoutImages.unit,
+          quantityPerUnit: productWithoutImages.quantityPerUnit,
+        };
+      }),
+      totalItems: cartDetails?.totalItems,
+      subtotal: cartDetails?.subtotal,
+      lastUpdatedAt: cartDetails?.lastUpdatedAt,
+    };
+
+    return FinalResponse;
   } catch (error) {
     console.log("error in cart repository", error);
     throw error;

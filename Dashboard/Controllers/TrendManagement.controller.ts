@@ -5,8 +5,9 @@ import {
   getProductsForTrendBuildingServices,
   getTrendsForDashboardServices,
   deleteTrendsFromDashboardServices,
+  editTrendsServices,
 } from "../Services/TrendManagement.services";
-import { ItrendData } from "../../types/TrendType";
+import { IEditTrendData, ItrendData } from "../../types/TrendType";
 
 const createTrendsController = async (
   req: Request,
@@ -118,20 +119,28 @@ const editTrendsController = async (
   next: NextFunction,
 ) => {
   try {
-    
     const { trendId, productId } = req.body;
 
-    // const response = await 
+    const finalData: IEditTrendData = {
+      trendId,
+      productId,
+    };
 
+    const response = await editTrendsServices(finalData);
+
+    if (response.status === STATUS_CODE.NOT_FOUND) {
+      return ErrorResponse(res, response.status, response.message);
+    }
+    SuccessResponse(res, response.status, response.message);
   } catch (error) {
     next(error);
   }
-}
+};
 
 export {
   createTrendsController,
   getProductsForTrendBuildingController,
   getTrendsForDashboardController,
   deleteTrendsFromDashboardController,
-  editTrendsController
+  editTrendsController,
 };

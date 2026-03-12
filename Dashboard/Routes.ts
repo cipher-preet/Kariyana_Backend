@@ -56,6 +56,7 @@ import {
   getProductsForTrendBuildingController,
   getTrendsForDashboardController,
   deleteTrendsFromDashboardController,
+  editTrendsController,
 } from "./Controllers/TrendManagement.controller";
 
 //------------------------------------------------------------------
@@ -262,7 +263,7 @@ router.get(
 );
 router.get("/getTrendsForDashboard", getTrendsForDashboardController);
 router.delete("/deleteTrends", deleteTrendsFromDashboardController);
-// router.put("/editTrends", editTrendsController);
+router.put("/editTrends", editTrendsController);
 //-----------------------------------------------------------------------------
 
 export default router;

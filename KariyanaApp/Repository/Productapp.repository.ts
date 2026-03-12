@@ -8,6 +8,7 @@ import { Icart } from "../../types/CartTypes";
 import { homePageModel } from "../../Dashboard/Modals/BuilfHomePage.modal";
 import { BannersAndCaroselsModel } from "../../Dashboard/Modals/BannersAndCarosels";
 import { ParentCategoryModel } from "../../Dashboard/Modals/Category.modal";
+import { TrendModel } from "../../Dashboard/Modals/Trend.modal";
 
 interface PaginationParams {
   limit?: number;
@@ -549,6 +550,40 @@ export const getParentcatandTagDataRepository = async () => {
       .limit(10)
       .lean();
     return data ?? [];
+  } catch (error) {
+    console.log("error in product repo ", error);
+    throw error;
+  }
+};
+
+//------------------------------------------------------------------------------------------------------------------
+
+export const getTrendSectionDataForHomePageRepository = async (
+  limit: number,
+  cursor?: string,
+) => {
+  try {
+    const query: any = {};
+
+    if (cursor) {
+      query._id = { $lt: new Types.ObjectId(cursor) };
+    }
+
+    const trends = await TrendModel.find(query)
+      .sort({ _id: -1 })
+      .limit(limit + 1).lean();
+
+    const hasNextPage = trends.length > limit;
+
+    if (hasNextPage) {
+      trends.pop();
+    }
+    return {
+      trends,
+      nextCursor: hasNextPage ? trends[trends.length - 1]._id : null,
+      hasNextPage,
+    };
+
   } catch (error) {
     console.log("error in product repo ", error);
     throw error;
