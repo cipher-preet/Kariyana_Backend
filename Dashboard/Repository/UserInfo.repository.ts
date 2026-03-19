@@ -19,7 +19,7 @@ export const getUserProfileForCardsInDashboardrepository = async (
     }
 
     const userData = await ShopProfileModel.find(query)
-      .select("shopName ownerName address documents")
+      .select("shopName ownerName address documents userId")
       .sort({ _id: -1 })
       .limit(limit + 1)
       .lean();
