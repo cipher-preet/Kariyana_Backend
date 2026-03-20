@@ -10,6 +10,8 @@ import {
   getParentcatandTagDataController,
   getTrendSectionDataForHomePageController,
 } from "./Controllers/Productapp.controller";
+import { createOrderController,razorpayWebhookController } from "./Controllers/payment.controller";
+import express from 'express';
 
 const router = Router();
 
@@ -45,5 +47,10 @@ router.get(
   getTrendSectionDataForHomePageController,
 );
 //--------------------------------------------------------------------------------
+
+//---------------- Order And Payment -----------------------------------
+router.post("/createOrder", createOrderController)
+router.post("/webhook", express.raw({type:"application/json"}), razorpayWebhookController)
+//----------------------------------------------------------------------
 
 export default router;

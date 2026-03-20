@@ -7,7 +7,6 @@ import {
   getPendingApprovalProfileCardsInDashboardServices,
 } from "../Services/UserInfo.services";
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 //-----------------------------------------------------------------------------------------------
 
