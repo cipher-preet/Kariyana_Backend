@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 interface IOrderItem {
   productId: mongoose.Types.ObjectId;
@@ -8,7 +8,8 @@ interface IOrderItem {
 }
 
 export interface IOrder extends mongoose.Document {
-  userId: string;
+  userId: Types.ObjectId;
+  addressId: Types.ObjectId;
   items: IOrderItem[];
   totalAmount: number;
 
@@ -20,7 +21,9 @@ export interface IOrder extends mongoose.Document {
 
 const orderSchema = new mongoose.Schema<IOrder>(
   {
-    userId: { type: String, required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+
+    addressId: { type: mongoose.Schema.Types.ObjectId, ref: "DileveryAddress" },
 
     items: [
       {

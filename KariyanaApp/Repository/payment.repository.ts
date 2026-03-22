@@ -1,11 +1,13 @@
-import { IOrderData } from "../../types/OrderTypes";
+import { Types } from "mongoose";
+import { STATUS_CODE } from "../../Api";
+import { IAddressSchema, IOrderData } from "../../types/OrderTypes";
 import { razorpay } from "../../utils/RazorpayIntance";
+import { DileveryAddress } from "../Modals/Address.modal";
 import { Order } from "../Modals/order.model";
-
 
 export const createOrderRepository = async (finalData: IOrderData) => {
   try {
-    const { items, userId } = finalData;
+    const { items, userId, addressId } = finalData;
 
     let totalAmount = 0;
 
@@ -29,6 +31,7 @@ export const createOrderRepository = async (finalData: IOrderData) => {
 
     const order = await Order.create({
       userId,
+      addressId,
       items: formattedItems,
       totalAmount,
       razorpayOrderId: razorpayOrder.id,
@@ -45,6 +48,42 @@ export const createOrderRepository = async (finalData: IOrderData) => {
   }
 };
 
-
 //-----------------------------------------------------------------------------------------------
 
+export const addDeliveryAddressRepository = async (
+  finalData: IAddressSchema,
+) => {
+  try {
+    const response = DileveryAddress.create(finalData);
+
+    if (!response) {
+      return {
+        status: STATUS_CODE.BAD_REQUEST,
+        message: "Error while Adding delevery Address",
+      };
+    }
+
+    return {
+      status: STATUS_CODE.OK,
+      message: "Dilevery Address Added !",
+    };
+  } catch (error) {
+    console.log("error in payment Repository", error);
+    throw error;
+  }
+};
+
+//--------------------------------------------------------------------------------------------------
+
+export const getUserDileveryAddressRepository = async (userId: string) => {
+  try {
+    const response = await DileveryAddress.find({
+      userId: new Types.ObjectId(userId),
+    });
+
+    return response ?? [];
+  } catch (error) {
+    console.log("error in payment Repository", error);
+    throw error;
+  }
+};

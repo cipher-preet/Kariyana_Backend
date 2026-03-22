@@ -1,3 +1,4 @@
+import express from "express";
 import { Router } from "express";
 import {
   getProductsBycategoryIdController,
@@ -10,8 +11,12 @@ import {
   getParentcatandTagDataController,
   getTrendSectionDataForHomePageController,
 } from "./Controllers/Productapp.controller";
-import { createOrderController,razorpayWebhookController } from "./Controllers/payment.controller";
-import express from 'express';
+import {
+  createOrderController,
+  razorpayWebhookController,
+  addDeliveryAddressController,
+  getUserDileveryAddressController,
+} from "./Controllers/payment.controller";
 
 const router = Router();
 
@@ -49,8 +54,15 @@ router.get(
 //--------------------------------------------------------------------------------
 
 //---------------- Order And Payment -----------------------------------
-router.post("/createOrder", createOrderController)
-router.post("/webhook", express.raw({type:"application/json"}), razorpayWebhookController)
+router.post("/createOrder", createOrderController);
+router.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  razorpayWebhookController
+);
+
+router.post("/addDeliveryAddress", addDeliveryAddressController);
+router.get("/getUserDileveryAddress", getUserDileveryAddressController);
 //----------------------------------------------------------------------
 
 export default router;

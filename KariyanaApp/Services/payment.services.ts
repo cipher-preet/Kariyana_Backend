@@ -1,5 +1,9 @@
-import { IOrderData } from "../../types/OrderTypes";
-import { createOrderRepository } from "../Repository/payment.repository";
+import { IAddressSchema, IOrderData } from "../../types/OrderTypes";
+import {
+  createOrderRepository,
+  addDeliveryAddressRepository,
+  getUserDileveryAddressRepository,
+} from "../Repository/payment.repository";
 
 export const createOrderServices = async (finalData: IOrderData) => {
   try {
@@ -13,3 +17,24 @@ export const createOrderServices = async (finalData: IOrderData) => {
 
 //------------------------------------------------------------------------------------------------
 
+export const addDeliveryAddressServices = async (finalData: IAddressSchema) => {
+  try {
+    const response = await addDeliveryAddressRepository(finalData);
+    return response;
+  } catch (error) {
+    console.log("error in payment services", error);
+    throw error;
+  }
+};
+
+//-----------------------------------------------------------------------------------------------
+
+export const getUserDileveryAddressServices = async (userId: string) => {
+  try {
+    const response = await getUserDileveryAddressRepository(userId);
+    return response;
+  } catch (error) {
+    console.log("error in payment services", error);
+    throw error;
+  }
+};
