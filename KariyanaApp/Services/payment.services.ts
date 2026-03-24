@@ -3,6 +3,7 @@ import {
   createOrderRepository,
   addDeliveryAddressRepository,
   getUserDileveryAddressRepository,
+  getOrderStatusRepository
 } from "../Repository/payment.repository";
 
 export const createOrderServices = async (finalData: IOrderData) => {
@@ -38,3 +39,15 @@ export const getUserDileveryAddressServices = async (userId: string) => {
     throw error;
   }
 };
+
+//-----------------------------------------------------------------------------------------------
+
+export const getOrderStatusServices = async (orderId:string) => {
+  try {
+    const response = await getOrderStatusRepository(orderId);
+    return response;
+  } catch (error) {
+    console.log("error in payment services", error);
+    throw error;
+  }
+}

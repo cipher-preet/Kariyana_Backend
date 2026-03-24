@@ -5,6 +5,7 @@ import {
   createOrderServices,
   addDeliveryAddressServices,
   getUserDileveryAddressServices,
+  getOrderStatusServices,
 } from "../Services/payment.services";
 import { IAddressSchema, IOrderData } from "../../types/OrderTypes";
 import { Order } from "../Modals/order.model";
@@ -63,30 +64,18 @@ const razorpayWebhookController = async (
   res: Response,
   next: NextFunction,
 ): Promise<any> => {
-
   try {
-    console.log(req.body);
+    const body = req.body;
 
     const secret = process.env.RAZORPAY_WEBHOOK_SECRET!;
 
-    console.log(secret);
-
-    console.log(
-      "this is secret ker ---------->>",
-      JSON.stringify(req.body, null, 2),
-    );
-
     const signature = req.headers["x-razorpay-signature"] as string;
-
-    console.log("this is secret ker ---------->>", signature);
-
     const expectedSignature = crypto
       .createHmac("sha256", secret)
-      .update(req.body.toString())
+      .update(body)
       .digest("hex");
 
     if (signature !== expectedSignature) {
-      console.log("go inside");
       return ErrorResponse(res, STATUS_CODE.BAD_REQUEST, "Invalid signature");
     }
 
@@ -95,10 +84,6 @@ const razorpayWebhookController = async (
     const payment = event.payload.payment.entity;
 
     const orderId = payment.order_id;
-
-    console.log("orderId", orderId);
-    console.log("payment", payment);
-    console.log("event", event);
 
     if (event.event === "payment.captured") {
       await Order.findOneAndUpdate(
@@ -184,10 +169,32 @@ const getUserDileveryAddressController = async (
   }
 };
 
+//------------------------------------------------------------------------------------------------------
+
+const getOrderStatusController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
+  try {
+    const orderId = req.query.orderId as string;
+
+    const response = await getOrderStatusServices(orderId);
+
+    if (response.status === STATUS_CODE.NOT_FOUND) {
+      return ErrorResponse(res, response.status, response.message);
+    }
+
+    SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
 //---------------------------------------------
 export {
   createOrderController,
   razorpayWebhookController,
   addDeliveryAddressController,
   getUserDileveryAddressController,
+  getOrderStatusController,
 };

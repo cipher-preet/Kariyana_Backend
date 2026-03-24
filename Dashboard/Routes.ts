@@ -266,4 +266,8 @@ router.delete("/deleteTrends", deleteTrendsFromDashboardController);
 router.put("/editTrends", editTrendsController);
 //-----------------------------------------------------------------------------
 
+//--------------- order managements api's --------------------------------------
+
+//------------------------------------------------------------------------------
+
 export default router;

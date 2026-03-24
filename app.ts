@@ -6,10 +6,11 @@ import productRoute from "./Dashboard/Routes";
 import appRoutes from "./KariyanaApp/Routes";
 import authRoutes from "./AuthenticationModule/Routes";
 import { sessionConfig } from "./Config/session";
-import dns from "dns"
+import dns from "dns";
+import { razorpayWebhookController } from "./KariyanaApp/Controllers/payment.controller";
 
 // Set the DNS server to use for resolving hostnames
-dns.setServers(["1.1.1.1","8.8.8.8"]);
+dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 const app = express();
 
@@ -29,6 +30,12 @@ app.use(
 );
 
 app.options(/.*/, cors());
+
+app.post(
+  "/api/v1/app/webhook",
+  express.raw({ type: "application/json" }),
+  razorpayWebhookController,
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

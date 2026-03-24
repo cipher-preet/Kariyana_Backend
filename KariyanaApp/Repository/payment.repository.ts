@@ -87,3 +87,30 @@ export const getUserDileveryAddressRepository = async (userId: string) => {
     throw error;
   }
 };
+
+//--------------------------------------------------------------------------------------------------
+
+export const getOrderStatusRepository = async (orderId: string) => {
+  try {
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      return {
+        status: STATUS_CODE.NOT_FOUND,
+        message: "Order not found",
+      };
+    }
+
+    return {
+      _id: order._id,
+      status: order.status,
+      totalAmount: order.totalAmount,
+      razorpayOrderId: order.razorpayOrderId,
+      razorpayPaymentId: order.razorpayPaymentId,
+    };
+
+  } catch (error) {
+    console.log("error in payment Repository", error);
+    throw error;
+  }
+};

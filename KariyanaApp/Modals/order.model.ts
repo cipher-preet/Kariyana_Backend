@@ -15,6 +15,14 @@ export interface IOrder extends mongoose.Document {
 
   status: "created" | "pending" | "paid" | "failed";
 
+  orderStatus:
+    | "Recieved"
+    | "packing"
+    | "packed"
+    | "outForDelivery"
+    | "Delivered"
+    | "cancelled";
+
   razorpayOrderId: string;
   razorpayPaymentId?: string;
 }
@@ -39,6 +47,18 @@ const orderSchema = new mongoose.Schema<IOrder>(
     status: {
       type: String,
       default: "created",
+    },
+
+    orderStatus: {
+      type: String,
+      enum: [
+        "Recieved",
+        "packing",
+        "packed",
+        "outForDelivery",
+        "Delivered",
+        "cancelled",
+      ],
     },
 
     razorpayOrderId: String,
