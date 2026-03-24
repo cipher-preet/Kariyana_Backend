@@ -60,6 +60,12 @@ import {
 } from "./Controllers/TrendManagement.controller";
 
 //------------------------------------------------------------------
+import {
+  getUpcomingOrderDetailsforDashboardController,
+  updateOrderStatusInOrderPageController,
+} from "./Controllers/OrderManagement.controller";
+
+//----------------------------------------------------------------
 import { uploadCategory } from "../Middleware/Multer/CateogryResources";
 import { uploadProduct } from "../Middleware/Multer/ProductResources";
 import { BannerAndCaresolsUploads } from "../Middleware/Multer/BannerAndCaresols";
@@ -267,7 +273,14 @@ router.put("/editTrends", editTrendsController);
 //-----------------------------------------------------------------------------
 
 //--------------- order managements api's --------------------------------------
-
+router.get(
+  "/getUpcomingOrderDetailsforDashboard",
+  getUpcomingOrderDetailsforDashboardController,
+);
+router.post(
+  "/updateOrderStatusInOrderPage",
+  updateOrderStatusInOrderPageController,
+);
 //------------------------------------------------------------------------------
 
 export default router;
