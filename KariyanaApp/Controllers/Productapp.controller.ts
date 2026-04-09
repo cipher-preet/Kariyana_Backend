@@ -10,11 +10,14 @@ import {
   getHomePageBannerAndProductServices,
   getParentcatandTagDataServices,
   getTrendSectionDataForHomePageServices,
+  getRandomProductsForCartPageServices,
+  searchProductService,
 } from "../Services/Productapp.services";
 
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
 import { Icart } from "../../types/CartTypes";
 import mongoose from "mongoose";
+import { SearchQuery } from "../../types/Search";
 //----------------------------------------------------------------------------------
 const getProductsBycategoryIdController = async (
   req: Request,
@@ -35,9 +38,7 @@ const getProductsBycategoryIdController = async (
 
     const productsWithSignedUrls = response.products.map((product: any) => ({
       ...product,
-      images: product.images.map((key: string) =>
-        generateCloudFrontSignedUrl(key),
-      ),
+      images: generateCloudFrontSignedUrl(product.images[0]),
     }));
 
     SuccessResponse(res, STATUS_CODE.OK, {
@@ -292,6 +293,71 @@ const getTrendSectionDataForHomePageController = async (
   }
 };
 
+//--------------------------------------------------------------------------------------------------------------
+
+const getRandomProductsForCartPageController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
+  try {
+    const response = await getRandomProductsForCartPageServices();
+
+    const productsWithSignedUrls = response.map((product: any) => ({
+      ...product,
+      images: generateCloudFrontSignedUrl(product.images[0]),
+    }));
+
+    SuccessResponse(res, STATUS_CODE.OK, {
+      products: productsWithSignedUrls,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+//-------------------------------------------------------------------------------------------------------------------------------------
+
+const searchProductController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
+  try {
+    const {
+      q,
+      page,
+      limit,
+      minPrice,
+      maxPrice,
+      category,
+      brand,
+      sort = "relevance",
+    } = req.query;
+
+    const pageNumber = Number(page) || 1;
+    const limitNumber = Number(limit) || 10;
+
+    const finalQuery: SearchQuery = {
+      q: q ? String(q) : undefined,
+      page: pageNumber,
+      limit: limitNumber,
+      minPrice: minPrice ? Number(minPrice) : undefined,
+      maxPrice: maxPrice ? Number(maxPrice) : undefined,
+      category: category ? String(category) : undefined,
+      brand: brand ? String(brand) : undefined,
+      sort: sort ? String(sort) : "relevance",
+    };
+
+    const response = await searchProductService(finalQuery);
+
+    return SuccessResponse(res, STATUS_CODE.OK, response);
+    
+  } catch (error) {
+    next(error);
+  }
+};
+
 //----------------------------------------------------
 export {
   getProductsBycategoryIdController,
@@ -303,4 +369,6 @@ export {
   getHomePageBannerAndProductController,
   getParentcatandTagDataController,
   getTrendSectionDataForHomePageController,
+  getRandomProductsForCartPageController,
+  searchProductController,
 };

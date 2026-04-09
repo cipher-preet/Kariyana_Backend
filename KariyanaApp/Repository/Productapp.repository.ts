@@ -9,6 +9,7 @@ import { homePageModel } from "../../Dashboard/Modals/BuilfHomePage.modal";
 import { BannersAndCaroselsModel } from "../../Dashboard/Modals/BannersAndCarosels";
 import { ParentCategoryModel } from "../../Dashboard/Modals/Category.modal";
 import { TrendModel } from "../../Dashboard/Modals/Trend.modal";
+import { SearchQuery } from "../../types/Search";
 
 interface PaginationParams {
   limit?: number;
@@ -571,7 +572,8 @@ export const getTrendSectionDataForHomePageRepository = async (
 
     const trends = await TrendModel.find(query)
       .sort({ _id: -1 })
-      .limit(limit + 1).lean();
+      .limit(limit + 1)
+      .lean();
 
     const hasNextPage = trends.length > limit;
 
@@ -583,9 +585,114 @@ export const getTrendSectionDataForHomePageRepository = async (
       nextCursor: hasNextPage ? trends[trends.length - 1]._id : null,
       hasNextPage,
     };
-
   } catch (error) {
     console.log("error in product repo ", error);
+    throw error;
+  }
+};
+
+//----------------------------------------------------------------------------------------------------------
+export const getRandomProductsForCartPageRepository = async () => {
+  try {
+    const response = await productModel.aggregate([
+      { $match: { isActive: true } },
+      { $sample: { size: 9 } },
+      {
+        $project: {
+          name: 1,
+          images: 1,
+          mrp: 1,
+          sellingPrice: 1,
+          reviewCount: 1,
+          unit: 1,
+          quantityPerUnit: 1,
+          rating: 1,
+          marketPrice: 1,
+          sku: 1,
+          subcategoryId: 1,
+        },
+      },
+    ]);
+    return response ?? [];
+  } catch (error) {
+    console.log("error in product repo ", error);
+    throw error;
+  }
+};
+
+//----------------------------------------------------------------------------------------------------------
+
+export const searchProductRepository = async (query: SearchQuery) => {
+  try {
+    const {
+      q,
+      page = 1,
+      limit = 10,
+      minPrice,
+      maxPrice,
+      category,
+      brand,
+      sort = "relevance",
+    } = query;
+
+    const skip = (page - 1) * limit;
+
+    const filter: Record<string, any> = { isActive: true };
+
+    // 🔍 SEARCH (FAST)
+    if (q) {
+      const regex = new RegExp(`^${q}`, "i");
+
+      filter.$or = [
+        { name: regex },
+        { tag: regex },
+      ];
+    }
+
+    // 💰 PRICE
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      filter.sellingPrice = {};
+      if (minPrice !== undefined) filter.sellingPrice.$gte = minPrice;
+      if (maxPrice !== undefined) filter.sellingPrice.$lte = maxPrice;
+    }
+
+    // 🏷 FILTERS
+    if (category) filter.categoryId = category;
+    if (brand) filter.brandId = brand;
+
+    // 🔀 SORT
+    const sortOption: Record<string, any> = {};
+
+    if (sort === "price_low") sortOption.sellingPrice = 1;
+    if (sort === "price_high") sortOption.sellingPrice = -1;
+    if (sort === "newest") sortOption.createdAt = -1;
+
+    const products = await productModel
+      .find(filter)
+      .select({
+        name: 1,
+        sellingPrice: 1,
+        categoryId: 1,
+        brandId: 1,
+        images: 1,
+        rating: 1,
+      })
+      .sort(sortOption)
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    const total = await productModel.countDocuments(filter);
+
+    return {
+      success: true,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+      products,
+    };
+  } catch (error) {
+    console.log("error in search repo", error);
     throw error;
   }
 };

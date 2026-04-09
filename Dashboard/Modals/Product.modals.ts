@@ -114,4 +114,9 @@ const ProductSchema = new mongoose.Schema<product>(
   }
 );
 
+ProductSchema.index({ name: "text", tag: "text" });
+ProductSchema.index({ isActive: 1, categoryId: 1, brandId: 1 });
+ProductSchema.index({ isActive: 1, sellingPrice: 1 });
+ProductSchema.index({ isActive: 1, createdAt: -1 });
+
 export const productModel = mongoose.model<product>("product", ProductSchema);

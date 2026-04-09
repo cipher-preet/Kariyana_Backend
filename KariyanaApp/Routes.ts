@@ -1,4 +1,3 @@
-import express from "express";
 import { Router } from "express";
 import {
   getProductsBycategoryIdController,
@@ -10,6 +9,8 @@ import {
   getHomePageBannerAndProductController,
   getParentcatandTagDataController,
   getTrendSectionDataForHomePageController,
+  getRandomProductsForCartPageController,
+  searchProductController,
 } from "./Controllers/Productapp.controller";
 import {
   createOrderController,
@@ -39,6 +40,8 @@ router.get("/getCartByUserId/:userId", getCartByUserIdController);
 
 router.post("/incAndDecCartQuantity", incAndDecCartQuantityController);
 
+router.get("/getRandomProductsForCartPage", getRandomProductsForCartPageController);
+
 //---------------------App Home Page Routes --------------------------------------
 
 router.get(
@@ -61,5 +64,8 @@ router.get("/getOrderStatus", getOrderStatusController)
 router.post("/addDeliveryAddress", addDeliveryAddressController);
 router.get("/getUserDileveryAddress", getUserDileveryAddressController);
 //----------------------------------------------------------------------
+
+router.get("/searchProduct", searchProductController);
+
 
 export default router;

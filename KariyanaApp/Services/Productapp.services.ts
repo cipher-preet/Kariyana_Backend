@@ -1,4 +1,5 @@
 import { Icart } from "../../types/CartTypes";
+import { SearchQuery } from "../../types/Search";
 import {
   getProductsBycategoryIdRepository,
   getAllChildCategoriesRepository,
@@ -9,6 +10,8 @@ import {
   getHomePageBannerAndProductRepository,
   getParentcatandTagDataRepository,
   getTrendSectionDataForHomePageRepository,
+  getRandomProductsForCartPageRepository,
+  searchProductRepository,
 } from "../Repository/Productapp.repository";
 
 //-----------------------------------------------------------------------------
@@ -147,3 +150,27 @@ export const getTrendSectionDataForHomePageServices = async (
     throw error;
   }
 };
+
+//----------------------------------------------------------------------------------------------------------
+
+export const getRandomProductsForCartPageServices = async () => {
+  try {
+    const response = await getRandomProductsForCartPageRepository();
+    return response;
+  } catch (error) {
+    console.log("error in product app services", error);
+    throw error;
+  }
+};
+
+//----------------------------------------------------------------------------------------------------------
+
+export const searchProductService = async (query: SearchQuery) => {
+  try {
+    const response = await searchProductRepository(query);
+    return response;
+  } catch (error) {
+    console.log("error in search services", error);
+    throw error;
+  }
+}
