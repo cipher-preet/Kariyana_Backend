@@ -351,8 +351,14 @@ const searchProductController = async (
 
     const response = await searchProductService(finalQuery);
 
-    return SuccessResponse(res, STATUS_CODE.OK, response);
-    
+    console.log("search response in controller", response);
+
+    const productsWithSignedUrls = response.products.map((product: any) => ({
+      ...product,
+      images: generateCloudFrontSignedUrl(product.images[0]),
+    }));
+
+    return SuccessResponse(res, STATUS_CODE.OK, productsWithSignedUrls);
   } catch (error) {
     next(error);
   }

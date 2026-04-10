@@ -639,28 +639,21 @@ export const searchProductRepository = async (query: SearchQuery) => {
 
     const filter: Record<string, any> = { isActive: true };
 
-    // 🔍 SEARCH (FAST)
     if (q) {
       const regex = new RegExp(`^${q}`, "i");
 
-      filter.$or = [
-        { name: regex },
-        { tag: regex },
-      ];
+      filter.$or = [{ name: regex }, { tag: regex }];
     }
 
-    // 💰 PRICE
     if (minPrice !== undefined || maxPrice !== undefined) {
       filter.sellingPrice = {};
       if (minPrice !== undefined) filter.sellingPrice.$gte = minPrice;
       if (maxPrice !== undefined) filter.sellingPrice.$lte = maxPrice;
     }
 
-    // 🏷 FILTERS
     if (category) filter.categoryId = category;
     if (brand) filter.brandId = brand;
 
-    // 🔀 SORT
     const sortOption: Record<string, any> = {};
 
     if (sort === "price_low") sortOption.sellingPrice = 1;
