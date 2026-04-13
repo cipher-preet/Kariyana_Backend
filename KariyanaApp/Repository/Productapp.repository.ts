@@ -10,6 +10,7 @@ import { BannersAndCaroselsModel } from "../../Dashboard/Modals/BannersAndCarose
 import { ParentCategoryModel } from "../../Dashboard/Modals/Category.modal";
 import { TrendModel } from "../../Dashboard/Modals/Trend.modal";
 import { SearchQuery } from "../../types/Search";
+import { Order } from "../Modals/order.model";
 
 interface PaginationParams {
   limit?: number;
@@ -57,6 +58,41 @@ export const getProductsBycategoryIdRepository = async (
       nextCursor: hasNextPage ? products[products.length - 1]._id : null,
       hasNextPage,
     };
+  } catch (error) {
+    console.log("error in product repo ", error);
+    throw error;
+  }
+};
+
+//--------------------------------------------------------------------------------------------
+
+export const getProductsbyProductIdRepository = async (productId: string) => {
+  try {
+    const product = await productModel
+      .findOne({ _id: new Types.ObjectId(productId), isActive: true })
+      .select({
+        name: 1,
+        mrp: 1,
+        sellingPrice: 1,
+        unit: 1,
+        quantityPerUnit: 1,
+        reviewCount: 1,
+        rating: 1,
+        marketPrice: 1,
+        sku: 1,
+        subcategoryId: 1,
+        brandId: 1,
+      })
+      .lean();
+
+    if (!product) {
+      return {
+        status: STATUS_CODE.NOT_FOUND,
+        message: "Product not Found",
+      };
+    }
+
+    return product;
   } catch (error) {
     console.log("error in product repo ", error);
     throw error;
@@ -664,7 +700,7 @@ export const searchProductRepository = async (query: SearchQuery) => {
       .find(filter)
       .select({
         name: 1,
-        sellingPrice: 1,
+        mrp: 1,
         categoryId: 1,
         brandId: 1,
         images: 1,
@@ -684,6 +720,57 @@ export const searchProductRepository = async (query: SearchQuery) => {
       totalPages: Math.ceil(total / limit),
       products,
     };
+  } catch (error) {
+    console.log("error in search repo", error);
+    throw error;
+  }
+};
+
+//----------------------------------------------------------------------------------------------------------
+
+export const getOrderDetailByuserIdRepository = async (userId: string) => {
+  try {
+    const orderDetails = await Order.find({ userId })
+      .populate({
+        path: "items.productId",
+        select: "images",
+      })
+      .sort({ createdAt: -1 });
+
+    console.log("order details in repo", JSON.stringify(orderDetails, null, 2));
+
+    const formattedOrders = orderDetails.map((order: any) => ({
+      id: order._id,
+
+      status: order.orderStatus || order.status,
+
+      totalAmount: order.totalAmount,
+
+      canReview: order.orderStatus === "Delivered",
+
+      items: order.items.map((item: any) => ({
+        title: item.name,
+
+        subtitle:
+          order.orderStatus === "Delivered"
+            ? `Delivered on ${new Date(order.updatedAt).toDateString()}`
+            : order.orderStatus === "Recieved"
+              ? "Order placed successfully"
+              : order.orderStatus === "packed"
+                ? "Order packed"
+                : order.orderStatus === "outForDelivery"
+                  ? "Out for delivery"
+                  : order.orderStatus === "packing"
+                    ? "Order in progress"
+                    : "",
+
+        image:
+          generateCloudFrontSignedUrl(item.productId?.images[0]) ||
+          "https://via.placeholder.com/150",
+      })),
+    }));
+
+    return formattedOrders ?? [];
   } catch (error) {
     console.log("error in search repo", error);
     throw error;

@@ -9,10 +9,14 @@ import { sessionConfig } from "./Config/session";
 import dns from "dns";
 import { razorpayWebhookController } from "./KariyanaApp/Controllers/payment.controller";
 
+import morgan from "morgan";
+
 // Set the DNS server to use for resolving hostnames
-dns.setServers(["1.1.1.1", "8.8.8.8"]);
+// dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 const app = express();
+app.use(morgan("dev"));
+
 
 app.use(
   cors({

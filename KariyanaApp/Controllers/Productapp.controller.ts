@@ -12,6 +12,8 @@ import {
   getTrendSectionDataForHomePageServices,
   getRandomProductsForCartPageServices,
   searchProductService,
+  getOrderDetailByuserIdServices,
+  getProductsbyProductIdService,
 } from "../Services/Productapp.services";
 
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
@@ -46,6 +48,34 @@ const getProductsBycategoryIdController = async (
       nextCursor: response.nextCursor,
       hasNextPage: response.hasNextPage,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+//--------------------------------------------------------------------------------------------]
+
+const getProductsbyProductIdController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
+  try {
+    const productId = req.params.productId as string;
+
+    console.log("productId in controller", productId);
+
+    const response = await getProductsbyProductIdService(productId);
+
+    if ((response as { status: number }).status === STATUS_CODE.NOT_FOUND) {
+      return ErrorResponse(
+        res,
+        (response as { status: number }).status,
+        (response as { message: string }).message,
+      );
+    }
+
+    return SuccessResponse(res, STATUS_CODE.OK, response);
   } catch (error) {
     next(error);
   }
@@ -351,7 +381,6 @@ const searchProductController = async (
 
     const response = await searchProductService(finalQuery);
 
-    console.log("search response in controller", response);
 
     const productsWithSignedUrls = response.products.map((product: any) => ({
       ...product,
@@ -359,6 +388,31 @@ const searchProductController = async (
     }));
 
     return SuccessResponse(res, STATUS_CODE.OK, productsWithSignedUrls);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//-------------------------------------------------------------------------------------------------------------------------------------
+
+const getOrderDetailByuserIdController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
+  try {
+    const userId = req.query.userId as string;
+    const response = await getOrderDetailByuserIdServices(userId);
+
+    if (!userId) {
+      return ErrorResponse(
+        res,
+        STATUS_CODE.BAD_REQUEST,
+        "Invalid request parameters",
+      );
+    }
+
+    return SuccessResponse(res, STATUS_CODE.OK, response);
   } catch (error) {
     next(error);
   }
@@ -377,4 +431,6 @@ export {
   getTrendSectionDataForHomePageController,
   getRandomProductsForCartPageController,
   searchProductController,
+  getOrderDetailByuserIdController,
+  getProductsbyProductIdController,
 };

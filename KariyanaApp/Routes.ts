@@ -11,13 +11,14 @@ import {
   getTrendSectionDataForHomePageController,
   getRandomProductsForCartPageController,
   searchProductController,
+  getOrderDetailByuserIdController,
+  getProductsbyProductIdController,
 } from "./Controllers/Productapp.controller";
 import {
   createOrderController,
-  razorpayWebhookController,
   addDeliveryAddressController,
   getUserDileveryAddressController,
-  getOrderStatusController
+  getOrderStatusController,
 } from "./Controllers/payment.controller";
 
 const router = Router();
@@ -25,6 +26,11 @@ const router = Router();
 router.get(
   "/getProductsbycategoryid/:categoryId",
   getProductsBycategoryIdController,
+);
+
+router.get(
+  "/getProductsbyProductId/:productId",
+  getProductsbyProductIdController,
 );
 
 router.get("/getAllChildCategories", getAllChildCategoriesController);
@@ -40,7 +46,10 @@ router.get("/getCartByUserId/:userId", getCartByUserIdController);
 
 router.post("/incAndDecCartQuantity", incAndDecCartQuantityController);
 
-router.get("/getRandomProductsForCartPage", getRandomProductsForCartPageController);
+router.get(
+  "/getRandomProductsForCartPage",
+  getRandomProductsForCartPageController,
+);
 
 //---------------------App Home Page Routes --------------------------------------
 
@@ -59,13 +68,13 @@ router.get(
 
 //---------------- Order And Payment -----------------------------------
 router.post("/createOrder", createOrderController);
-router.get("/getOrderStatus", getOrderStatusController)
+router.get("/getOrderStatus", getOrderStatusController);
 
 router.post("/addDeliveryAddress", addDeliveryAddressController);
 router.get("/getUserDileveryAddress", getUserDileveryAddressController);
 //----------------------------------------------------------------------
-
 router.get("/searchProduct", searchProductController);
 
+router.get("/getOrderDetailByuserId", getOrderDetailByuserIdController);
 
 export default router;

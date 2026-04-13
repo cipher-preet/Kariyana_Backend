@@ -12,6 +12,8 @@ import {
   getTrendSectionDataForHomePageRepository,
   getRandomProductsForCartPageRepository,
   searchProductRepository,
+  getOrderDetailByuserIdRepository,
+  getProductsbyProductIdRepository,
 } from "../Repository/Productapp.repository";
 
 //-----------------------------------------------------------------------------
@@ -26,6 +28,18 @@ export const getProductsBycategoryIdService = async (
       limit,
       cursor,
     });
+    return response;
+  } catch (error) {
+    console.log("error in product app services", error);
+    throw error;
+  }
+};
+
+//-------------------------------------------------------------------------------
+
+export const getProductsbyProductIdService = async (productId: string) => {
+  try {
+    const response = await getProductsbyProductIdRepository(productId);
     return response;
   } catch (error) {
     console.log("error in product app services", error);
@@ -173,4 +187,16 @@ export const searchProductService = async (query: SearchQuery) => {
     console.log("error in search services", error);
     throw error;
   }
-}
+};
+
+//----------------------------------------------------------------------------------------------------------
+
+export const getOrderDetailByuserIdServices = async (userId: string) => {
+  try {
+    const response = await getOrderDetailByuserIdRepository(userId);
+    return response;
+  } catch (error) {
+    console.log("error in search services", error);
+    throw error;
+  }
+};
