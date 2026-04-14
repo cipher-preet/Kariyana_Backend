@@ -12,7 +12,7 @@ import { razorpayWebhookController } from "./KariyanaApp/Controllers/payment.con
 import morgan from "morgan";
 
 // Set the DNS server to use for resolving hostnames
-// dns.setServers(["1.1.1.1", "8.8.8.8"]);
+dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 const app = express();
 app.use(morgan("dev"));

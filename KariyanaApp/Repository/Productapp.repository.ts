@@ -11,6 +11,7 @@ import { ParentCategoryModel } from "../../Dashboard/Modals/Category.modal";
 import { TrendModel } from "../../Dashboard/Modals/Trend.modal";
 import { SearchQuery } from "../../types/Search";
 import { Order } from "../Modals/order.model";
+import { stat } from "node:fs";
 
 interface PaginationParams {
   limit?: number;
@@ -728,51 +729,130 @@ export const searchProductRepository = async (query: SearchQuery) => {
 
 //----------------------------------------------------------------------------------------------------------
 
-export const getOrderDetailByuserIdRepository = async (userId: string) => {
+export const getOrderDetailByuserIdRepository = async (
+  userId: string,
+  cursor?: string,
+  limit: number = 4,
+) => {
   try {
-    const orderDetails = await Order.find({ userId })
+    let filter: any = { userId };
+
+    if (cursor) {
+      filter._id = { $lt: new Types.ObjectId(cursor) };
+    }
+
+    const orders = await Order.find(filter)
       .populate({
         path: "items.productId",
         select: "images",
       })
-      .sort({ createdAt: -1 });
+      .sort({ _id: -1 })
+      .limit(limit + 1);
 
-    console.log("order details in repo", JSON.stringify(orderDetails, null, 2));
+    const hasMore = orders.length > limit;
 
-    const formattedOrders = orderDetails.map((order: any) => ({
-      id: order._id,
+    if (hasMore) orders.pop();
 
-      status: order.orderStatus || order.status,
+    const statusMap: any = {
+      Delivered: (date: Date) =>
+        `Delivered on ${new Date(date).toDateString()}`,
+      Recieved: () => "Order placed successfully",
+      packed: () => "Order packed",
+      outForDelivery: () => "Out for delivery",
+      packing: () => "Order in progress",
+    };
 
-      totalAmount: order.totalAmount,
+    const formattedOrders = orders.map((order: any) => {
+      const firstItem = order.items?.[0];
 
-      canReview: order.orderStatus === "Delivered",
-
-      items: order.items.map((item: any) => ({
-        title: item.name,
-
-        subtitle:
-          order.orderStatus === "Delivered"
-            ? `Delivered on ${new Date(order.updatedAt).toDateString()}`
-            : order.orderStatus === "Recieved"
-              ? "Order placed successfully"
-              : order.orderStatus === "packed"
-                ? "Order packed"
-                : order.orderStatus === "outForDelivery"
-                  ? "Out for delivery"
-                  : order.orderStatus === "packing"
-                    ? "Order in progress"
-                    : "",
-
+      return {
+        id: order._id,
+        title: firstItem?.name || "No Item",
         image:
-          generateCloudFrontSignedUrl(item.productId?.images[0]) ||
+          generateCloudFrontSignedUrl(firstItem?.productId?.images?.[0]) ||
+          "https://via.placeholder.com/150",
+        itemCount: order.items?.length || 0,
+        subtitle: statusMap[order.orderStatus]?.(order.updatedAt) || "",
+        totalAmount: order.totalAmount,
+        status: order.orderStatus || order.status,
+        canReview: order.orderStatus === "Delivered",
+        rating: order.rating || 0,
+        review: order.review || null,
+      };
+    });
+
+    const nextCursor = hasMore ? orders[orders.length - 1]._id : null;
+
+    return {
+      data: formattedOrders,
+      nextCursor,
+      hasMore,
+    };
+  } catch (error) {
+    console.log("error in order repo", error);
+    throw error;
+  }
+};
+
+//-------------------------------------------------------------------------------------------------------------
+
+export const getOrderDetailWithOrderIdRepository = async (orderId: string) => {
+  try {
+    const order = await Order.findById(orderId)
+      .populate({
+        path: "items.productId",
+        select: "images",
+      })
+      .populate({
+        path: "addressId",
+      });
+
+    if (!order) {
+      return {
+        status: STATUS_CODE.NOT_FOUND,
+        message: "Order not found",
+      };
+    }
+
+    const statusMap: any = {
+      Delivered: (date: Date) =>
+        `Delivered on ${new Date(date).toDateString()}`,
+      Recieved: () => "Order placed successfully",
+      packed: () => "Order packed",
+      outForDelivery: () => "Out for delivery",
+      packing: () => "Order in progress",
+      cancelled: () => "Order cancelled",
+    };
+
+    const formattedOrder = {
+      id: order._id,
+      status: order.orderStatus,
+      paymentStatus: order.status,
+      totalAmount: order.totalAmount,
+      address: {
+        name: (order.addressId as any)?.name || "",
+        phone: (order.addressId as any)?.phone || "",
+        houseVillage: (order.addressId as any)?.houseVillage || "",
+        areaStreet: (order.addressId as any)?.areaStreet || "",
+        city: (order.addressId as any)?.city || "",
+        type: (order.addressId as any)?.type || "",
+        pincode: (order.addressId as any)?.pincode || "",
+      },
+      subtitle: statusMap[order.orderStatus]?.((order as any).updatedAt) || "",
+      items: order.items.map((item: any) => ({
+        id: item._id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        image:
+          generateCloudFrontSignedUrl(item.productId?.images?.[0]) ||
           "https://via.placeholder.com/150",
       })),
-    }));
+    };
 
-    return formattedOrders ?? [];
+    return formattedOrder;
   } catch (error) {
-    console.log("error in search repo", error);
+    console.log("error in order repo", error);
     throw error;
   }
 };

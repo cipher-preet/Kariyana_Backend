@@ -25,6 +25,9 @@ export interface IOrder extends mongoose.Document {
 
   razorpayOrderId: string;
   razorpayPaymentId?: string;
+
+  rating?: number;
+  review?: string;
 }
 
 const orderSchema = new mongoose.Schema<IOrder>(
@@ -63,6 +66,15 @@ const orderSchema = new mongoose.Schema<IOrder>(
 
     razorpayOrderId: String,
     razorpayPaymentId: String,
+
+    rating: {
+      type: Number,
+      min: 1,
+      max: 5,
+      default: 0,
+    },
+
+    review: String,
   },
   { timestamps: true },
 );

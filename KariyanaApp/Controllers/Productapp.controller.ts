@@ -14,6 +14,7 @@ import {
   searchProductService,
   getOrderDetailByuserIdServices,
   getProductsbyProductIdService,
+  getOrderDetailWithOrderIdServices,
 } from "../Services/Productapp.services";
 
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
@@ -381,7 +382,6 @@ const searchProductController = async (
 
     const response = await searchProductService(finalQuery);
 
-
     const productsWithSignedUrls = response.products.map((product: any) => ({
       ...product,
       images: generateCloudFrontSignedUrl(product.images[0]),
@@ -402,7 +402,9 @@ const getOrderDetailByuserIdController = async (
 ): Promise<any> => {
   try {
     const userId = req.query.userId as string;
-    const response = await getOrderDetailByuserIdServices(userId);
+    const cursor = req.query.cursor as string;
+
+    const response = await getOrderDetailByuserIdServices(userId, cursor);
 
     if (!userId) {
       return ErrorResponse(
@@ -412,6 +414,39 @@ const getOrderDetailByuserIdController = async (
       );
     }
 
+    return SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//-------------------------------------------------------------------------------------------------------------------------------------
+
+const getOrderDetailWithOrderIdController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const orderId = req.query.orderId as string;
+
+    if (!orderId) {
+      return ErrorResponse(
+        res,
+        STATUS_CODE.BAD_REQUEST,
+        "Invalid request parameters",
+      );
+    }
+
+    const response = await getOrderDetailWithOrderIdServices(orderId);
+
+    if ((response as { status: number }).status === STATUS_CODE.NOT_FOUND) {
+      return ErrorResponse(
+        res,
+        (response as { status: number }).status,
+        (response as { message: string }).message,
+      );
+    }
     return SuccessResponse(res, STATUS_CODE.OK, response);
   } catch (error) {
     next(error);
@@ -433,4 +468,5 @@ export {
   searchProductController,
   getOrderDetailByuserIdController,
   getProductsbyProductIdController,
+  getOrderDetailWithOrderIdController,
 };

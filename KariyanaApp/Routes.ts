@@ -13,6 +13,7 @@ import {
   searchProductController,
   getOrderDetailByuserIdController,
   getProductsbyProductIdController,
+  getOrderDetailWithOrderIdController,
 } from "./Controllers/Productapp.controller";
 import {
   createOrderController,
@@ -76,5 +77,6 @@ router.get("/getUserDileveryAddress", getUserDileveryAddressController);
 router.get("/searchProduct", searchProductController);
 
 router.get("/getOrderDetailByuserId", getOrderDetailByuserIdController);
+router.get("/getOrderDetailWithOrderId", getOrderDetailWithOrderIdController);
 
 export default router;

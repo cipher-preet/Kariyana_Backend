@@ -14,6 +14,7 @@ import {
   searchProductRepository,
   getOrderDetailByuserIdRepository,
   getProductsbyProductIdRepository,
+  getOrderDetailWithOrderIdRepository,
 } from "../Repository/Productapp.repository";
 
 //-----------------------------------------------------------------------------
@@ -191,9 +192,24 @@ export const searchProductService = async (query: SearchQuery) => {
 
 //----------------------------------------------------------------------------------------------------------
 
-export const getOrderDetailByuserIdServices = async (userId: string) => {
+export const getOrderDetailByuserIdServices = async (
+  userId: string,
+  cursor?: string,
+) => {
   try {
-    const response = await getOrderDetailByuserIdRepository(userId);
+    const response = await getOrderDetailByuserIdRepository(userId, cursor);
+    return response;
+  } catch (error) {
+    console.log("error in search services", error);
+    throw error;
+  }
+};
+
+//----------------------------------------------------------------------------------------------------------
+
+export const getOrderDetailWithOrderIdServices = async (orderId: string) => {
+  try {
+    const response = await getOrderDetailWithOrderIdRepository(orderId);
     return response;
   } catch (error) {
     console.log("error in search services", error);
