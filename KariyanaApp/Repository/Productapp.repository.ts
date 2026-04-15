@@ -12,6 +12,8 @@ import { TrendModel } from "../../Dashboard/Modals/Trend.modal";
 import { SearchQuery } from "../../types/Search";
 import { Order } from "../Modals/order.model";
 import { stat } from "node:fs";
+import { IFeedback } from "../../types/Dashboardtypes";
+import { FeedBack } from "../Modals/AppFeedback.modal";
 
 interface PaginationParams {
   limit?: number;
@@ -851,6 +853,80 @@ export const getOrderDetailWithOrderIdRepository = async (orderId: string) => {
     };
 
     return formattedOrder;
+  } catch (error) {
+    console.log("error in order repo", error);
+    throw error;
+  }
+};
+
+//----------------------------------------------------------------------------------------------------------------------
+
+export const userRatingProductsServicesRepository = async (
+  id: string,
+  rating: number,
+  review: string,
+) => {
+  try {
+    const result = await Order.findByIdAndUpdate(id, {
+      rating,
+      review,
+    });
+
+    if (!result) {
+      return {
+        status: STATUS_CODE.NOT_FOUND,
+        message: "Order not found",
+      };
+    }
+
+    for (const item of result.items) {
+      const product = await productModel.findById(item.productId);
+
+      if (!product) continue;
+
+      const oldRating = product.rating || 0;
+      const oldCount = product.reviewCount || 0;
+
+      const newCount = oldCount + 1;
+
+      const newRating = (oldRating * oldCount + rating) / newCount;
+
+      await productModel.findByIdAndUpdate(item.productId, {
+        rating: newRating,
+        reviewCount: newCount,
+      });
+    }
+
+    result.orderStatus = "Rated";
+    result.save();
+
+    return {
+      status: STATUS_CODE.OK,
+      message: "Thanks for Rating",
+    };
+  } catch (error) {
+    console.log("error in order repo", error);
+    throw error;
+  }
+};
+
+//--------------------------------------------------------------------------------------------------------------
+
+export const shareAppFeedbackRepository = async (finalData: IFeedback) => {
+  try {
+    const feedbackTaken = await FeedBack.create(finalData);
+
+    if (!feedbackTaken) {
+      return {
+        status: STATUS_CODE.BAD_REQUEST,
+        message: "Error while Submiting Feedback",
+      };
+    }
+
+    return {
+      status: STATUS_CODE.OK,
+      message: "Thanks for your Feedback !",
+    };
   } catch (error) {
     console.log("error in order repo", error);
     throw error;

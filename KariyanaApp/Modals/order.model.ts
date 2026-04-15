@@ -21,7 +21,8 @@ export interface IOrder extends mongoose.Document {
     | "packed"
     | "outForDelivery"
     | "Delivered"
-    | "cancelled";
+    | "cancelled"
+    | "Rated";
 
   razorpayOrderId: string;
   razorpayPaymentId?: string;
@@ -61,7 +62,9 @@ const orderSchema = new mongoose.Schema<IOrder>(
         "outForDelivery",
         "Delivered",
         "cancelled",
+        "Rated",
       ],
+      default: "Recieved",
     },
 
     razorpayOrderId: String,

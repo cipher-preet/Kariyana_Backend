@@ -17,7 +17,7 @@ dns.setServers(["1.1.1.1", "8.8.8.8"]);
 const app = express();
 app.use(morgan("dev"));
 
-
+app.set("trust proxy", 1);
 app.use(
   cors({
     origin: [

@@ -1,4 +1,5 @@
 import { Icart } from "../../types/CartTypes";
+import { IFeedback } from "../../types/Dashboardtypes";
 import { SearchQuery } from "../../types/Search";
 import {
   getProductsBycategoryIdRepository,
@@ -15,6 +16,8 @@ import {
   getOrderDetailByuserIdRepository,
   getProductsbyProductIdRepository,
   getOrderDetailWithOrderIdRepository,
+  userRatingProductsServicesRepository,
+  shareAppFeedbackRepository,
 } from "../Repository/Productapp.repository";
 
 //-----------------------------------------------------------------------------
@@ -210,6 +213,38 @@ export const getOrderDetailByuserIdServices = async (
 export const getOrderDetailWithOrderIdServices = async (orderId: string) => {
   try {
     const response = await getOrderDetailWithOrderIdRepository(orderId);
+    return response;
+  } catch (error) {
+    console.log("error in search services", error);
+    throw error;
+  }
+};
+
+//-------------------------------------------------------------------------------------------------------------
+
+export const userRatingProductsServices = async (
+  id: string,
+  rating: number,
+  review: string,
+) => {
+  try {
+    const response = await userRatingProductsServicesRepository(
+      id,
+      rating,
+      review,
+    );
+    return response;
+  } catch (error) {
+    console.log("error in search services", error);
+    throw error;
+  }
+};
+
+//---------------------------------------------------------------------------------------------------------------
+
+export const shareAppFeedbackServices = async (finalData: IFeedback) => {
+  try {
+    const response = await shareAppFeedbackRepository(finalData);
     return response;
   } catch (error) {
     console.log("error in search services", error);

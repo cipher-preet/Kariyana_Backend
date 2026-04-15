@@ -14,6 +14,8 @@ import {
   getOrderDetailByuserIdController,
   getProductsbyProductIdController,
   getOrderDetailWithOrderIdController,
+  userRatingProductsController,
+  shareAppFeedbackController,
 } from "./Controllers/Productapp.controller";
 import {
   createOrderController,
@@ -21,6 +23,7 @@ import {
   getUserDileveryAddressController,
   getOrderStatusController,
 } from "./Controllers/payment.controller";
+import { uploadProduct } from "../Middleware/Multer/ProductResources";
 
 const router = Router();
 
@@ -78,5 +81,17 @@ router.get("/searchProduct", searchProductController);
 
 router.get("/getOrderDetailByuserId", getOrderDetailByuserIdController);
 router.get("/getOrderDetailWithOrderId", getOrderDetailWithOrderIdController);
+
+router.post("/userRatingProducts", userRatingProductsController);
+router.post(
+  "/shareAppFeedback",
+  uploadProduct.fields([
+    {
+      name: "images",
+      maxCount: 5,
+    },
+  ]),
+  shareAppFeedbackController,
+);
 
 export default router;

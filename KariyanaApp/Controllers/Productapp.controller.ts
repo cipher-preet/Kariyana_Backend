@@ -15,12 +15,15 @@ import {
   getOrderDetailByuserIdServices,
   getProductsbyProductIdService,
   getOrderDetailWithOrderIdServices,
+  userRatingProductsServices,
+  shareAppFeedbackServices,
 } from "../Services/Productapp.services";
 
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
 import { Icart } from "../../types/CartTypes";
 import mongoose from "mongoose";
 import { SearchQuery } from "../../types/Search";
+import { IFeedback } from "../../types/Dashboardtypes";
 //----------------------------------------------------------------------------------
 const getProductsBycategoryIdController = async (
   req: Request,
@@ -453,6 +456,102 @@ const getOrderDetailWithOrderIdController = async (
   }
 };
 
+//------------------------------------------------------------------------------------------------------------------------
+
+const userRatingProductsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { id, rating, review } = req.body;
+
+    if (!id || typeof id !== "string") {
+      return ErrorResponse(
+        res,
+        STATUS_CODE.BAD_REQUEST,
+        "Product id is required and must be a string",
+      );
+    }
+
+    if (
+      rating === undefined ||
+      typeof rating !== "number" ||
+      rating < 1 ||
+      rating > 5
+    ) {
+      return ErrorResponse(
+        res,
+        STATUS_CODE.BAD_REQUEST,
+        "Rating must be a number between 1 and 5",
+      );
+    }
+
+    if (!review || typeof review !== "string" || review.trim().length < 3) {
+      return ErrorResponse(
+        res,
+        STATUS_CODE.BAD_REQUEST,
+        "Review must be at least 3 characters long",
+      );
+    }
+
+    const response = await userRatingProductsServices(id, rating, review);
+
+    if ((response as { status: number }).status === STATUS_CODE.NOT_FOUND) {
+      return ErrorResponse(
+        res,
+        (response as { status: number }).status,
+        (response as { message: string }).message,
+      );
+    }
+    return SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//-----------------------------------------------------------------------------------------------------------
+
+const shareAppFeedbackController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    let { userId, rating, type, feedback } = req.body;
+
+    let images: string[] = [];
+    if (
+      req.files &&
+      (req as any).files.images &&
+      Array.isArray((req as any).files.images)
+    ) {
+      images = (req as any).files.images.map((file: any) => file.key);
+    }
+
+    const finalData: IFeedback = {
+      userId,
+      rating,
+      type,
+      feedback,
+      images,
+    };
+
+    const response = await shareAppFeedbackServices(finalData);
+
+    if ((response as { status: number }).status === STATUS_CODE.BAD_REQUEST) {
+      return ErrorResponse(
+        res,
+        (response as { status: number }).status,
+        (response as { message: string }).message,
+      );
+    }
+    return SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
+
 //----------------------------------------------------
 export {
   getProductsBycategoryIdController,
@@ -469,4 +568,6 @@ export {
   getOrderDetailByuserIdController,
   getProductsbyProductIdController,
   getOrderDetailWithOrderIdController,
+  userRatingProductsController,
+  shareAppFeedbackController,
 };

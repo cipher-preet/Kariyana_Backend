@@ -81,3 +81,14 @@ export interface IcontactusType {
   query: string;
   message: string;
 }
+
+
+//-------------------------------------------
+
+export interface IFeedback {
+  userId:string;
+  rating:number;
+  type:string;
+  feedback:string;
+  images:string[]
+}
