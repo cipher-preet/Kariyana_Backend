@@ -734,7 +734,7 @@ export const searchProductRepository = async (query: SearchQuery) => {
 export const getOrderDetailByuserIdRepository = async (
   userId: string,
   cursor?: string,
-  limit: number = 4,
+  limit: number = 8,
 ) => {
   try {
     let filter: any = { userId };
