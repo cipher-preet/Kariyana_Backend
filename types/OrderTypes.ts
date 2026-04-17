@@ -14,7 +14,8 @@ export interface IOrderData {
 }
 
 export interface IAddressSchema {
-  userId: object;
+  id?:string;
+  userId?: object;
   name: string;
   phone: number;
   houseVillage: string;

@@ -537,6 +537,8 @@ const shareAppFeedbackController = async (
       images,
     };
 
+    console.log("this is final data============?? ", finalData)
+
     const response = await shareAppFeedbackServices(finalData);
 
     if ((response as { status: number }).status === STATUS_CODE.BAD_REQUEST) {

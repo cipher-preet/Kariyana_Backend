@@ -6,6 +6,8 @@ import {
   addDeliveryAddressServices,
   getUserDileveryAddressServices,
   getOrderStatusServices,
+  updateDeliveryAddressServices,
+  deleteDeliveryAddressServices,
 } from "../Services/payment.services";
 import { IAddressSchema, IOrderData } from "../../types/OrderTypes";
 import { Order } from "../Modals/order.model";
@@ -190,6 +192,63 @@ const getOrderStatusController = async (
     next(error);
   }
 };
+
+//------------------------------------------------------------------------------------------------------------------------------------
+
+export const updateDeliveryAddressController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
+  try {
+    const { id, name, phone, houseVillage, areaStreet, city, pincode, type } =
+      req.body;
+
+    const finalData: IAddressSchema = {
+      id,
+      name,
+      phone,
+      houseVillage,
+      areaStreet,
+      city,
+      pincode,
+      type,
+    };
+
+    const response = await updateDeliveryAddressServices(finalData);
+
+    if (response.status === STATUS_CODE.BAD_REQUEST) {
+      return ErrorResponse(res, response.status, response.message);
+    }
+
+    SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//---------------------------------------------------------------------------------------------------------------------------
+
+export const deleteDeliveryAddressController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
+  try {
+    const id = req.query.id as string;
+
+    const response = await deleteDeliveryAddressServices(id);
+
+    if (response.status === STATUS_CODE.BAD_REQUEST) {
+      return ErrorResponse(res, response.status, response.message);
+    }
+
+    SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
+
 //---------------------------------------------
 export {
   createOrderController,

@@ -3,7 +3,9 @@ import {
   createOrderRepository,
   addDeliveryAddressRepository,
   getUserDileveryAddressRepository,
-  getOrderStatusRepository
+  getOrderStatusRepository,
+  updateDeliveryAddressRepository,
+  deleteDeliveryAddressRepository,
 } from "../Repository/payment.repository";
 
 export const createOrderServices = async (finalData: IOrderData) => {
@@ -42,7 +44,7 @@ export const getUserDileveryAddressServices = async (userId: string) => {
 
 //-----------------------------------------------------------------------------------------------
 
-export const getOrderStatusServices = async (orderId:string) => {
+export const getOrderStatusServices = async (orderId: string) => {
   try {
     const response = await getOrderStatusRepository(orderId);
     return response;
@@ -50,4 +52,30 @@ export const getOrderStatusServices = async (orderId:string) => {
     console.log("error in payment services", error);
     throw error;
   }
-}
+};
+
+//----------------------------------------------------------------------------------------------
+
+export const updateDeliveryAddressServices = async (
+  finalData: IAddressSchema,
+) => {
+  try {
+    const response = await updateDeliveryAddressRepository(finalData);
+    return response;
+  } catch (error) {
+    console.log("error in payment services", error);
+    throw error;
+  }
+};
+
+//----------------------------------------------------------------------------------------------------
+
+export const deleteDeliveryAddressServices = async (id: string) => {
+  try {
+    const response = await deleteDeliveryAddressRepository(id);
+    return response;
+  } catch (error) {
+    console.log("error in payment services", error);
+    throw error;
+  }
+};

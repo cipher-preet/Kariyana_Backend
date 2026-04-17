@@ -22,6 +22,8 @@ import {
   addDeliveryAddressController,
   getUserDileveryAddressController,
   getOrderStatusController,
+  updateDeliveryAddressController,
+  deleteDeliveryAddressController,
 } from "./Controllers/payment.controller";
 import { uploadProduct } from "../Middleware/Multer/ProductResources";
 
@@ -76,6 +78,8 @@ router.get("/getOrderStatus", getOrderStatusController);
 
 router.post("/addDeliveryAddress", addDeliveryAddressController);
 router.get("/getUserDileveryAddress", getUserDileveryAddressController);
+router.put("/updateDeliveryAddress", updateDeliveryAddressController);
+router.delete("/deleteDeliveryAddress", deleteDeliveryAddressController);
 //----------------------------------------------------------------------
 router.get("/searchProduct", searchProductController);
 

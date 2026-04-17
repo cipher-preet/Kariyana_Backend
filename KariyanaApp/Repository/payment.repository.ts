@@ -4,6 +4,7 @@ import { IAddressSchema, IOrderData } from "../../types/OrderTypes";
 import { razorpay } from "../../utils/RazorpayIntance";
 import { DileveryAddress } from "../Modals/Address.modal";
 import { Order } from "../Modals/order.model";
+import { stat } from "node:fs";
 
 export const createOrderRepository = async (finalData: IOrderData) => {
   try {
@@ -108,7 +109,68 @@ export const getOrderStatusRepository = async (orderId: string) => {
       razorpayOrderId: order.razorpayOrderId,
       razorpayPaymentId: order.razorpayPaymentId,
     };
+  } catch (error) {
+    console.log("error in payment Repository", error);
+    throw error;
+  }
+};
 
+//--------------------------------------------------------------------------------------------------------------------
+
+export const updateDeliveryAddressRepository = async (
+  finalData: IAddressSchema,
+) => {
+  try {
+    const { id, name, phone, houseVillage, areaStreet, city, pincode, type } =
+      finalData;
+
+    const updatePayload = {
+      ...(phone !== undefined && { phone }),
+      ...(name !== undefined && { name }),
+      ...(houseVillage !== undefined && { houseVillage }),
+      ...(areaStreet !== undefined && { areaStreet }),
+      ...(city !== undefined && { city }),
+      ...(pincode !== undefined && { pincode }),
+      ...(type !== undefined && { type }),
+    };
+    const addressUpdate = await DileveryAddress.findByIdAndUpdate(id, {
+      $set: updatePayload,
+    });
+
+    if (!addressUpdate) {
+      return {
+        status: STATUS_CODE.BAD_REQUEST,
+        message: "Error while updating address",
+      };
+    }
+
+    return {
+      status: STATUS_CODE.OK,
+      message: "Address Updated Successfully",
+    };
+  } catch (error) {
+    console.log("error in payment Repository", error);
+    throw error;
+  }
+};
+
+//--------------------------------------------------------------------------------------------------------------------
+
+export const deleteDeliveryAddressRepository = async (id: string) => {
+  try {
+    const deleteAddress = await DileveryAddress.findByIdAndDelete(id);
+
+    if (!deleteAddress) {
+      return {
+        status: STATUS_CODE.BAD_REQUEST,
+        message: "Error while Deleting address",
+      };
+    }
+
+    return {
+      status: STATUS_CODE.OK,
+      message: "Address Deleting Successfully",
+    };
   } catch (error) {
     console.log("error in payment Repository", error);
     throw error;
