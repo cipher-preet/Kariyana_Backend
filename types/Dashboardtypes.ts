@@ -92,3 +92,19 @@ export interface IFeedback {
   feedback:string;
   images:string[]
 }
+
+
+export interface IUser {
+  _id: string;
+  phone: string;
+}
+export interface IShopProfilePopulated {
+  shopName: string;
+  ownerName: string;
+  address: string;
+  dateofbirth: Date;
+  Type: string;
+  tenureOfShop: number;
+  documents: any[];
+  userId: IUser; 
+}

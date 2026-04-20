@@ -17,11 +17,12 @@ import {
   getOrderDetailWithOrderIdServices,
   userRatingProductsServices,
   shareAppFeedbackServices,
+  getPersonalInformationByUserIdServices,
 } from "../Services/Productapp.services";
 
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
 import { Icart } from "../../types/CartTypes";
-import mongoose from "mongoose";
+import mongoose, { PreMiddlewareFunction } from "mongoose";
 import { SearchQuery } from "../../types/Search";
 import { IFeedback } from "../../types/Dashboardtypes";
 //----------------------------------------------------------------------------------
@@ -537,11 +538,32 @@ const shareAppFeedbackController = async (
       images,
     };
 
-    console.log("this is final data============?? ", finalData)
-
     const response = await shareAppFeedbackServices(finalData);
 
     if ((response as { status: number }).status === STATUS_CODE.BAD_REQUEST) {
+      return ErrorResponse(
+        res,
+        (response as { status: number }).status,
+        (response as { message: string }).message,
+      );
+    }
+    return SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//-------------------------------------------------------------------------------------------------------------------------------------
+const getPersonalInformationByUserIdController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
+  try {
+    const userId = req.query.userId as string;
+    const response = await getPersonalInformationByUserIdServices(userId);
+
+    if ((response as { status: number }).status === STATUS_CODE.NOT_FOUND) {
       return ErrorResponse(
         res,
         (response as { status: number }).status,
@@ -572,4 +594,5 @@ export {
   getOrderDetailWithOrderIdController,
   userRatingProductsController,
   shareAppFeedbackController,
+  getPersonalInformationByUserIdController,
 };

@@ -16,6 +16,7 @@ import {
   getOrderDetailWithOrderIdController,
   userRatingProductsController,
   shareAppFeedbackController,
+  getPersonalInformationByUserIdController,
 } from "./Controllers/Productapp.controller";
 import {
   createOrderController,
@@ -96,6 +97,11 @@ router.post(
     },
   ]),
   shareAppFeedbackController,
+);
+
+router.get(
+  "/getPersonalInformationByUserId",
+  getPersonalInformationByUserIdController,
 );
 
 export default router;

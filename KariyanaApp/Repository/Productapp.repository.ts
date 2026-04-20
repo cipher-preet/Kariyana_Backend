@@ -12,8 +12,9 @@ import { TrendModel } from "../../Dashboard/Modals/Trend.modal";
 import { SearchQuery } from "../../types/Search";
 import { Order } from "../Modals/order.model";
 import { stat } from "node:fs";
-import { IFeedback } from "../../types/Dashboardtypes";
+import { IFeedback, IUser } from "../../types/Dashboardtypes";
 import { FeedBack } from "../Modals/AppFeedback.modal";
+import { ShopProfileModel } from "../../AuthenticationModule/Modals/ShopProfile.modal";
 
 interface PaginationParams {
   limit?: number;
@@ -927,6 +928,44 @@ export const shareAppFeedbackRepository = async (finalData: IFeedback) => {
       status: STATUS_CODE.OK,
       message: "Thanks for your Feedback !",
     };
+  } catch (error) {
+    console.log("error in order repo", error);
+    throw error;
+  }
+};
+
+//----------------------------------------------------------------------------------------------------------------------
+
+export const getPersonalInformationByUserIdRepository = async (
+  userId: string,
+) => {
+  try {
+    const userProfileData = await ShopProfileModel.findOne({
+      userId,
+    }).populate<{ userId: IUser }>({ path: "userId", select: "phone" });
+
+    if (!userProfileData) {
+      return {
+        status: STATUS_CODE.NOT_FOUND,
+        message: "User Profile Data bot found",
+      };
+    }
+
+    const finalResult = {
+      shopName: userProfileData.shopName,
+      ownerName: userProfileData.ownerName,
+      address: userProfileData.address,
+      dateofbirth: userProfileData.dateofbirth,
+      dateofRegister: userProfileData.createdAt,
+      Type: userProfileData.Type,
+      tenureOfShop: userProfileData.tenureOfShop,
+      phone: userProfileData.userId.phone,
+      documents:
+        generateCloudFrontSignedUrl(userProfileData.documents.shopPhotos) ||
+        "https://via.placeholder.com/150",
+    };
+
+    return finalResult;
   } catch (error) {
     console.log("error in order repo", error);
     throw error;

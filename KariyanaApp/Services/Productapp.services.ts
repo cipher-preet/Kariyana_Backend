@@ -18,6 +18,7 @@ import {
   getOrderDetailWithOrderIdRepository,
   userRatingProductsServicesRepository,
   shareAppFeedbackRepository,
+  getPersonalInformationByUserIdRepository,
 } from "../Repository/Productapp.repository";
 
 //-----------------------------------------------------------------------------
@@ -251,3 +252,16 @@ export const shareAppFeedbackServices = async (finalData: IFeedback) => {
     throw error;
   }
 };
+
+
+//---------------------------------------------------------------------------------------------------------------------------------
+
+export const getPersonalInformationByUserIdServices = async (userId:string) => {
+  try {
+    const response = await getPersonalInformationByUserIdRepository(userId);
+    return response;
+  } catch (error) {
+    console.log("error in search services", error);
+    throw error;
+  }
+}

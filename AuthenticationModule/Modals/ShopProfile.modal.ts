@@ -17,6 +17,8 @@ export interface IShopProfile extends Document {
   documents: {
     shopPhotos: string;
   };
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const ShopProfileSchema = new Schema<IShopProfile>(
