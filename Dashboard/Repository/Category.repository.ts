@@ -185,7 +185,6 @@ export const getChildCategoryByParentIdRepository = async (
       parentCategoryId: new Types.ObjectId(ParentCategoryId),
       isActive: true,
     };
-    console.log();
 
     if (cursor) {
       query._id = { $lt: new Types.ObjectId(cursor) };
@@ -195,7 +194,7 @@ export const getChildCategoryByParentIdRepository = async (
       .find(query)
       .sort({ _id: -1 })
       .limit(limit + 1)
-      .select({ name: 1, image: 1 })
+      .select({ name: 1, image: 1, isActive:1 })
       .lean();
 
     const hasNextPage = childcat.length > limit;

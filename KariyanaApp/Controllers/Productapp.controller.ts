@@ -18,6 +18,7 @@ import {
   userRatingProductsServices,
   shareAppFeedbackServices,
   getPersonalInformationByUserIdServices,
+  emptyCartAfterCheckoutServices,
 } from "../Services/Productapp.services";
 
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
@@ -576,6 +577,31 @@ const getPersonalInformationByUserIdController = async (
   }
 };
 
+//----------------------------------------------------------------------------------------------------------------------------------------
+
+const emptyCartAfterCheckoutController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
+  try {
+    const userId = req.body.userId as string;
+
+    const response = await emptyCartAfterCheckoutServices(userId);
+
+    if ((response as { status: number }).status === STATUS_CODE.NOT_FOUND) {
+      return ErrorResponse(
+        res,
+        (response as { status: number }).status,
+        (response as { message: string }).message,
+      );
+    }
+    return SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
+
 //----------------------------------------------------
 export {
   getProductsBycategoryIdController,
@@ -595,4 +621,5 @@ export {
   userRatingProductsController,
   shareAppFeedbackController,
   getPersonalInformationByUserIdController,
+  emptyCartAfterCheckoutController,
 };

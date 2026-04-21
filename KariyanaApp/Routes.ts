@@ -17,6 +17,7 @@ import {
   userRatingProductsController,
   shareAppFeedbackController,
   getPersonalInformationByUserIdController,
+  emptyCartAfterCheckoutController,
 } from "./Controllers/Productapp.controller";
 import {
   createOrderController,
@@ -103,5 +104,7 @@ router.get(
   "/getPersonalInformationByUserId",
   getPersonalInformationByUserIdController,
 );
+
+router.post("/emptyCartAfterCheckout", emptyCartAfterCheckoutController);
 
 export default router;

@@ -27,9 +27,6 @@ const childCategorySchema = new mongoose.Schema<childCategory>(
       default: true,
     },
   },
-  {
-    timestamps: true,
-  },
 );
 
 export const childCategoryModel = mongoose.model<childCategory>(

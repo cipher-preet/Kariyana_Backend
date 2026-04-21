@@ -971,3 +971,35 @@ export const getPersonalInformationByUserIdRepository = async (
     throw error;
   }
 };
+
+//------------------------------------------------------------------------------------------------------------------------
+
+export const emptyCartAfterCheckoutRepository = async (userId: string) => {
+  try {
+    const emptycart = await cartSchemaModel.findOneAndUpdate(
+      { userId },
+      {
+        $set: {
+          items: [],
+          subtotal: 0,
+          totalItems: 0,
+        },
+      },
+    );
+
+    if (!emptycart) {
+      return {
+        status: STATUS_CODE.NOT_FOUND,
+        message: "User cart Items not Found",
+      };
+    }
+
+    return {
+      status: STATUS_CODE.OK,
+      message: "Cart Empty",
+    };
+  } catch (error) {
+    console.log("error in order repo", error);
+    throw error;
+  }
+};

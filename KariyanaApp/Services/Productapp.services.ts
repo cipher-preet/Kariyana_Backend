@@ -19,6 +19,7 @@ import {
   userRatingProductsServicesRepository,
   shareAppFeedbackRepository,
   getPersonalInformationByUserIdRepository,
+  emptyCartAfterCheckoutRepository,
 } from "../Repository/Productapp.repository";
 
 //-----------------------------------------------------------------------------
@@ -253,10 +254,11 @@ export const shareAppFeedbackServices = async (finalData: IFeedback) => {
   }
 };
 
+//----------------------------------------------------------------------------------------------------------------------------
 
-//---------------------------------------------------------------------------------------------------------------------------------
-
-export const getPersonalInformationByUserIdServices = async (userId:string) => {
+export const getPersonalInformationByUserIdServices = async (
+  userId: string,
+) => {
   try {
     const response = await getPersonalInformationByUserIdRepository(userId);
     return response;
@@ -264,4 +266,16 @@ export const getPersonalInformationByUserIdServices = async (userId:string) => {
     console.log("error in search services", error);
     throw error;
   }
-}
+};
+
+//--------------------------------------------------------------------------------------------------------------------------
+
+export const emptyCartAfterCheckoutServices = async (userId: string) => {
+  try {
+    const response = await emptyCartAfterCheckoutRepository(userId);
+    return response;
+  } catch (error) {
+    console.log("error in search services", error);
+    throw error;
+  }
+};

@@ -22,9 +22,6 @@ const ParentCategorySchema = new mongoose.Schema<ParentCategory>(
       default: true,
     },
   },
-  {
-    timestamps: true,
-  }
 );
 
 export const ParentCategoryModel = mongoose.model<ParentCategory>(
