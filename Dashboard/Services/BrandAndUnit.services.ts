@@ -15,6 +15,7 @@ import {
   contactUsPageForWebsiteRepository,
   getContactUsPageDetailsFromWebsiteRepository,
   markAsReadInContactUsRepository,
+  getUserOrderHistoryByUserIdRepository,
 } from "../Repository/BrandAndUnit.repository";
 //-------------------------------------------------------------------------------
 
@@ -207,3 +208,20 @@ export const markAsReadInContactUsServices = async (queryId: string) => {
 
 //----------------------------------------------------------------------------------
 
+export const getUserOrderHistoryByUserIdServices = async (
+  userId: string,
+  limit: number,
+  cursor?: string,
+) => {
+  try {
+    const response = await getUserOrderHistoryByUserIdRepository(
+      userId,
+      limit,
+      cursor,
+    );
+    return response;
+  } catch (error) {
+    console.log("error in WebsiteS section ", error);
+    throw error;
+  }
+};

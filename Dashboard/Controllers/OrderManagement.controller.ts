@@ -1,6 +1,8 @@
 import { ErrorResponse, STATUS_CODE, SuccessResponse } from "../../Api";
 import { NextFunction, Request, Response } from "express";
 import {
+  getGraphsStatsForDashboardServices,
+  getOrderStatsForDashboardServices,
   getUpcomingOrderDetailsforDashboardServices,
   updateOrderStatusInOrderPageServices,
 } from "../Services/OrderManagement.services";
@@ -41,9 +43,41 @@ const updateOrderStatusInOrderPageController = async (
   }
 };
 
+//-------------------------------------------------------------------------------------------------
+
+const getOrderStatsForDashboardController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
+  try {
+    const response = await getOrderStatsForDashboardServices();
+    return SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//------------------------------------------------------------------------------------------------
+
+const getGraphsStatsForDashboardController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
+  try {
+    const response = await getGraphsStatsForDashboardServices();
+    return SuccessResponse(res, STATUS_CODE.OK, response);
+  } catch (error) {
+    next(error);
+  }
+};
+
 //--------------------------------------------------------
 
 export {
   getUpcomingOrderDetailsforDashboardController,
   updateOrderStatusInOrderPageController,
+  getOrderStatsForDashboardController,
+  getGraphsStatsForDashboardController,
 };

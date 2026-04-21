@@ -7,6 +7,7 @@ import { TagModel } from "../Modals/Tags.modal";
 import { cartSchemaModel } from "../Modals/cart.model";
 import { contactModal } from "../Modals/Contactus.modal";
 import { generateCloudFrontSignedUrl } from "../../utils/cloudfrontSigner";
+import { Order } from "../../KariyanaApp/Modals/order.model";
 
 //-----------------------------------------------------------------------------------------------------
 
@@ -370,6 +371,48 @@ export const markAsReadInContactUsRepository = async (queryId: string) => {
     return {
       status: STATUS_CODE.OK,
       message: "Action Perform Sucessfully !!!",
+    };
+  } catch (error) {
+    console.log("error in cart repository", error);
+    throw error;
+  }
+};
+
+//-----------------------------------------------------------------------------------------
+
+export const getUserOrderHistoryByUserIdRepository = async (
+  userId: string,
+  limit: number = 10,
+  cursor?: string,
+) => {
+  try {
+    const query: any = {
+      userId,
+    };
+
+    if (cursor) {
+      query._id = { $lt: new Types.ObjectId(cursor) };
+    }
+
+    const userOrderData = await Order.find(query)
+      .select("-razorpayOrderId -updatedAt -userId -__v -razorpayPaymentId")
+      .populate({ path: "addressId", select: "-userId -_id -__v" })
+      .sort({ _id: -1 })
+      .limit(limit + 1)
+      .lean();
+
+    const hasNextPage = userOrderData.length > limit;
+
+    if (hasNextPage) {
+      userOrderData.pop();
+    }
+
+    return {
+      userOrderData,
+      nextCursor: hasNextPage
+        ? userOrderData[userOrderData.length - 1]._id
+        : null,
+      hasNextPage,
     };
   } catch (error) {
     console.log("error in cart repository", error);

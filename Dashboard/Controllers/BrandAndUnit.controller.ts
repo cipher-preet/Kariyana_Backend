@@ -17,6 +17,7 @@ import {
   contactUsPageForWebsiteServices,
   getContactUsPageDetailsFromWebsiteServices,
   markAsReadInContactUsServices,
+  getUserOrderHistoryByUserIdServices,
 } from "../Services/BrandAndUnit.services";
 import { IcontactusType, IUnitInterface } from "../../types/Dashboardtypes";
 //----------------------------------------------------------------------------------
@@ -357,6 +358,29 @@ const markAsReadInContactUsController = async (
 
 //--------------------------------------------------------------------------------------------------------------
 
+const getUserOrderHistoryByUserIdController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.query.userId as string;
+    const limit = Number(req.query.limit) || 10;
+    const cursor = req.query.cursor;
+
+    const response = await getUserOrderHistoryByUserIdServices(
+      userId,
+      limit,
+      cursor as string | undefined,
+    );
+    
+    return SuccessResponse(res, STATUS_CODE.OK, response);
+
+  } catch (error) {
+    next(error);
+  }
+};
+
 //-----------------------------------------------------------------------------------------------------------
 
 export {
@@ -375,4 +399,5 @@ export {
   contactUsPageForWebsiteController,
   getContactUsPageDetailsFromWebsiteController,
   markAsReadInContactUsController,
+  getUserOrderHistoryByUserIdController,
 };

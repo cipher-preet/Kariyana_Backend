@@ -82,4 +82,6 @@ const orderSchema = new mongoose.Schema<IOrder>(
   { timestamps: true },
 );
 
+orderSchema.index({ createdAt: 1, status: 1 });
+
 export const Order = mongoose.model<IOrder>("Order", orderSchema);

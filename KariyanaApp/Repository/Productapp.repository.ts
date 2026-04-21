@@ -738,7 +738,7 @@ export const getOrderDetailByuserIdRepository = async (
   limit: number = 8,
 ) => {
   try {
-    let filter: any = { userId };
+    let filter: any = { userId, status:"paid" };
 
     if (cursor) {
       filter._id = { $lt: new Types.ObjectId(cursor) };

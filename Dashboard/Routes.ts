@@ -40,6 +40,7 @@ import {
   contactUsPageForWebsiteController,
   getContactUsPageDetailsFromWebsiteController,
   markAsReadInContactUsController,
+  getUserOrderHistoryByUserIdController,
 } from "./Controllers/BrandAndUnit.controller";
 //---------------------------------------------------------------
 import {
@@ -61,6 +62,8 @@ import {
 
 //------------------------------------------------------------------
 import {
+  getGraphsStatsForDashboardController,
+  getOrderStatsForDashboardController,
   getUpcomingOrderDetailsforDashboardController,
   updateOrderStatusInOrderPageController,
 } from "./Controllers/OrderManagement.controller";
@@ -253,6 +256,11 @@ router.get(
   getuserCartDataForDashboardController,
 );
 
+router.get(
+  "/getUserOrderHistoryByUserId",
+  getUserOrderHistoryByUserIdController,
+);
+
 //--------- contactus page api -----------
 router.post("/contactuspage", contactUsPageForWebsiteController);
 router.get(
@@ -282,5 +290,9 @@ router.post(
   updateOrderStatusInOrderPageController,
 );
 //------------------------------------------------------------------------------
+
+// ---------- Dashboard API's ---------------
+router.get("/getOrderStatsForDashboard", getOrderStatsForDashboardController);
+router.get("/getGraphsStatsForDashboard", getGraphsStatsForDashboardController);
 
 export default router;
