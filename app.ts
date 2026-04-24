@@ -26,6 +26,8 @@ app.use(
       "http://localhost:5173",
       "http://127.0.0.1:3000",
       "https://7862b8962a32.ngrok-free.app",
+      "https://www.ambemart.com",
+      "www.ambemart.com",
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
