@@ -59,8 +59,7 @@ const ProductSchema = new mongoose.Schema<product>(
     },
     marketPrice: {
       type: Number,
-      required: true,
-      min: 0,
+      default: 0,
     },
 
     sellingPrice: {

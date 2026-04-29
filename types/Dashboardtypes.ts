@@ -9,7 +9,7 @@ export interface IProduct {
   brandId: Types.ObjectId;
   mrp: number;
   marketPrice?: number;
-  sellingPrice: number;
+  sellingPrice?: number;
   unit: string;
   quantityPerUnit: number;
   offPercentage: number;

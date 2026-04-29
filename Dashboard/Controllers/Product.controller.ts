@@ -52,15 +52,15 @@ const addNewProductController = async (
 
     const finalData: IProduct = {
       name: parseIfString<string>(name)!,
-      sku: parseIfString<number>(sku)!,
+      sku: parseIfString<number>(sku)!  ?? 0,
       categoryId: new Types.ObjectId(categoryId),
       subcategoryId: new Types.ObjectId(subcategoryId),
       brandId: new Types.ObjectId(brandId),
-      mrp: parseIfString<number>(mrp)!,
-      marketPrice: parseIfString<number>(marketPrice)!,
-      sellingPrice: parseIfString<number>(sellingPrice)!,
+      mrp: parseIfString<number>(mrp)! ?? 0,
+      marketPrice: parseIfString<number>(marketPrice)! ?? 0,
+      sellingPrice: parseIfString<number>(sellingPrice)! ?? 0,
       unit: parseIfString<string>(unit)!,
-      quantityPerUnit: parseIfString<number>(quantityPerUnit)!,
+      quantityPerUnit: parseIfString<number>(quantityPerUnit)! ?? 0,
       offPercentage: parseIfString<number>(offPercentage) ?? 0,
       tag: parseIfString<string>(tag) ?? "",
       images,
@@ -116,6 +116,8 @@ const editProductController = async (
     }
 
     const finalImages = [...existingImages, ...images];
+
+    console.log("this ios final images ", finalImages)
 
     const finalData: IProduct = {
       name: parseIfString<string>(name)!,
