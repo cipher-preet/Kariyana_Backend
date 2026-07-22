@@ -26,6 +26,14 @@ import { Icart } from "../../types/CartTypes";
 import mongoose, { PreMiddlewareFunction } from "mongoose";
 import { SearchQuery } from "../../types/Search";
 import { IFeedback } from "../../types/Dashboardtypes";
+
+const getFirstImageKey = (images?: string[] | string | null): string | null => {
+  if (Array.isArray(images)) {
+    return images[0] ?? null;
+  }
+
+  return images ?? null;
+};
 //----------------------------------------------------------------------------------
 const getProductsBycategoryIdController = async (
   req: Request,
@@ -46,7 +54,7 @@ const getProductsBycategoryIdController = async (
 
     const productsWithSignedUrls = response.products.map((product: any) => ({
       ...product,
-      images: generateCloudFrontSignedUrl(product.images[0]),
+      images: generateCloudFrontSignedUrl(getFirstImageKey(product.images)),
     }));
 
     SuccessResponse(res, STATUS_CODE.OK, {
@@ -133,7 +141,7 @@ const getProductByChildCategoryIdController = async (
 
     const productsWithSignedUrls = response.products.map((product: any) => ({
       ...product,
-      images: generateCloudFrontSignedUrl(product.images[0]),
+      images: generateCloudFrontSignedUrl(getFirstImageKey(product.images)),
     }));
 
     SuccessResponse(res, STATUS_CODE.OK, {
@@ -287,7 +295,7 @@ const getParentcatandTagDataController = async (
     const response = await getParentcatandTagDataServices();
     const productsWithSignedUrls = response.map((cat: any) => ({
       ...cat,
-      image: generateCloudFrontSignedUrl(cat.images),
+      image: generateCloudFrontSignedUrl(cat.image),
     }));
     return SuccessResponse(res, STATUS_CODE.OK, productsWithSignedUrls);
   } catch (error) {
@@ -341,7 +349,7 @@ const getRandomProductsForCartPageController = async (
 
     const productsWithSignedUrls = response.map((product: any) => ({
       ...product,
-      images: generateCloudFrontSignedUrl(product.images[0]),
+      images: generateCloudFrontSignedUrl(getFirstImageKey(product.images)),
     }));
 
     SuccessResponse(res, STATUS_CODE.OK, {
@@ -389,7 +397,7 @@ const searchProductController = async (
 
     const productsWithSignedUrls = response.products.map((product: any) => ({
       ...product,
-      images: generateCloudFrontSignedUrl(product.images[0]),
+      images: generateCloudFrontSignedUrl(getFirstImageKey(product.images)),
     }));
 
     return SuccessResponse(res, STATUS_CODE.OK, productsWithSignedUrls);

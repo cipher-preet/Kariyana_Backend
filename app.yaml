@@ -12,3 +12,37 @@ automatic_scaling:
 env_variables:
   NODE_ENV: "production"
   GCP_PROJECT: "python-microservice-hub"
+
+  # CloudFront Configuration
+  CLOUDFRONT_URL: "https://dzihz2b7sjcfx.cloudfront.net"
+  CLOUDFRONT_KEY_PAIR_ID: "K1G7OUTC12YYOG"
+
+  CLOUDFRONT_PRIVATE_KEY: |
+    -----BEGIN PRIVATE KEY-----
+    MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDWUNrd3yKV0ykA
+    M4qLCreINoBT6LZEjsdERMEh412iMlYR7igREwg/jqw0ph7xKQtkGW+nFN6AyrPS
+    VrejfyxqBakb5k2+aaf6ieHeXMJ7MvqeienKFioT7yyhHoUw2O0gRCT5Ql+bLVuG
+    /gE/Ep5HIrBwuVcYELipdlVNY55tdrYDMlk0njk4hyRwoAzcqm1smnCow40fE2Jr
+    wkAvlUAu0kV/aUwryDN093+UwKaxkiE0lav7ErtmGtaOwB7c2FiY22OHqmRQZLT1
+    pVUR0BxzqaZlL7V8uXK+xK2S7jbWM7XD7/cx1XCOfYr9cQ0YHK+XkVzTv4CEXJ3h
+    9Y4sW71lAgMBAAECggEABsaFyNu//D8cWHneAIEn+2ndBZTBmxTC0X0f+E+NG1kz
+    4JC9hQlWP9Yln8DRu8Y+/9zlq1as+yLiwPywr736nDvOFHL5PxLC4VhAbbcpMdu9
+    0csikEWXnSDjsbtP3X26L281a7ObZ1dC1xd1gsuL+UvsNUAddAYRTyWN0wAaLIk0
+    WNE6FPuvPIQe1unSnVDBbmqwlu1Rwb6ytjI+5JPb3MvfJKH/MxY+m4qg3Ci4RX3+
+    4joo9r4/NkFYR3CWrPgxnAruRD+bun41hMYxdJNTjHBJ+rUEsic2qpCCvhpdf/Z0
+    tJT58pQq+vowXYlxG51hPSpzCkmDsAOQoBr558bDGQKBgQDtyYh6sX1s7MJw211S
+    AgGKxi6b+o9Xo36DSe+h+7esuOz71sNMVwXQKyQWp3SKvN3be6zuWiR5G0ohabPt
+    HGLrRnSK/Vjrv9HmljQJ/rW2VkH6iDsVxmVzMbfK6lXcdQLS6V2u4I+A3yFHu2xk
+    gmr2RV7jsQw+FEhmV7W6c3+SvQKBgQDmuxngN1BCDU6uXm7I7C3/eBUnmo8vnbrk
+    ML9c6go6jWTg0e4a9k07UC4yAE4QVf40qhuXfgp8rDZha5LrSUNIsvzOUx/QbAIe
+    jZsr3SVcCwkefmIY3qEUOQUawpHqVaoYcSeeQUIeiVCV3nxjWDc+1ETrZYmyK82W
+    PF1q6huTyQKBgDhy7WljFUl0czxjdyXuv/r3zTzOIJVHhNMaDD9CCHqCdA/dDgPj
+    bMfcVfbizfHZoDlohMcYsyvk5JZGB6a0ZG9CDIyqVB+zK9s3sSbmRrEAjS0yhgRH
+    UvIjzWPoeXWaeY8kQ08ulCKd1cK3paW+qDHKiho3f5aFLiLNk6Ctpo1pAoGBAIX0
+    wKwlUQpYMYMYvlcWkAoPDLEmkdUCTTwodSGbm36tEpFYMFYlA2fZQEi1Vp0zX9fx
+    nv1QJwSE8zmSPAUwTskJaa7cIc9etchJTHql9QfAPHYgyBFKR9i21hjYN+EGBTAV
+    mfvORXX3IPsx5aPD1qc6lBzaoZv4xG5h85ab/pDJAoGBALziDm3grZcFXW/Db6Xq
+    tLcrlDsenLHOEcsMQuCJOCnsMzPmfNzLOvZPujBGHQ0hAorRj+SW7IdLYkqoGhVg
+    DDFuyfdpIQdxt6Jnh9+ipKAOVwUlPKZ7FXOefYN/pxP78cqvXWzL0IkIJ/9JNYPx
+    +v9OgcnxjQqUIx2oWw6rv+8j
+    -----END PRIVATE KEY-----

@@ -24,6 +24,8 @@ interface PaginationParams {
   cursor?: string;
 }
 
+const isSignedUrl = (url: string | null): url is string => Boolean(url);
+
 export const getProductsBycategoryIdRepository = async (
   categoryId: string,
   { limit = 10, cursor }: PaginationParams,
@@ -564,13 +566,13 @@ export const getHomePageBannerAndProductRepository = async (
         .lean();
 
       banners =
-        bannersAndCarosels?.banners.map((item: any) =>
-          generateCloudFrontSignedUrl(item),
-        ) ?? [];
+        bannersAndCarosels?.banners
+          .map((item: any) => generateCloudFrontSignedUrl(item))
+          .filter(isSignedUrl) ?? [];
       carosels =
-        bannersAndCarosels?.carosels.map((item: any) =>
-          generateCloudFrontSignedUrl(item),
-        ) ?? [];
+        bannersAndCarosels?.carosels
+          .map((item: any) => generateCloudFrontSignedUrl(item))
+          .filter(isSignedUrl) ?? [];
     }
 
     return {

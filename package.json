@@ -6,6 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon",
     "build": "tsc",
+    "gcp-build": "npm run build",
     "start": "node dist/index.js"
   },
   "keywords": [],
