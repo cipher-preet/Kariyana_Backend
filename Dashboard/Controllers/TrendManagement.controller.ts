@@ -17,8 +17,24 @@ const createTrendsController = async (
   try {
     const { trendName, trendDescription, productId } = req.body;
 
+    if (!trendName?.trim()) {
+      return ErrorResponse(
+        res,
+        STATUS_CODE.BAD_REQUEST,
+        "Trend name is required",
+      );
+    }
+
+    if (!Array.isArray(productId) || productId.length === 0) {
+      return ErrorResponse(
+        res,
+        STATUS_CODE.BAD_REQUEST,
+        "Select at least one product",
+      );
+    }
+
     const finalData: ItrendData = {
-      trendName,
+      trendName: trendName.trim(),
       trendDescription,
       productId,
     };

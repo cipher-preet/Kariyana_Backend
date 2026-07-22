@@ -65,7 +65,7 @@ export const editProductRepository = async (
 //-------------------------------------------------------------------------------------------------]
 
 export const getProductsBasicDetailsRepository = async (
-  limit: number = 10,
+  limit: number = 20,
   cursor?: string,
 ) => {
   try {

@@ -85,3 +85,54 @@ const orderSchema = new mongoose.Schema<IOrder>(
 orderSchema.index({ createdAt: 1, status: 1 });
 
 export const Order = mongoose.model<IOrder>("Order", orderSchema);
+
+export type OrderStatus = IOrder["orderStatus"];
+
+export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
+  Recieved: "Received",
+  packing: "Packing",
+  packed: "Packed",
+  outForDelivery: "Out for Delivery",
+  Delivered: "Delivered",
+  cancelled: "Cancelled",
+  Rated: "Rated",
+};
+
+export const normalizeOrderStatus = (status?: string | null): OrderStatus => {
+  const value = String(status || "").trim().toLowerCase();
+
+  switch (value) {
+    case "received":
+    case "recieved":
+    case "order":
+    case "placed":
+    case "created":
+      return "Recieved";
+    case "packing":
+    case "processing":
+    case "inprogress":
+    case "in_progress":
+      return "packing";
+    case "packed":
+    case "confirmed":
+      return "packed";
+    case "outfordelivery":
+    case "out_for_delivery":
+    case "out for delivery":
+    case "dispatched":
+      return "outForDelivery";
+    case "delivered":
+    case "complete":
+    case "completed":
+    case "done":
+    case "orders":
+      return "Delivered";
+    case "cancelled":
+    case "canceled":
+      return "cancelled";
+    case "rated":
+      return "Rated";
+    default:
+      return "Recieved";
+  }
+};

@@ -8,52 +8,55 @@ import {
 } from "../Services/Auth.services";
 import { RegisterInput } from "../../types/Dashboardtypes";
 import { User } from "../Modals/User.Modals";
-import { AuthRequest } from "../../Config/FirebaseAuthebtication/auth.middleware";
 
 //-----------------------------------------------------------------------------------------------------
-// const verifyOtpController = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction,
-// ) => {
-//   try {
-//     const { phone, otp } = req.body;
+const verifyOtpController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
+  try {
+    const { phone, otp } = req.body;
 
-//     if (!phone && !otp) {
-//       return ErrorResponse(
-//         res,
-//         STATUS_CODE.NOT_FOUND,
-//         "Please provide both PhoneNumber and Otp for Login",
-//       );
-//     }
+    if (!phone || !otp) {
+      return ErrorResponse(
+        res,
+        STATUS_CODE.BAD_REQUEST,
+        "Please provide both phone and OTP",
+      );
+    }
 
-//     const response = await verifyOtpServices(phone, otp);
+    const response = await verifyOtpServices(Number(phone), Number(otp));
 
-//     if (!response.success) {
-//       return ErrorResponse(res, response.status, response.message);
-//     }
+    if (!response.success) {
+      return ErrorResponse(res, response.status, response.message);
+    }
 
-//     req.session.regenerate((err) => {
-//       if (err) {
-//         return ErrorResponse(
-//           res,
-//           STATUS_CODE.INTERNAL_SERVER_ERROR,
-//           "Session creation failed",
-//         );
-//       }
+    req.session.user = {
+      _id: response.user.id,
+      phone: response.user.phone,
+      role: response.user.role,
+      status: response.user.status,
+    };
 
-//       req.session.userId = response.user.id;
-//       req.session.role = response.user.role;
+    await new Promise<void>((resolve, reject) => {
+      req.session.save((err) => {
+        if (err) reject(err);
+        resolve();
+      });
+    });
 
-//       return SuccessResponse(res, STATUS_CODE.OK, {
-//         userId: response.user.id,
-//         role: response.user.role,
-//       });
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+    return SuccessResponse(res, STATUS_CODE.OK, {
+      nextScreen: response.user.status,
+      userId: response.user.id,
+      role: response.user.role,
+      status: response.user.status,
+      isActive: response.user.isActive,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 //---------------------------------------------------------------------------------------------------
 
@@ -65,9 +68,13 @@ const sendOtpController = async (
   try {
     const { phone } = req.body;
 
-    const response = await sendOtpServices(phone);
+    if (!phone) {
+      return ErrorResponse(res, STATUS_CODE.BAD_REQUEST, "Phone is required");
+    }
 
-    if ((response as { status: number }).status === STATUS_CODE.NOT_FOUND) {
+    const response = await sendOtpServices(Number(phone));
+
+    if ((response as { status: number }).status !== STATUS_CODE.OK) {
       return ErrorResponse(
         res,
         (response as { status: number }).status,
@@ -91,7 +98,7 @@ const registerUserController = async (
   try {
     const phone = req?.session?.user?.phone;
 
-    console.log(req.session)
+    console.log(req.session);
 
     const {
       name,
@@ -145,37 +152,32 @@ const registerUserController = async (
 
 //-------------------------------------------------------------------------
 const loginUserController = async (
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<any> => {
   try {
-    if (!req.user) {
-      return ErrorResponse(res, 401, "Unauthorized");
+    const { phone, otp } = req.body;
+
+    if (!phone || !otp) {
+      return ErrorResponse(
+        res,
+        STATUS_CODE.BAD_REQUEST,
+        "Please provide both phone and OTP",
+      );
     }
 
-    const { uid, phone_number } = req.user;
-    let user = await User.findOne({ firebaseUid: uid });
+    const response = await verifyOtpServices(Number(phone), Number(otp));
 
-    if (!user) {
-      user = await User.create({
-        firebaseUid: uid,
-        phone: phone_number,
-        status: "REGISTER",
-        isActive: true,
-      });
-    }
-
-    if (!user.isActive) {
-      return ErrorResponse(res, 403, "Account disabled");
+    if (!response.success) {
+      return ErrorResponse(res, response.status, response.message);
     }
 
     req.session.user = {
-      _id: user._id.toString(),
-      firebaseUid: user.firebaseUid,
-      phone: user.phone,
-      role: user.role,
-      status: user.status,
+      _id: response.user.id,
+      phone: response.user.phone,
+      role: response.user.role,
+      status: response.user.status,
     };
 
     await new Promise<void>((resolve, reject) => {
@@ -186,11 +188,11 @@ const loginUserController = async (
     });
 
     return SuccessResponse(res, 200, {
-      nextScreen: user.status,
-      userId: user._id,
-      role: user.role,
-      status: user.status,
-      isActive: user.isActive,
+      nextScreen: response.user.status,
+      userId: response.user.id,
+      role: response.user.role,
+      status: response.user.status,
+      isActive: response.user.isActive,
     });
   } catch (error) {
     next(error);
@@ -200,7 +202,7 @@ const loginUserController = async (
 //---------------------------------------------------------------------------------------------------------------
 
 const verifyMeController = async (
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<any> => {
@@ -232,7 +234,7 @@ const verifyMeController = async (
 };
 
 export {
-  // verifyOtpController,
+  verifyOtpController,
   sendOtpController,
   registerUserController,
   loginUserController,

@@ -10,8 +10,11 @@ import { BannersAndCaroselsModel } from "../../Dashboard/Modals/BannersAndCarose
 import { ParentCategoryModel } from "../../Dashboard/Modals/Category.modal";
 import { TrendModel } from "../../Dashboard/Modals/Trend.modal";
 import { SearchQuery } from "../../types/Search";
-import { Order } from "../Modals/order.model";
-import { stat } from "node:fs";
+import {
+  ORDER_STATUS_LABELS,
+  Order,
+  normalizeOrderStatus,
+} from "../Modals/order.model";
 import { IFeedback, IUser } from "../../types/Dashboardtypes";
 import { FeedBack } from "../Modals/AppFeedback.modal";
 import { ShopProfileModel } from "../../AuthenticationModule/Modals/ShopProfile.modal";
@@ -767,6 +770,7 @@ export const getOrderDetailByuserIdRepository = async (
 
     const formattedOrders = orders.map((order: any) => {
       const firstItem = order.items?.[0];
+      const deliveryStatus = normalizeOrderStatus(order.orderStatus);
 
       return {
         id: order._id,
@@ -775,10 +779,13 @@ export const getOrderDetailByuserIdRepository = async (
           generateCloudFrontSignedUrl(firstItem?.productId?.images?.[0]) ||
           "https://via.placeholder.com/150",
         itemCount: order.items?.length || 0,
-        subtitle: statusMap[order.orderStatus]?.(order.updatedAt) || "",
+        subtitle: statusMap[deliveryStatus]?.(order.updatedAt) || "",
         totalAmount: order.totalAmount,
-        status: order.orderStatus || order.status,
-        canReview: order.orderStatus === "Delivered",
+        status: deliveryStatus,
+        orderStatus: deliveryStatus,
+        statusLabel: ORDER_STATUS_LABELS[deliveryStatus],
+        paymentStatus: order.status,
+        canReview: deliveryStatus === "Delivered",
         rating: order.rating || 0,
         review: order.review || null,
       };
@@ -827,9 +834,13 @@ export const getOrderDetailWithOrderIdRepository = async (orderId: string) => {
       cancelled: () => "Order cancelled",
     };
 
+    const deliveryStatus = normalizeOrderStatus(order.orderStatus);
+
     const formattedOrder = {
       id: order._id,
-      status: order.orderStatus,
+      status: deliveryStatus,
+      orderStatus: deliveryStatus,
+      statusLabel: ORDER_STATUS_LABELS[deliveryStatus],
       paymentStatus: order.status,
       totalAmount: order.totalAmount,
       address: {
@@ -841,7 +852,7 @@ export const getOrderDetailWithOrderIdRepository = async (orderId: string) => {
         type: (order.addressId as any)?.type || "",
         pincode: (order.addressId as any)?.pincode || "",
       },
-      subtitle: statusMap[order.orderStatus]?.((order as any).updatedAt) || "",
+      subtitle: statusMap[deliveryStatus]?.((order as any).updatedAt) || "",
       items: order.items.map((item: any) => ({
         id: item._id,
         name: item.name,

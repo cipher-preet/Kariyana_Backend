@@ -270,6 +270,7 @@ router.get(
 router.post("/markasreadincontactus", markAsReadInContactUsController);
 
 //----------------  Trend Management Api --------------------------------------
+router.post("/createTrends", createTrendsController);
 router.post("/creteTrends", createTrendsController);
 router.get(
   "/getProductsForTrendBuilding",

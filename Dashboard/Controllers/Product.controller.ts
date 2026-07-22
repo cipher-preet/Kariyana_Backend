@@ -155,7 +155,7 @@ const getProductsBasicDetailsController = async (
   next: NextFunction,
 ): Promise<any> => {
   try {
-    const limit = Number(req.query.limit) || 10;
+    const limit = Number(req.query.limit) || 20;
     const cursor = req.query.cursor;
 
     const product = await getProductsBasicDetailsServices(

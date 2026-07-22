@@ -1,4 +1,4 @@
-import { STATES, Types } from "mongoose";
+import { Types } from "mongoose";
 import { IEditTrendData, ItrendData } from "../../types/TrendType";
 import { product, productModel } from "../Modals/Product.modals";
 import { TrendModel } from "../Modals/Trend.modal";
@@ -13,9 +13,20 @@ export const createTrendsRepository = async (finalData: ItrendData) => {
       };
     }
 
+    const validProductIds = finalData.productId.filter((id) =>
+      Types.ObjectId.isValid(id),
+    );
+
+    if (!validProductIds.length) {
+      return {
+        status: STATUS_CODE.BAD_REQUEST,
+        message: "No valid product IDs provided",
+      };
+    }
+
     const productDetails = await productModel
       .find({
-        _id: { $in: finalData.productId },
+        _id: { $in: validProductIds },
       })
       .select(
         "_id name images mrp sellingPrice reviewCount unit quantityPerUnit rating marketPrice sku",
@@ -30,20 +41,20 @@ export const createTrendsRepository = async (finalData: ItrendData) => {
     }
 
     const finalTrendData = {
-      trendDescription: finalData.trendDescription,
+      trendDescription: finalData.trendDescription || "",
       TrendName: finalData.trendName,
       products: productDetails.map((product) => ({
         _id: product._id,
         name: product.name,
-        images: product.images[0],
-        mrp: product.mrp,
-        sellingPrice: product.sellingPrice,
-        reviewCount: product.reviewCount,
-        unit: product.unit,
-        quantityPerUnit: product.quantityPerUnit,
-        rating: product.rating,
-        marketPrice: product.marketPrice,
-        sku: product.sku,
+        images: product.images?.[0] || "",
+        mrp: product.mrp || 0,
+        sellingPrice: product.sellingPrice || 0,
+        reviewCount: product.reviewCount || 0,
+        unit: product.unit || "",
+        quantityPerUnit: product.quantityPerUnit || 1,
+        rating: product.rating || 0,
+        marketPrice: product.marketPrice || product.mrp || 0,
+        sku: product.sku || 0,
       })),
     };
 

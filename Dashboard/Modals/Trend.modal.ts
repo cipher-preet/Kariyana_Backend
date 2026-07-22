@@ -42,39 +42,39 @@ const TrendSchema = new mongoose.Schema<trend>({
             },
             images: {
                 type: String,
-                required: true
+                default: ""
             },
             mrp: {
                 type: Number,
-                required: true
+                default: 0
             },
             sellingPrice: {
                 type: Number,
-                required: true
+                default: 0
             },
             reviewCount: {
                 type: Number,
-                required: true
+                default: 0
             },
             unit: {
                 type: String,
-                required: true
+                default: ""
             },
             quantityPerUnit: {
                 type: Number,
-                required: true
+                default: 1
             },
             rating: {
                 type: Number,
-                required: true
+                default: 0
             },
             marketPrice: {
                 type: Number,
-                required: true
+                default: 0
             },
             sku: {
                 type: Number,
-                required: true
+                default: 0
             }
         }
     ]

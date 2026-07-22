@@ -3,7 +3,7 @@ import { RegisterInput, VerifyOtpResult } from "../../types/Dashboardtypes";
 import { Otp } from "../Modals/Otp.modal";
 import { ShopProfileModel } from "../Modals/ShopProfile.modal";
 import { User } from "../Modals/User.Modals";
-import crypto from "crypto";
+import { sendBlackSmsOtp } from "../../Config/blackSms";
 
 //------------------------------------------------------------------------------------------------------------------
 
@@ -32,6 +32,24 @@ export const verifyOtpRepository = async (
       };
     }
 
+    if (record.expiresAt.getTime() < Date.now()) {
+      await record.deleteOne();
+      return {
+        success: false,
+        status: STATUS_CODE.UNAUTHORIZED,
+        message: "OTP expired",
+      };
+    }
+
+    if (record.attempts >= 5) {
+      await record.deleteOne();
+      return {
+        success: false,
+        status: STATUS_CODE.UNAUTHORIZED,
+        message: "Too many OTP attempts. Please request a new OTP.",
+      };
+    }
+
     if (record.otpHash !== otp) {
       record.attempts += 1;
       await record.save();
@@ -52,6 +70,8 @@ export const verifyOtpRepository = async (
         id: user._id.toString(),
         role: user.role,
         phone: user.phone,
+        status: user.status,
+        isActive: user.isActive,
       },
     };
   } catch (error) {
@@ -64,12 +84,20 @@ export const verifyOtpRepository = async (
 
 export const sendOtpRepository = async (phone: number) => {
   try {
-    const user = await User.findOne({ phone });
+    let user = await User.findOne({ phone });
 
     if (!user) {
+      user = await User.create({
+        phone,
+        status: "REGISTER",
+        isActive: true,
+      });
+    }
+
+    if (!user.isActive) {
       return {
-        status: STATUS_CODE.NOT_FOUND,
-        message: "User not found",
+        status: STATUS_CODE.FORBIDDEN,
+        message: "Account disabled",
       };
     }
 
@@ -83,6 +111,8 @@ export const sendOtpRepository = async (phone: number) => {
       expiresAt: new Date(Date.now() + 5 * 60 * 1000),
       attempts: 0,
     });
+
+    await sendBlackSmsOtp(phone, otp);
 
     return {
       status: STATUS_CODE.OK,

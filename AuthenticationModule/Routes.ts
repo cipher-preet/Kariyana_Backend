@@ -1,19 +1,17 @@
 import { Router } from "express";
 import {
-  // verifyOtpController,
+  verifyOtpController,
   sendOtpController,
   registerUserController,
   loginUserController,
   verifyMeController,
 } from "./Controllers/Auth.Controller";
 import { ShopDetailUploads } from "../Middleware/Multer/ShopResources";
-import { verifyFirebaseToken } from "../Config/FirebaseAuthebtication/auth.middleware";
 
 const router = Router();
 
-// router.post("/verify-otp", verifyOtpController);
-
 router.post("/send-otp", sendOtpController);
+router.post("/verify-otp", verifyOtpController);
 
 router.post(
   "/registerUser",
@@ -28,7 +26,7 @@ router.post(
 
 //----------------------------------------------
 
-router.post("/loginUser", verifyFirebaseToken, loginUserController);
+router.post("/loginUser", loginUserController);
 
 router.get("/verifyme", verifyMeController);
 

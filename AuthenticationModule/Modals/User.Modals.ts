@@ -5,13 +5,11 @@ export interface IUser extends Document {
   role: "ADMIN" | "VENDOR" | "BUYER";
   isActive: boolean;
   status: "PENDING" | "APPROVED" | "REJECTED" | "REGISTER";
-  firebaseUid: string;
 }
 
 const UserSchema = new Schema<IUser>(
   {
     phone: { type: Number, unique: true, required: true },
-    firebaseUid: { type: String, unique: true },
     role: { type: String, enum: ["BUYER", "ADMIN"], default: "BUYER" },
     isActive: { type: Boolean, default: true },
     status: {

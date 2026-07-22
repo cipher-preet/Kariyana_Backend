@@ -32,7 +32,9 @@ export type VerifyOtpResult =
       user: {
         id: string;
         role: string;
-        phone: Number;
+        phone: number;
+        status: "REGISTER" | "PENDING" | "REJECTED" | "APPROVED";
+        isActive: boolean;
       };
     };
 

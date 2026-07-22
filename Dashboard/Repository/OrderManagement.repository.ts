@@ -1,4 +1,8 @@
-import { Order } from "../../KariyanaApp/Modals/order.model";
+import {
+  ORDER_STATUS_LABELS,
+  Order,
+  normalizeOrderStatus,
+} from "../../KariyanaApp/Modals/order.model";
 import { STATUS_CODE } from "../../Api";
 
 export const getUpcomingOrderDetailsforDashboardrepository = async () => {
@@ -6,7 +10,15 @@ export const getUpcomingOrderDetailsforDashboardrepository = async () => {
     const orderDetails = await Order.find({
       status: "paid",
       orderStatus: {
-        $in: ["Recieved", "packing", "packed", "outForDelivery", "Delivered"],
+        $in: [
+          "Recieved",
+          "packing",
+          "packed",
+          "outForDelivery",
+          "Delivered",
+          "Rated",
+          "orders",
+        ],
       },
     }).sort({ createdAt: -1 });
 
@@ -21,7 +33,9 @@ export const getUpcomingOrderDetailsforDashboardrepository = async () => {
           hour: "2-digit",
           minute: "2-digit",
         }),
-        status: item.orderStatus,
+        status: normalizeOrderStatus(item.orderStatus),
+        orderStatus: normalizeOrderStatus(item.orderStatus),
+        statusLabel: ORDER_STATUS_LABELS[normalizeOrderStatus(item.orderStatus)],
         total: item.totalAmount,
         items: item.items,
       };
@@ -40,10 +54,14 @@ export const updateOrderStatusInOrderPageRepository = async (
   status: string,
 ) => {
   try {
+    const normalizedStatus = normalizeOrderStatus(status);
+
     const orderUpdate = await Order.findByIdAndUpdate(id, {
       $set: {
-        orderStatus: status,
+        orderStatus: normalizedStatus,
       },
+    }, {
+      new: true,
     });
 
     if (!orderUpdate) {
@@ -55,7 +73,9 @@ export const updateOrderStatusInOrderPageRepository = async (
 
     return {
       status: STATUS_CODE.OK,
-      message: "Order Status Updated ",
+      message: "Order Status Updated",
+      orderStatus: orderUpdate.orderStatus,
+      statusLabel: ORDER_STATUS_LABELS[orderUpdate.orderStatus],
     };
   } catch (error) {
     console.log("error in orderManagement Repository layer", error);
